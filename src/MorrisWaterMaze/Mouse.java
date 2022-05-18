@@ -23,7 +23,7 @@ public class Mouse
 	ArrayList<Double> time_steps = new ArrayList<>(0);
 		
 	static final double RADIUS = 3;							// Radius des die Maus repräsentierenden Kreises
-	private static final double FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90� zu beiden Seiten der Blickrichtung --> 180�
+	private static final double FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180�
 		
 	Mouse(String[] argv)
 	{		
@@ -31,7 +31,7 @@ public class Mouse
 		this.max_swimming_time = Integer.parseInt(argv[1]);
 		this.training_level = Double.parseDouble(argv[2]);
 		this.step_length_bias = Double.parseDouble(argv[3]);
-		this.start_position_left = false; // argv[4].equals("0") ? true : false;
+		this.start_position_left = argv[4].equals("0");
 		this.speed = Double.parseDouble(argv[5]);
 	}
 		
@@ -76,10 +76,13 @@ public class Mouse
 			if(this.training_level > Math.random() && FIELD_OF_VIEW/2 >= MyMath.angle(movement_vector, new_pos_mouse_platform_vector))
 			{
 				mean_angle = MyMath.calculate_polar_angle(new_pos_mouse_platform_vector);
+				//this.angle = MyMath.gausian(mean_angle, (1-this.training_level)*22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
+				
 			}
 			else
 			{
 				mean_angle = MyMath.calculate_polar_angle(movement_vector);
+				//this.angle = MyMath.gausian(mean_angle, 22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
 			}			
 			this.angle = MyMath.gausian(mean_angle, (1-this.training_level)*22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
 		}

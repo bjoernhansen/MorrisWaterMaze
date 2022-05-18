@@ -148,7 +148,7 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 			if(mouse.is_swimming)
 			{
 				counter++;
-				double time_step =  Math.log(mouse.step_length_bias/Math.random());
+				double time_step =  Math.log(mouse.step_length_bias/ nonZeroRandom());
 				
 				mouse.move(pool, platform, time_step);
 			}
@@ -191,7 +191,12 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 				restart();
 			}
 		}
-	}	
+	}
+	
+	private static double nonZeroRandom()
+	{
+		return 1.0 - Math.random();
+	}
 	
 	static void drawOffImage()
 	{		
