@@ -1,5 +1,16 @@
 package MorrisWaterMaze;
 
+import MorrisWaterMaze.parameter.ParameterAccessor;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -24,21 +35,14 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-class Simulation extends JPanel implements Runnable, ActionListener, ChangeListener
+public class Simulation extends JPanel implements Runnable, ActionListener, ChangeListener
 {
-	private static final long serialVersionUID = 4301592417000711331L;
+	private static final long
+		serialVersionUID = 4301592417000711331L;
+	public static final String LOG_DIRECTORY_NAME = "logs/";
 	
-	static boolean start_as_app;	
+	
+	static boolean isStartingWithGui;
 	static int 	max_nr_of_pic_in_series;
 	private static int current_nr_of_pic_in_series = 0;
 	static int number_of_pics = 0;
@@ -55,8 +59,8 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 	private static final double image_size = 2 * image_center;
 	private static final Dimension dim = new Dimension((int)(zoom_factor*image_size), (int)(zoom_factor*image_size));
 		
-	static int total_number_of_sim,
-			   remaining_number_of_sim;
+	static int totalNumberOfSimulations,
+			   remainingNumberOfSimulations;
 	private static double sum_of_search_time = 0;
 	private long last_painted = System.currentTimeMillis();
 	
@@ -82,11 +86,15 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 	static final DecimalFormat decimal_format = new DecimalFormat("0.000");
 	static final Font myFontPLAIN36 = new Font("Dialog", Font.BOLD, 36);
 		
-	static String file_name;
-	static File picture_directory;
+	static String fileName;
+	static File pictureDirectory;
 	
 	static Color dark_grey = new Color(75, 75, 75);	
 	static Color light_grey = new Color(150, 150, 150);
+	
+	private ParameterAccessor
+		parameterAccessor;
+	
 	
 	Simulation()
 	{			
@@ -95,8 +103,8 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 		JLabel mouse_level_label = new JLabel("training level");
 		JLabel number_of_sim_label = new JLabel("number of simulations");
 		this.neustart_button = new JButton("Neustart");
-		this.mouse_level = new JSpinner(new SpinnerNumberModel(mouse.training_level, 0.0, 1.0, 0.01));
-		this.number_of_sim = new JSpinner(new SpinnerNumberModel(total_number_of_sim, 1.0, Double.MAX_VALUE, 1.00));
+		this.mouse_level = new JSpinner(new SpinnerNumberModel(mouse.trainingLevel, 0.0, 1.0, 0.01));
+		this.number_of_sim = new JSpinner(new SpinnerNumberModel(totalNumberOfSimulations, 1.0, Double.MAX_VALUE, 1.00));
 		this.mouse_level.addChangeListener(this); 
 		this.number_of_sim.addChangeListener(this);
 		JPanel main_panel = new JPanel(new GridLayout(3, 2));
@@ -117,14 +125,21 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 		
 		restart();
 	}
-		
+	
 	private static Graphics2D getGraphics(Image Image)
 	{
 		Graphics2D graphics2D = (Graphics2D) Image.getGraphics();
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
 		return graphics2D;
 	}
-
+	
+	public static void makeDirectory()
+	{
+		String directoryName = LOG_DIRECTORY_NAME + fileName;
+		pictureDirectory = new File(directoryName);
+		pictureDirectory.mkdir();
+	}
+	
 	public void run()
 	{
 		while (Thread.currentThread() == this.animator)
@@ -141,37 +156,37 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 		}
 	}	
 		
-	private static void CalculateSim()
+	private static void calculateSim()
 	{
 		if(loop)
 		{
 			if(mouse.is_swimming)
 			{
 				counter++;
-				double time_step =  Math.log(mouse.step_length_bias/ nonZeroRandom());
+				double time_step =  Math.log(mouse.stepLengthBias / nonZeroRandom());
 				
 				mouse.move(pool, platform, time_step);
 			}
-			else if (remaining_number_of_sim >= 1)
+			else if (remainingNumberOfSimulations >= 1)
 			{
 				double last_search_time = mouse.time_steps.get(mouse.time_steps.size()-1);
 				search_time.add(last_search_time);
 				sum_of_search_time += last_search_time;
 				
-				System.out.println("Simulation " + (total_number_of_sim - remaining_number_of_sim + 1) + " of " + total_number_of_sim + ", simulation time: " + last_search_time);
-				remaining_number_of_sim--;
+				System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations + 1) + " of " + totalNumberOfSimulations + ", simulation time: " + last_search_time);
+				remainingNumberOfSimulations--;
 				
 				if(	number_of_pics > 0 && last_search_time >= pic_time_frame_lower_bound && last_search_time <= pic_time_frame_upper_bound)
 			    {					
 					saveImage();					
 			    }
-				
-				if(remaining_number_of_sim == 0)
+							
+				if(remainingNumberOfSimulations == 0)
 				{
-					System.out.println("\nDurchschnittliche Suchzeit: " + (sum_of_search_time/total_number_of_sim) + "\n");
+					System.out.println("\nDurchschnittliche Suchzeit: " + (sum_of_search_time/ totalNumberOfSimulations) + "\n");
 					
 					BufferedWriter bw;
-					String file_name_temp = file_name + "/" + file_name + ".txt";
+					String file_name_temp = LOG_DIRECTORY_NAME + fileName + "/" + fileName + ".txt";
 					System.out.println("Schreibe Datei: " + file_name_temp);				
 				    try 
 				    {				    	
@@ -200,7 +215,7 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 	
 	static void drawOffImage()
 	{		
-		if(start_as_app || current_nr_of_pic_in_series == 1)
+		if(isStartingWithGui || current_nr_of_pic_in_series == 1)
 		{
 			// weißer Hintergrund
 			offGraphics.setColor(Color.white);
@@ -221,7 +236,7 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 	@Override
 	public void paintComponent(Graphics g)
 	{
-		CalculateSim();	
+		calculateSim();
 		if(this.pictures_per_second != 0 && System.currentTimeMillis() - this.last_painted > 1000/this.pictures_per_second)
 		{		
 			Graphics2D g2 = (Graphics2D) g.create();		
@@ -237,7 +252,7 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 	static void restart()
 	{
 		counter = 0;
-		if(start_as_app){button1.setText("Starten");}
+		if(isStartingWithGui){button1.setText("Starten");}
 		mouse.get_random_pos(pool);
 	}
 		
@@ -263,7 +278,7 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 		{
 			restart();
 			loop = false;
-			remaining_number_of_sim = total_number_of_sim;
+			remainingNumberOfSimulations = totalNumberOfSimulations;
 			search_time.clear();
 			sum_of_search_time = 0;
 			this.mouse_level.setEnabled(true);		
@@ -284,7 +299,7 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
             {
             	this.mouse_level.setValue(1.0);
             }
-            mouse.training_level = Double.parseDouble(this.mouse_level.getValue().toString());
+            mouse.trainingLevel = Double.parseDouble(this.mouse_level.getValue().toString());
         }
         if(o==this.number_of_sim)
         {
@@ -296,7 +311,7 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
             {
             	this.number_of_sim.setValue(1.0);
             }
-            remaining_number_of_sim = total_number_of_sim = (int)Double.valueOf((this.number_of_sim).getValue().toString()).doubleValue(); 
+            remainingNumberOfSimulations = totalNumberOfSimulations = (int)Double.valueOf((this.number_of_sim).getValue().toString()).doubleValue();
         }
     }
     
@@ -319,39 +334,36 @@ class Simulation extends JPanel implements Runnable, ActionListener, ChangeListe
 			platform_site_length, platform_site_length);
 	}	
 	
-	public static void start_sim()
+	public static void startSim()
 	{					
 		restart();
-		while(remaining_number_of_sim >= 1){CalculateSim();} 
+		while(remainingNumberOfSimulations >= 1){
+			calculateSim();}
 	}
 	
-	static void getFilename(String argv_string)
-	{
-		Date dt = new Date(System.currentTimeMillis());	
-		SimpleDateFormat df = new SimpleDateFormat( "yyyy_MM_dd_HH_mm_ss" );	
-		file_name = df.format(dt) + "_parameter" + argv_string;
-		picture_directory = new File(file_name);
-		picture_directory.mkdir();
-	}
-
 	public static void saveImage()
 	{
-		if(!start_as_app){current_nr_of_pic_in_series++;}	
+		if(!isStartingWithGui){current_nr_of_pic_in_series++;}
 		drawOffImage();	
-		if(start_as_app || current_nr_of_pic_in_series == max_nr_of_pic_in_series)
+		if(isStartingWithGui || current_nr_of_pic_in_series == max_nr_of_pic_in_series)
 		{
 			try
 			{
-				String file_name_temp = file_name + "/" + System.currentTimeMillis() + ".png";
-				System.out.println("Schreibe Datei: " + file_name_temp + "\n");		
-				ImageIO.write((RenderedImage)offImage, "png", new File(file_name_temp));
+				String fileNameTemp = LOG_DIRECTORY_NAME + fileName + "/" + System.currentTimeMillis() + ".png";
+				System.out.println("\nSchreibe Datei: " + fileNameTemp + "\n");
+				ImageIO.write((RenderedImage)offImage, "png", new File(fileNameTemp));
 				number_of_pics--;
 			}
 			catch(Exception exc){System.out.println(exc);}
 		}
-		if(!start_as_app && current_nr_of_pic_in_series == max_nr_of_pic_in_series)
+		if(!isStartingWithGui && current_nr_of_pic_in_series == max_nr_of_pic_in_series)
 		{
 			current_nr_of_pic_in_series = 0;
 		}
+	}
+	
+	public void addParameterAccessor(ParameterAccessor parameterAccessor)
+	{
+		this.parameterAccessor = parameterAccessor;
 	}
 }

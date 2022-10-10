@@ -1,5 +1,7 @@
 package MorrisWaterMaze;
 
+import MorrisWaterMaze.parameter.ParameterAccessor;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
@@ -13,10 +15,10 @@ public class Mouse
 	private Point2D position;				// aktueller Aufenthaltsort der Maus	
 	private final double speed;                    // Geschwindigkeit der Maus; default: 5
 	private double angle;                    // bestimmt in welche Richtung die Maus schwimmt
-	private final double max_swimming_time;		// maximale Schwimmzeit; default: 0 (no restriction)
-	private final boolean start_position_left;	// gibt an, ob die Maus am linken oder rechten Rand des Pools erscheint; default: true
-	double training_level, 					// Trainingslevel der Maus; [0, 1]; default: 0.5
-		   step_length_bias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
+	private final double maximumSwimmingTime;		// maximale Schwimmzeit; default: 0 (no restriction)
+	private final boolean isStartPositionLeft;	// gibt an, ob die Maus am linken oder rechten Rand des Pools erscheint; default: true
+	double trainingLevel, 					// Trainingslevel der Maus; [0, 1]; default: 0.5
+		   stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
 	boolean is_swimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
 
 	private final ArrayList<Point2D> fluchtweg_punkte = new ArrayList<>(0);
@@ -25,19 +27,19 @@ public class Mouse
 	static final double RADIUS = 3;							// Radius des die Maus repräsentierenden Kreises
 	private static final double FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180�
 		
-	Mouse(String[] argv)
+	Mouse(ParameterAccessor parameterAccessor)
 	{		
 		this.position = new Point2D.Double();
-		this.max_swimming_time = Integer.parseInt(argv[1]);
-		this.training_level = Double.parseDouble(argv[2]);
-		this.step_length_bias = Double.parseDouble(argv[3]);
-		this.start_position_left = argv[4].equals("0");
-		this.speed = Double.parseDouble(argv[5]);
+		this.maximumSwimmingTime = parameterAccessor.getMaximumMouseSwimmingTime();
+		this.trainingLevel = parameterAccessor.getMouseTrainingLevel();
+		this.stepLengthBias = parameterAccessor.getStepLengthBias();
+		this.isStartPositionLeft = parameterAccessor.isMouseStartPositionLeft();
+		this.speed = parameterAccessor.mouseSpeed();
 	}
 		
 	void get_random_pos(Pool pool)// Startposition von der Maus
 	{
-		if(this.start_position_left)
+		if(this.isStartPositionLeft)
 		{
 			this.position.setLocation(pool.border.getCenterX()- pool.radius + RADIUS, pool.border.getCenterY());
 		}
@@ -56,9 +58,9 @@ public class Mouse
 	void move(Pool pool, Rectangle2D platform, double time_step)
 	{
 		double real_time_step;
-		if(this.max_swimming_time != 0 && time_step + this.time_steps.get(this.time_steps.size()-1) > this.max_swimming_time)
+		if(this.maximumSwimmingTime != 0 && time_step + this.time_steps.get(this.time_steps.size()-1) > this.maximumSwimmingTime)
 		{
-			real_time_step = this.max_swimming_time - this.time_steps.get(this.time_steps.size()-1);
+			real_time_step = this.maximumSwimmingTime - this.time_steps.get(this.time_steps.size()-1);
 			this.is_swimming = false;
 		}
 		else
@@ -73,7 +75,7 @@ public class Mouse
 			Point2D movement_vector = MyMath.calculate_vector(this.position, new_pos);
 			Point2D new_pos_mouse_platform_vector = MyMath.calculate_vector(new_pos, Simulation.center_of_platform);
 			
-			if(this.training_level > Math.random() && FIELD_OF_VIEW/2 >= MyMath.angle(movement_vector, new_pos_mouse_platform_vector))
+			if(this.trainingLevel > Math.random() && FIELD_OF_VIEW/2 >= MyMath.angle(movement_vector, new_pos_mouse_platform_vector))
 			{
 				mean_angle = MyMath.calculate_polar_angle(new_pos_mouse_platform_vector);
 				//this.angle = MyMath.gausian(mean_angle, (1-this.training_level)*22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
@@ -84,7 +86,7 @@ public class Mouse
 				mean_angle = MyMath.calculate_polar_angle(movement_vector);
 				//this.angle = MyMath.gausian(mean_angle, 22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
 			}			
-			this.angle = MyMath.gausian(mean_angle, (1-this.training_level)*22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
+			this.angle = MyMath.gausian(mean_angle, (1-this.trainingLevel)*22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
 		}
 		else // Schnittstelle von Pool und Mausschritt
 		{			
@@ -124,7 +126,7 @@ public class Mouse
 								(int)(Simulation.zoom_factor*(this.fluchtweg_punkte.get(i+1).getY()-0.5)), 
 								(int)Simulation.zoom_factor, (int)Simulation.zoom_factor);
 			}	
-			if(Simulation.start_as_app)
+			if(Simulation.isStartingWithGui)
 			{
 				g2d.setColor(Simulation.light_grey);
 				g2d.fillOval(	(int)(Simulation.zoom_factor*(this.fluchtweg_punkte.get(this.fluchtweg_punkte.size()-1).getX()-RADIUS)), 
