@@ -16,10 +16,14 @@ public class MorrisWaterMaze extends JFrame
 	
 	private static final ParameterSource
 		PARAMETER_SOURCE = ParameterSource.PROPERTIES_FILE;
-
-	MorrisWaterMaze(Simulation anim)
+	
+	public static final String
+		APPLICATION_NAME = "Morris Water Maze Simulation";
+	
+	
+	MorrisWaterMaze(SimulationController anim)
     {
-    	super("Morris Water Maze Simulation");
+    	super(APPLICATION_NAME);
     	setSize(1024, 768);
     	addWindowListener(new DemoAdapter());    	
     	this.add(anim);        
@@ -29,32 +33,32 @@ public class MorrisWaterMaze extends JFrame
     {
 		ParameterAccessor parameterAccessor = makeParameterAccessorInstance(args);
 		
-		Simulation.totalNumberOfSimulations = parameterAccessor.getNumberOfSimulations();
-		Simulation.remainingNumberOfSimulations = Simulation.totalNumberOfSimulations;
-		Simulation.mouse = new Mouse(parameterAccessor);
-    	Simulation.isStartingWithGui = parameterAccessor.isStartingWithGui();
-    	Simulation.fileName = parameterAccessor.getFilename();
-		Simulation.makeDirectory();
+		SimulationController.totalNumberOfSimulations = parameterAccessor.getNumberOfSimulations();
+		SimulationController.remainingNumberOfSimulations = SimulationController.totalNumberOfSimulations;
+		SimulationController.mouse = new Mouse(parameterAccessor);
+    	SimulationController.isStartingWithGui = parameterAccessor.isStartingWithGui();
+    	SimulationController.fileName = parameterAccessor.getFilename();
+		SimulationController.makeDirectory();
 		
     	if(parameterAccessor.getNumberOfPics() > 0)
     	{
-    		Simulation.number_of_pics = parameterAccessor.getNumberOfPics();
-    		Simulation.pic_time_frame_lower_bound = parameterAccessor.getLowerBoundOfPictureTimeFrame();
-    		Simulation.pic_time_frame_upper_bound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
-    		Simulation.max_nr_of_pic_in_series = parameterAccessor.getMaximumTrajectoriesPerPicture();
+    		SimulationController.number_of_pics = parameterAccessor.getNumberOfPics();
+    		SimulationController.pic_time_frame_lower_bound = parameterAccessor.getLowerBoundOfPictureTimeFrame();
+    		SimulationController.pic_time_frame_upper_bound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
+    		SimulationController.max_nr_of_pic_in_series = parameterAccessor.getMaximumTrajectoriesPerPicture();
     	}
     	
-    	if(Simulation.isStartingWithGui)
+    	if(SimulationController.isStartingWithGui)
         {        	
-    		Simulation simulation = new Simulation();
-			simulation.addParameterAccessor(parameterAccessor);
-    		JFrame f = new MorrisWaterMaze(simulation);
+    		SimulationController simulationController = new SimulationController();
+			simulationController.addParameterAccessor(parameterAccessor);
+    		JFrame f = new MorrisWaterMaze(simulationController);
     		f.setVisible(true);
         }
     	else
     	{
-    		Simulation.loop = true;
-    		Simulation.startSim();
+    		SimulationController.loop = true;
+    		SimulationController.startSim();
         }	
     }
 	

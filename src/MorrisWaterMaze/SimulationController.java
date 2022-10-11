@@ -30,17 +30,19 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.Date;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class Simulation extends JPanel implements Runnable, ActionListener, ChangeListener
+public class SimulationController extends JPanel implements Runnable, ActionListener, ChangeListener
 {
+	public static final int
+		PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS = 100;
+	
 	private static final long
 		serialVersionUID = 4301592417000711331L;
-	public static final String LOG_DIRECTORY_NAME = "logs/";
 	
+	private static final String
+		LOG_DIRECTORY_NAME = "logs/";
 	
 	static boolean isStartingWithGui;
 	static int 	max_nr_of_pic_in_series;
@@ -75,10 +77,10 @@ public class Simulation extends JPanel implements Runnable, ActionListener, Chan
 	private Thread animator = new Thread();
 	private static final Image offImage = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
     private static final Graphics2D offGraphics = getGraphics(offImage);
-	private static JButton button1;
-	private final JButton neustart_button;
-	private final JSpinner mouse_level;
-	private final JSpinner number_of_sim;
+	private static JButton startAndPauseButton;
+	private final JButton restartButton;
+	private final JSpinner mouseLevel;
+	private final JSpinner numberOfSimulations;
 	
 	private static final Pool pool = new Pool(image_center, image_center, pool_radius);
 	
@@ -96,29 +98,29 @@ public class Simulation extends JPanel implements Runnable, ActionListener, Chan
 		parameterAccessor;
 	
 	
-	Simulation()
+	SimulationController()
 	{			
 		this.setLayout(null);		
-		button1 = new JButton("Starten");
+		startAndPauseButton = new JButton("Starten");
 		JLabel mouse_level_label = new JLabel("training level");
 		JLabel number_of_sim_label = new JLabel("number of simulations");
-		this.neustart_button = new JButton("Neustart");
-		this.mouse_level = new JSpinner(new SpinnerNumberModel(mouse.trainingLevel, 0.0, 1.0, 0.01));
-		this.number_of_sim = new JSpinner(new SpinnerNumberModel(totalNumberOfSimulations, 1.0, Double.MAX_VALUE, 1.00));
-		this.mouse_level.addChangeListener(this); 
-		this.number_of_sim.addChangeListener(this);
-		JPanel main_panel = new JPanel(new GridLayout(3, 2));
-		main_panel.setBounds(675, 25, 300, 120);
-		main_panel.setBorder(BorderFactory.createEtchedBorder());
-		button1.addActionListener(this);
-		this.neustart_button.addActionListener(this);		
-		this.add(main_panel);
-		main_panel.add(button1);
-		main_panel.add(this.neustart_button);
-		main_panel.add(mouse_level_label);
-		main_panel.add(this.mouse_level);
-		main_panel.add(number_of_sim_label);
-		main_panel.add(this.number_of_sim);
+		this.restartButton = new JButton("Neustart");
+		this.mouseLevel = new JSpinner(new SpinnerNumberModel(mouse.trainingLevel, 0.0, 1.0, 0.01));
+		this.numberOfSimulations = new JSpinner(new SpinnerNumberModel(totalNumberOfSimulations, 1.0, Double.MAX_VALUE, 1.00));
+		this.mouseLevel.addChangeListener(this);
+		this.numberOfSimulations.addChangeListener(this);
+		JPanel mainPanel = new JPanel(new GridLayout(3, 2));
+		mainPanel.setBounds(675, 25, 300, 120);
+		mainPanel.setBorder(BorderFactory.createEtchedBorder());
+		startAndPauseButton.addActionListener(this);
+		this.restartButton.addActionListener(this);
+		this.add(mainPanel);
+		mainPanel.add(startAndPauseButton);
+		mainPanel.add(this.restartButton);
+		mainPanel.add(mouse_level_label);
+		mainPanel.add(this.mouseLevel);
+		mainPanel.add(number_of_sim_label);
+		mainPanel.add(this.numberOfSimulations);
 		
 		this.animator = new Thread(this);		
 		this.animator.start();
@@ -145,8 +147,7 @@ public class Simulation extends JPanel implements Runnable, ActionListener, Chan
 		while (Thread.currentThread() == this.animator)
 		{			
 			try{
-				int pause_between_simulation_steps = 100;
-				Thread.sleep(pause_between_simulation_steps);}
+				Thread.sleep(PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS);}
 			catch (InterruptedException e)
 			{
 				e.printStackTrace();
@@ -252,66 +253,67 @@ public class Simulation extends JPanel implements Runnable, ActionListener, Chan
 	static void restart()
 	{
 		counter = 0;
-		if(isStartingWithGui){button1.setText("Starten");}
-		mouse.get_random_pos(pool);
+		if(isStartingWithGui){
+			startAndPauseButton.setText("Starten");}
+		mouse.getRandomStartingPosition(pool);
 	}
 		
 	public void actionPerformed(ActionEvent e)
 	{
 		Object o = e.getSource();
 		
-		if (o == button1)
+		if (o == startAndPauseButton)
 		{
 			if(loop)
 			{
-				button1.setText("Starten");
+				startAndPauseButton.setText("Starten");
 			}
 			else
 			{
-				button1.setText("Anhalten");
+				startAndPauseButton.setText("Anhalten");
 			}
 			loop = !loop;
-			this.mouse_level.setEnabled(false);
-			this.number_of_sim.setEnabled(false);
+			this.mouseLevel.setEnabled(false);
+			this.numberOfSimulations.setEnabled(false);
 		} 
-		else if(o == this.neustart_button)
+		else if(o == this.restartButton)
 		{
 			restart();
 			loop = false;
 			remainingNumberOfSimulations = totalNumberOfSimulations;
 			search_time.clear();
 			sum_of_search_time = 0;
-			this.mouse_level.setEnabled(true);		
-			this.number_of_sim.setEnabled(true);
+			this.mouseLevel.setEnabled(true);
+			this.numberOfSimulations.setEnabled(true);
 		}
 	}
 		
 	public void stateChanged(ChangeEvent e)
     {
         Object o = e.getSource();           
-        if(o==this.mouse_level)
+        if(o==this.mouseLevel)
         {
-            if( 0 > Double.parseDouble(this.mouse_level.getValue().toString()))
+            if( 0 > Double.parseDouble(this.mouseLevel.getValue().toString()))
             {
-            	this.mouse_level.setValue(0.0);
+            	this.mouseLevel.setValue(0.0);
             }
-            else if( 1 < Double.parseDouble(this.mouse_level.getValue().toString()))
+            else if( 1 < Double.parseDouble(this.mouseLevel.getValue().toString()))
             {
-            	this.mouse_level.setValue(1.0);
+            	this.mouseLevel.setValue(1.0);
             }
-            mouse.trainingLevel = Double.parseDouble(this.mouse_level.getValue().toString());
+            mouse.trainingLevel = Double.parseDouble(this.mouseLevel.getValue().toString());
         }
-        if(o==this.number_of_sim)
+        if(o==this.numberOfSimulations)
         {
-            if( 0 > Double.parseDouble(this.mouse_level.getValue().toString()))
+            if( 0 > Double.parseDouble(this.mouseLevel.getValue().toString()))
             {
-            	this.number_of_sim.setValue(0.0);
+            	this.numberOfSimulations.setValue(0.0);
             }
-            else if( 1 < Double.parseDouble((this.mouse_level).getValue().toString()))
+            else if( 1 < Double.parseDouble((this.mouseLevel).getValue().toString()))
             {
-            	this.number_of_sim.setValue(1.0);
+            	this.numberOfSimulations.setValue(1.0);
             }
-            remainingNumberOfSimulations = totalNumberOfSimulations = (int)Double.valueOf((this.number_of_sim).getValue().toString()).doubleValue();
+            remainingNumberOfSimulations = totalNumberOfSimulations = (int)Double.valueOf((this.numberOfSimulations).getValue().toString()).doubleValue();
         }
     }
     

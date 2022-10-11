@@ -37,7 +37,7 @@ public class Mouse
 		this.speed = parameterAccessor.mouseSpeed();
 	}
 		
-	void get_random_pos(Pool pool)// Startposition von der Maus
+	void getRandomStartingPosition(Pool pool)// Startposition von der Maus
 	{
 		if(this.isStartPositionLeft)
 		{
@@ -73,7 +73,7 @@ public class Mouse
 		{			
 			double mean_angle;
 			Point2D movement_vector = MyMath.calculate_vector(this.position, new_pos);
-			Point2D new_pos_mouse_platform_vector = MyMath.calculate_vector(new_pos, Simulation.center_of_platform);
+			Point2D new_pos_mouse_platform_vector = MyMath.calculate_vector(new_pos, SimulationController.center_of_platform);
 			
 			if(this.trainingLevel > Math.random() && FIELD_OF_VIEW/2 >= MyMath.angle(movement_vector, new_pos_mouse_platform_vector))
 			{
@@ -119,19 +119,19 @@ public class Mouse
 			{
 				g2d.setColor(Color.BLACK);
 				g2d.draw(	new Line2D.Double(MyMath.scale_point(this.fluchtweg_punkte.get(i), 
-							Simulation.zoom_factor), 
+							SimulationController.zoom_factor),
 							MyMath.scale_point(this.fluchtweg_punkte.get(i+1),
-							Simulation.zoom_factor)));
-				g2d.fillOval(	(int)(Simulation.zoom_factor*(this.fluchtweg_punkte.get(i+1).getX()-0.5)), 
-								(int)(Simulation.zoom_factor*(this.fluchtweg_punkte.get(i+1).getY()-0.5)), 
-								(int)Simulation.zoom_factor, (int)Simulation.zoom_factor);
+							SimulationController.zoom_factor)));
+				g2d.fillOval(	(int)(SimulationController.zoom_factor*(this.fluchtweg_punkte.get(i+1).getX()-0.5)),
+								(int)(SimulationController.zoom_factor*(this.fluchtweg_punkte.get(i+1).getY()-0.5)),
+								(int) SimulationController.zoom_factor, (int) SimulationController.zoom_factor);
 			}	
-			if(Simulation.isStartingWithGui)
+			if(SimulationController.isStartingWithGui)
 			{
-				g2d.setColor(Simulation.light_grey);
-				g2d.fillOval(	(int)(Simulation.zoom_factor*(this.fluchtweg_punkte.get(this.fluchtweg_punkte.size()-1).getX()-RADIUS)), 
-								(int)(Simulation.zoom_factor*(this.fluchtweg_punkte.get(this.fluchtweg_punkte.size()-1).getY()-RADIUS)), 
-								(int)(Simulation.zoom_factor*RADIUS*2), (int)(Simulation.zoom_factor*RADIUS*2));
+				g2d.setColor(SimulationController.light_grey);
+				g2d.fillOval(	(int)(SimulationController.zoom_factor*(this.fluchtweg_punkte.get(this.fluchtweg_punkte.size()-1).getX()-RADIUS)),
+								(int)(SimulationController.zoom_factor*(this.fluchtweg_punkte.get(this.fluchtweg_punkte.size()-1).getY()-RADIUS)),
+								(int)(SimulationController.zoom_factor*RADIUS*2), (int)(SimulationController.zoom_factor*RADIUS*2));
 			}
 		}		
 	}
