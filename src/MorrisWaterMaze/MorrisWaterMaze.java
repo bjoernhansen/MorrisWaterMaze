@@ -6,6 +6,7 @@ import MorrisWaterMaze.parameter.ParameterAccessorFromPropertiesFile;
 import MorrisWaterMaze.parameter.ParameterSource;
 
 import javax.swing.JFrame;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
  
@@ -19,12 +20,16 @@ public class MorrisWaterMaze extends JFrame
 	
 	public static final String
 		APPLICATION_NAME = "Morris Water Maze Simulation";
+
+	private static final Dimension
+		APPLICATION_DIMENSION = new Dimension(1024, 768);
+
 	
 	
 	MorrisWaterMaze(SimulationController anim)
     {
     	super(APPLICATION_NAME);
-    	setSize(1024, 768);
+    	setSize(APPLICATION_DIMENSION);
     	addWindowListener(new DemoAdapter());    	
     	this.add(anim);        
     }
@@ -42,8 +47,8 @@ public class MorrisWaterMaze extends JFrame
 		
     	if(parameterAccessor.getNumberOfPics() > 0)
     	{
-    		SimulationController.number_of_pics = parameterAccessor.getNumberOfPics();
-    		SimulationController.pic_time_frame_lower_bound = parameterAccessor.getLowerBoundOfPictureTimeFrame();
+    		SimulationController.numberOfPics = parameterAccessor.getNumberOfPics();
+    		SimulationController.picTimeFrameLowerBound = parameterAccessor.getLowerBoundOfPictureTimeFrame();
     		SimulationController.pic_time_frame_upper_bound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
     		SimulationController.max_nr_of_pic_in_series = parameterAccessor.getMaximumTrajectoriesPerPicture();
     	}

@@ -47,34 +47,34 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 	static boolean isStartingWithGui;
 	static int 	max_nr_of_pic_in_series;
 	private static int current_nr_of_pic_in_series = 0;
-	static int number_of_pics = 0;
+	static int numberOfPics = 0;
 	static double pic_time_frame_upper_bound, 
-			      pic_time_frame_lower_bound;
+			      picTimeFrameLowerBound;
 	
 	private static int counter;
 	static boolean loop = false;
-	double pictures_per_second = 75;
-	static double zoom_factor = 4;
-	private static final double pool_radius = 65;
-	private static final double pool_border_distance = 25;
-	private static final double image_center = pool_radius + pool_border_distance;
-	private static final double image_size = 2 * image_center;
-	private static final Dimension dim = new Dimension((int)(zoom_factor*image_size), (int)(zoom_factor*image_size));
+	double picturesPerSecond = 75;
+	static final double ZOOM_FACTOR = 4;
+	private static final double POOL_RADIUS = 65;
+	private static final double POOL_BORDER_DISTANCE = 25;
+	private static final double IMAGE_CENTER = POOL_RADIUS + POOL_BORDER_DISTANCE;
+	private static final double IMAGE_SIZE = 2 * IMAGE_CENTER;
+	private static final Dimension dim = new Dimension((int)(ZOOM_FACTOR * IMAGE_SIZE), (int)(ZOOM_FACTOR * IMAGE_SIZE));
 		
 	static int totalNumberOfSimulations,
 			   remainingNumberOfSimulations;
-	private static double sum_of_search_time = 0;
-	private long last_painted = System.currentTimeMillis();
+	private static double sumOfSearchTime = 0;
+	private long lastPainted = System.currentTimeMillis();
 	
 	
 	
-	private static final ArrayList<Double> search_time = new ArrayList<>(0);
+	private static final ArrayList<Double> searchTime = new ArrayList<>(0);
 	
-	private static final Rectangle2D platform = make_platform();
+	private static final Rectangle2D platform = makePlatform();
 	static Point2D center_of_platform = new Point2D.Double(platform.getCenterX(), platform.getCenterY());
-	private static final AffineTransform AFFINE_TRANSFORMATION = new AffineTransform(zoom_factor, 0, 0, zoom_factor, 0, 0);
+	private static final AffineTransform AFFINE_TRANSFORMATION = new AffineTransform(ZOOM_FACTOR, 0, 0, ZOOM_FACTOR, 0, 0);
 	
-	private Thread animator = new Thread();
+	private Thread animator;
 	private static final Image offImage = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
     private static final Graphics2D offGraphics = getGraphics(offImage);
 	private static JButton startAndPauseButton;
@@ -82,7 +82,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 	private final JSpinner mouseLevel;
 	private final JSpinner numberOfSimulations;
 	
-	private static final Pool pool = new Pool(image_center, image_center, pool_radius);
+	private static final Pool pool = new Pool(IMAGE_CENTER, IMAGE_CENTER, POOL_RADIUS);
 	
 	static Mouse mouse;
 	static final DecimalFormat decimal_format = new DecimalFormat("0.000");
@@ -161,39 +161,39 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 	{
 		if(loop)
 		{
-			if(mouse.is_swimming)
+			if(mouse.isSwimming)
 			{
 				counter++;
-				double time_step =  Math.log(mouse.stepLengthBias / nonZeroRandom());
+				double timeStep = Math.log(mouse.stepLengthBias / nonZeroRandom());
 				
-				mouse.move(pool, platform, time_step);
+				mouse.move(pool, platform, timeStep);
 			}
 			else if (remainingNumberOfSimulations >= 1)
 			{
-				double last_search_time = mouse.time_steps.get(mouse.time_steps.size()-1);
-				search_time.add(last_search_time);
-				sum_of_search_time += last_search_time;
+				double lastSearchTime = mouse.timeSteps.get(mouse.timeSteps.size()-1);
+				searchTime.add(lastSearchTime);
+				sumOfSearchTime += lastSearchTime;
 				
-				System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations + 1) + " of " + totalNumberOfSimulations + ", simulation time: " + last_search_time);
+				System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations + 1) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
 				remainingNumberOfSimulations--;
 				
-				if(	number_of_pics > 0 && last_search_time >= pic_time_frame_lower_bound && last_search_time <= pic_time_frame_upper_bound)
+				if(	numberOfPics > 0 && lastSearchTime >= picTimeFrameLowerBound && lastSearchTime <= pic_time_frame_upper_bound)
 			    {					
 					saveImage();					
 			    }
 							
 				if(remainingNumberOfSimulations == 0)
 				{
-					System.out.println("\nDurchschnittliche Suchzeit: " + (sum_of_search_time/ totalNumberOfSimulations) + "\n");
+					System.out.println("\nDurchschnittliche Suchzeit: " + (sumOfSearchTime / totalNumberOfSimulations) + "\n");
 					
 					BufferedWriter bw;
 					String file_name_temp = LOG_DIRECTORY_NAME + fileName + "/" + fileName + ".txt";
 					System.out.println("Schreibe Datei: " + file_name_temp);				
 				    try 
 				    {				    	
-				    	search_time.size();
+				    	searchTime.size();
 				        bw = new BufferedWriter(new FileWriter(file_name_temp));
-						for (Double aDouble : search_time)
+						for (Double aDouble : searchTime)
 						{
 							bw.write(aDouble + System.getProperty("line.separator"));
 						}
@@ -220,7 +220,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 		{
 			// weißer Hintergrund
 			offGraphics.setColor(Color.white);
-			offGraphics.fillRect(0, 0, (int)zoom_factor*dim.height, (int)zoom_factor*dim.width);	
+			offGraphics.fillRect(0, 0, (int) ZOOM_FACTOR *dim.height, (int) ZOOM_FACTOR *dim.width);
 			
 			// der Pool
 			pool.paint(offGraphics, AFFINE_TRANSFORMATION);
@@ -229,7 +229,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 			offGraphics.setColor(dark_grey);
 			offGraphics.fill(AFFINE_TRANSFORMATION.createTransformedShape(platform));
 			offGraphics.setColor(Color.black);
-			offGraphics.fillOval((int)(zoom_factor*(image_center-1)), (int)(zoom_factor*(image_center-1)), (int)(2*zoom_factor), (int)(2*zoom_factor));
+			offGraphics.fillOval((int)(ZOOM_FACTOR *(IMAGE_CENTER -1)), (int)(ZOOM_FACTOR *(IMAGE_CENTER -1)), (int)(2* ZOOM_FACTOR), (int)(2* ZOOM_FACTOR));
 		}
 		mouse.paint_trajectory(offGraphics);
 	}	
@@ -238,7 +238,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 	public void paintComponent(Graphics g)
 	{
 		calculateSim();
-		if(this.pictures_per_second != 0 && System.currentTimeMillis() - this.last_painted > 1000/this.pictures_per_second)
+		if(this.picturesPerSecond != 0 && System.currentTimeMillis() - this.lastPainted > 1000/this.picturesPerSecond)
 		{		
 			Graphics2D g2 = (Graphics2D) g.create();		
 			drawOffImage();				
@@ -246,7 +246,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);  
 	    	g2.drawImage(offImage, 25, 25, null);	
 			g2.dispose();
-			this.last_painted = System.currentTimeMillis();
+			this.lastPainted = System.currentTimeMillis();
 		}	
 	}
 			
@@ -281,8 +281,8 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 			restart();
 			loop = false;
 			remainingNumberOfSimulations = totalNumberOfSimulations;
-			search_time.clear();
-			sum_of_search_time = 0;
+			searchTime.clear();
+			sumOfSearchTime = 0;
 			this.mouseLevel.setEnabled(true);
 			this.numberOfSimulations.setEnabled(true);
 		}
@@ -326,13 +326,13 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 	}
 	*/
 		
-	static Rectangle2D make_platform()
+	static Rectangle2D makePlatform()
 	{
 		double alpha = 0.25*Math.PI;
 		double platform_site_length = 10;
-		double outer_corner_radius = 0.5*(pool_radius+ platform_site_length *Math.sqrt(2));
-		return new Rectangle2D.Double(	image_center + outer_corner_radius*Math.cos(alpha) - platform_site_length, 
-										image_center + outer_corner_radius*Math.sin(alpha) - platform_site_length,
+		double outer_corner_radius = 0.5*(POOL_RADIUS + platform_site_length *Math.sqrt(2));
+		return new Rectangle2D.Double(	IMAGE_CENTER + outer_corner_radius*Math.cos(alpha) - platform_site_length,
+										IMAGE_CENTER + outer_corner_radius*Math.sin(alpha) - platform_site_length,
 			platform_site_length, platform_site_length);
 	}	
 	
@@ -354,7 +354,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 				String fileNameTemp = LOG_DIRECTORY_NAME + fileName + "/" + System.currentTimeMillis() + ".png";
 				System.out.println("\nSchreibe Datei: " + fileNameTemp + "\n");
 				ImageIO.write((RenderedImage)offImage, "png", new File(fileNameTemp));
-				number_of_pics--;
+				numberOfPics--;
 			}
 			catch(Exception exc){System.out.println(exc);}
 		}

@@ -10,7 +10,7 @@ public class Pool
 {	
 	Point2D		center;			// Mittelpunkt des Pools 
 	Ellipse2D 	border,			// Jeder Punkt des Kreises, welcher die Maus repräsentiert, muss sich innerhalb dieses Kreises befinden
-			  	collision_size;	// Der Mittelpunkt der Maus muss sich innerhalb dieses Kreises befinden.
+			  	collisionSize;	// Der Mittelpunkt der Maus muss sich innerhalb dieses Kreises befinden.
 	double 		radius;			// Pool-Radius
 	
 	
@@ -19,7 +19,7 @@ public class Pool
 	{		
 		this.radius = radius;
 		this.center = new Point2D.Double(x, y);
-		this.collision_size = new Ellipse2D.Double(	x - this.radius + Mouse.RADIUS,
+		this.collisionSize = new Ellipse2D.Double(	x - this.radius + Mouse.RADIUS,
 													y - this.radius + Mouse.RADIUS,
 													2 *(this.radius - Mouse.RADIUS), 
 													2 *(this.radius - Mouse.RADIUS));

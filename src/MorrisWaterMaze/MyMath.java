@@ -10,7 +10,7 @@ public class MyMath
 	static final Point2D p0 = new Point2D.Float(0,0); 
 	static final Random random = new Random();	
 	
-	static Point2D circle_line_intersection(Point2D p1, double r, Point2D p2, Point2D p3)
+	static Point2D circleLineIntersection(Point2D p1, double r, Point2D p2, Point2D p3)
 	{
 		// Source: http://www.seibsprogrammladen.de/frame1.html?Prgm/Algorithmen/Schnittpunkte
 		double rr = r * r;
@@ -38,23 +38,23 @@ public class MyMath
 		return intersect;
 	}
 
-	static Point2D calculate_vector(Point2D start_point, Point2D end_point)
+	static Point2D calculateVector(Point2D startPointX, Point2D endPoint)
 	{
-		return new Point2D.Double(end_point.getX()-start_point.getX(), end_point.getY()- start_point.getY());
+		return new Point2D.Double(endPoint.getX()-startPointX.getX(), endPoint.getY()- startPointX.getY());
 	}
 	
-	static double calculate_polar_angle(Point2D vector)
+	static double calculatePolarAngle(Point2D vector)
 	{		
 		return Math.atan2(vector.getY(), vector.getX());	
 	}
 	
-	static double calculate_angle(Point2D vector1, Point2D vector2)
+	static double calculateAngle(Point2D vector1, Point2D vector2)
 	{		
 		return Math.atan2(vector2.getY()-vector1.getY(), vector2.getX()-vector1.getX());		
 		//return Math.atan2(vector1.getY(),vector1.getX()) - Math.atan2(vector2.getY(),vector2.getX());
 	}	
 	
-	static Point2D scale_point(Point2D point, double scaling_factor)
+	static Point2D scalePoint(Point2D point, double scaling_factor)
 	{		
 		return new Point2D.Double(scaling_factor*point.getX(), scaling_factor*point.getY());
 	}
@@ -79,7 +79,7 @@ public class MyMath
 		{
 			if ((f1 & f2) != 0)
 			{
-				return null; // Linie liegt komplett au�erhalb des Rechtecks
+				return null; // Linie liegt komplett außerhalb des Rechtecks
 			}
 			double dx = (x2 - x1);
 			double dy = (y2 - y1);
@@ -148,22 +148,22 @@ public class MyMath
 		return Math.acos(scalar/(point1.distance(p0) * point2.distance(p0)));
 	}
 
-	static double signed_angle(Point2D p1, Point2D p2)
+	static double signedAngle(Point2D p1, Point2D p2)
 	{
 		return Math.atan2(p2.getY(), p2.getX()) - Math.atan2(p1.getY(), p1.getX());
 	}
 
-	static double vector_length(Point2D vector){return vector.distance(p0);}
+	static double vectorLength(Point2D vector){return vector.distance(p0);}
 	
-	static double gausian(double mu, double sigma)
+	static double gaussian(double mu, double sigma)
 	{
 		return sigma*random.nextGaussian()+mu;
 	}
 	
-	static double gausian(double mu, double sigma, double max)
+	static double gaussian(double mu, double sigma, double max)
 	{
 		double gaussian = sigma*random.nextGaussian();
 		if(Math.abs(gaussian) < max)return gaussian+mu;
-		return gausian(mu, sigma, max);
+		return gaussian(mu, sigma, max);
 	}
 }
