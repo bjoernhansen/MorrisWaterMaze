@@ -12,10 +12,10 @@ public final class Calculations
 		throw new UnsupportedOperationException();
 	}
 
-	static final Point2D p0 = new Point2D.Float(0,0); 
-	static final Random random = new Random();	
-	
-	static Point2D circleLineIntersection(Point2D p1, double r, Point2D p2, Point2D p3)
+	private static final Point2D p0 = new Point2D.Float(0,0);
+	private static final Random random = new Random();
+
+	public static Point2D circleLineIntersection(Point2D p1, double r, Point2D p2, Point2D p3)
 	{
 		// Source: http://www.seibsprogrammladen.de/frame1.html?Prgm/Algorithmen/Schnittpunkte
 		double rr = r * r;
@@ -43,27 +43,27 @@ public final class Calculations
 		return intersect;
 	}
 
-	static Point2D calculateVector(Point2D startPointX, Point2D endPoint)
+	public static Point2D calculateVector(Point2D startPointX, Point2D endPoint)
 	{
 		return new Point2D.Double(endPoint.getX()-startPointX.getX(), endPoint.getY()- startPointX.getY());
 	}
-	
-	static double calculatePolarAngle(Point2D vector)
+
+	public static double calculatePolarAngle(Point2D vector)
 	{		
 		return Math.atan2(vector.getY(), vector.getX());	
 	}
-	
-	static double calculateAngle(Point2D vector1, Point2D vector2)
+
+	public static double calculateAngle(Point2D vector1, Point2D vector2)
 	{		
 		return Math.atan2(vector2.getY()-vector1.getY(), vector2.getX()-vector1.getX());		
 		//return Math.atan2(vector1.getY(),vector1.getX()) - Math.atan2(vector2.getY(),vector2.getX());
-	}	
-	
-	static Point2D scalePoint(Point2D point, double scalingFactor)
+	}
+
+	public static Point2D scalePoint(Point2D point, double scalingFactor)
 	{		
 		return new Point2D.Double(scalingFactor*point.getX(), scalingFactor*point.getY());
 	}
-	  
+
 	public static Line2D clipLine(Line2D line, Rectangle2D rect)
 	{
 		// Source: http://www.java2s.com/Tutorial/Java/0261__2D-Graphics/Clipsthespecifiedlinetothegivenrectangle.htm
@@ -147,7 +147,7 @@ public final class Calculations
 		return new Line2D.Double(x1, y1, x2, y2);
 	}
 	
-	static double angle(Point2D point1, Point2D point2)
+	public static double angle(Point2D point1, Point2D point2)
 	{
 		double scalar = point1.getX() * point2.getX() + point1.getY() * point2.getY();
 		return Math.acos(scalar/(point1.distance(p0) * point2.distance(p0)));
@@ -160,12 +160,12 @@ public final class Calculations
 
 	static double vectorLength(Point2D vector){return vector.distance(p0);}
 	
-	static double gaussian(double mu, double sigma)
+	public static double gaussian(double mu, double sigma)
 	{
 		return sigma*random.nextGaussian()+mu;
 	}
 	
-	static double gaussian(double mu, double sigma, double max)
+	public static double gaussian(double mu, double sigma, double max)
 	{
 		double gaussian = sigma*random.nextGaussian();
 		if(Math.abs(gaussian) < max)return gaussian+mu;

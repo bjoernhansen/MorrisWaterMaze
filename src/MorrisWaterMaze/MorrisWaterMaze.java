@@ -26,7 +26,7 @@ public class MorrisWaterMaze extends JFrame
 
 	
 	
-	MorrisWaterMaze(SimulationController anim)
+	MorrisWaterMaze(Controller anim)
     {
     	super(APPLICATION_NAME);
     	setSize(APPLICATION_DIMENSION);
@@ -37,33 +37,37 @@ public class MorrisWaterMaze extends JFrame
     public static void main(String[] args)
     {
 		ParameterAccessor parameterAccessor = makeParameterAccessorInstance(args);
-		
-		SimulationController.totalNumberOfSimulations = parameterAccessor.getNumberOfSimulations();
-		SimulationController.remainingNumberOfSimulations = SimulationController.totalNumberOfSimulations;
-		SimulationController.mouse = new Mouse(parameterAccessor);
-    	SimulationController.isStartingWithGui = parameterAccessor.isStartingWithGui();
-    	SimulationController.fileName = parameterAccessor.getFilename();
-		SimulationController.makeDirectory();
+		Simulation simulation = new Simulation(parameterAccessor);
+
+		Controller.totalNumberOfSimulations = parameterAccessor.getNumberOfSimulations();
+		Controller.remainingNumberOfSimulations = Controller.totalNumberOfSimulations;
+    	Controller.isStartingWithGui = parameterAccessor.isStartingWithGui();
+    	Controller.fileName = parameterAccessor.getFilename();
+		Controller.makeDirectory();
 		
     	if(parameterAccessor.getNumberOfPics() > 0)
     	{
-    		SimulationController.numberOfPics = parameterAccessor.getNumberOfPics();
-    		SimulationController.picTimeFrameLowerBound = parameterAccessor.getLowerBoundOfPictureTimeFrame();
-    		SimulationController.picTimeFrameUpperBound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
-    		SimulationController.maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
+    		Controller.numberOfPics = parameterAccessor.getNumberOfPics();
+    		Controller.picTimeFrameLowerBound = parameterAccessor.getLowerBoundOfPictureTimeFrame();
+    		Controller.picTimeFrameUpperBound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
+    		Controller.maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
     	}
     	
-    	if(SimulationController.isStartingWithGui)
+    	if(Controller.isStartingWithGui)
         {
-    		SimulationController simulationController = new SimulationController();
-			simulationController.addParameterAccessor(parameterAccessor);
-    		JFrame f = new MorrisWaterMaze(simulationController);
+    		Controller controller = new Controller(simulation);
+			controller.addParameterAccessor(parameterAccessor);
+    		JFrame f = new MorrisWaterMaze(controller);
     		f.setVisible(true);
         }
     	else
     	{
-    		SimulationController.loop = true;
-    		SimulationController.startSim();
+			Controller.simulation = simulation;
+			Controller.reset();
+			while(Controller.remainingNumberOfSimulations >= 1)
+			{
+				simulation.nextStep();
+			}
         }	
     }
 	

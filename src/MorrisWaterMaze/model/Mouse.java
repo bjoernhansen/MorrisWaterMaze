@@ -1,12 +1,12 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.model;
 
+import MorrisWaterMaze.Calculations;
+import MorrisWaterMaze.Controller;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -17,17 +17,17 @@ public class Mouse
 	private double angle;                    // bestimmt in welche Richtung die Maus schwimmt
 	private final double maximumSwimmingTime;		// maximale Schwimmzeit; default: 0 (no restriction)
 	private final boolean isStartPositionLeft;	// gibt an, ob die Maus am linken oder rechten Rand des Pools erscheint; default: true
-	double trainingLevel, 					// Trainingslevel der Maus; [0, 1]; default: 0.5
-		   stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
-	boolean isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
+	private double trainingLevel;                    // Trainingslevel der Maus; [0, 1]; default: 0.5
+		   public double stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
+	public boolean isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
 
 	private final ArrayList<Point2D> escapeRoutePoints = new ArrayList<>(0);
-	ArrayList<Double> timeSteps = new ArrayList<>(0);
+	public ArrayList<Double> timeSteps = new ArrayList<>(0);
 		
 	static final double RADIUS = 3;							// Radius des die Maus repräsentierenden Kreises
 	private static final double FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180�
 		
-	Mouse(ParameterAccessor parameterAccessor)
+	public Mouse(ParameterAccessor parameterAccessor)
 	{		
 		this.position = new Point2D.Double();
 		this.maximumSwimmingTime = parameterAccessor.getMaximumMouseSwimmingTime();
@@ -37,15 +37,15 @@ public class Mouse
 		this.speed = parameterAccessor.mouseSpeed();
 	}
 		
-	void getRandomStartingPosition(Pool pool)// Startposition von der Maus
+	public void determineStartingPosition(Pool pool)// Startposition von der Maus
 	{
 		if(this.isStartPositionLeft)
 		{
-			this.position.setLocation(pool.border.getCenterX()- pool.radius + RADIUS, pool.border.getCenterY());
+			this.position.setLocation(pool.border.getCenterX()- Pool.RADIUS + RADIUS, pool.border.getCenterY());
 		}
 		else
 		{
-			this.position.setLocation(pool.border.getCenterX() + pool.radius - RADIUS, pool.border.getCenterY());	
+			this.position.setLocation(pool.border.getCenterX() + Pool.RADIUS - RADIUS, pool.border.getCenterY());
 		}
 		this.angle = Math.PI*(Math.random()-0.5) + Calculations.calculatePolarAngle(Calculations.calculateVector(this.position, pool.center));
 		this.isSwimming = true;
@@ -55,7 +55,7 @@ public class Mouse
 		this.timeSteps.add((double)0);
 	}
 		
-	void move(Pool pool, Rectangle2D platform, double timeStep)
+	public void move(Pool pool, Platform platform, double timeStep)
 	{
 		double realTimeStep;
 		if(this.maximumSwimmingTime != 0 && timeStep + this.timeSteps.get(this.timeSteps.size()-1) > this.maximumSwimmingTime)
@@ -73,7 +73,7 @@ public class Mouse
 		{			
 			double meanAngle;
 			Point2D movementVector = Calculations.calculateVector(this.position, newPos);
-			Point2D newPosMousePlatformVector = Calculations.calculateVector(newPos, SimulationController.center_of_platform);
+			Point2D newPosMousePlatformVector = Calculations.calculateVector(newPos, platform.getCenter());
 			
 			if(this.trainingLevel > Math.random() && FIELD_OF_VIEW/2 >= Calculations.angle(movementVector, newPosMousePlatformVector))
 			{
@@ -90,16 +90,16 @@ public class Mouse
 		}
 		else // Schnittstelle von Pool und Mausschritt
 		{			
-			newPos = Calculations.circleLineIntersection(pool.center, pool.radius - RADIUS, this.position, newPos);
+			newPos = Calculations.circleLineIntersection(pool.center, Pool.RADIUS - RADIUS, this.position, newPos);
 			Point2D newPosCenterVector = Calculations.calculateVector(newPos, pool.center);
 			double direction = Line2D.relativeCCW(pool.center.getX(), pool.center.getY(), newPos.getX(), newPos.getY(), this.position.getX(), this.position.getY());
 			this.angle = Calculations.calculatePolarAngle(newPosCenterVector) - direction * (Math.PI/3 + Calculations.gaussian(0, Math.PI/12, Math.PI/6));
 			this.isSwimming = true;
 		}		
 		Line2D lastMove = new Line2D.Double(this.position, newPos);
-		if(lastMove.intersects(platform)) // Schnittstelle von Maus und Plattform
+		if(lastMove.intersects(platform.getBounds())) // Schnittstelle von Maus und Plattform
 		{	
-			newPos = Objects.requireNonNull(Calculations.clipLine(lastMove, platform)).getP1();
+			newPos = Objects.requireNonNull(Calculations.clipLine(lastMove, platform.getBounds())).getP1();
 			this.isSwimming = false;
 		}
 		double timeOfLastMove = this.position.distance(newPos)/this.speed; //?
@@ -111,7 +111,7 @@ public class Mouse
 	}
 
 	
-	void paintTrajectory(Graphics2D g2d)
+	public void paintTrajectory(Graphics2D g2d)
 	{
 		if(!this.escapeRoutePoints.isEmpty())
 		{			
@@ -119,21 +119,28 @@ public class Mouse
 			{
 				g2d.setColor(Color.BLACK);
 				g2d.draw(	new Line2D.Double(Calculations.scalePoint(this.escapeRoutePoints.get(i),
-							SimulationController.ZOOM_FACTOR),
+							Controller.ZOOM_FACTOR),
 							Calculations.scalePoint(this.escapeRoutePoints.get(i+1),
-							SimulationController.ZOOM_FACTOR)));
-				g2d.fillOval(	(int)(SimulationController.ZOOM_FACTOR *(this.escapeRoutePoints.get(i+1).getX()-0.5)),
-								(int)(SimulationController.ZOOM_FACTOR *(this.escapeRoutePoints.get(i+1).getY()-0.5)),
-								(int) SimulationController.ZOOM_FACTOR, (int) SimulationController.ZOOM_FACTOR);
+							Controller.ZOOM_FACTOR)));
+				g2d.fillOval(	(int)(Controller.ZOOM_FACTOR *(this.escapeRoutePoints.get(i+1).getX()-0.5)),
+								(int)(Controller.ZOOM_FACTOR *(this.escapeRoutePoints.get(i+1).getY()-0.5)),
+								(int) Controller.ZOOM_FACTOR, (int) Controller.ZOOM_FACTOR);
 			}	
-			if(SimulationController.isStartingWithGui)
+			if(Controller.isStartingWithGui)
 			{
-				g2d.setColor(SimulationController.light_grey);
-				g2d.fillOval(	(int)(SimulationController.ZOOM_FACTOR *(this.escapeRoutePoints.get(this.escapeRoutePoints.size()-1).getX()-RADIUS)),
-								(int)(SimulationController.ZOOM_FACTOR *(this.escapeRoutePoints.get(this.escapeRoutePoints.size()-1).getY()-RADIUS)),
-								(int)(SimulationController.ZOOM_FACTOR *RADIUS*2), (int)(SimulationController.ZOOM_FACTOR *RADIUS*2));
+				g2d.setColor(Controller.light_grey);
+				g2d.fillOval(	(int)(Controller.ZOOM_FACTOR *(this.escapeRoutePoints.get(this.escapeRoutePoints.size()-1).getX()-RADIUS)),
+								(int)(Controller.ZOOM_FACTOR *(this.escapeRoutePoints.get(this.escapeRoutePoints.size()-1).getY()-RADIUS)),
+								(int)(Controller.ZOOM_FACTOR *RADIUS*2), (int)(Controller.ZOOM_FACTOR *RADIUS*2));
 			}
 		}		
 	}
-	
+
+	public double getTrainingLevel() {
+		return trainingLevel;
+	}
+
+	public void setTrainingLevel(double trainingLevel) {
+		this.trainingLevel = trainingLevel;
+	}
 }
