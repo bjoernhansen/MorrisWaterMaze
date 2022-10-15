@@ -5,8 +5,13 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
-public class MyMath
+public final class Calculations
 {
+	private Calculations()
+	{
+		throw new UnsupportedOperationException();
+	}
+
 	static final Point2D p0 = new Point2D.Float(0,0); 
 	static final Random random = new Random();	
 	
@@ -54,9 +59,9 @@ public class MyMath
 		//return Math.atan2(vector1.getY(),vector1.getX()) - Math.atan2(vector2.getY(),vector2.getX());
 	}	
 	
-	static Point2D scalePoint(Point2D point, double scaling_factor)
+	static Point2D scalePoint(Point2D point, double scalingFactor)
 	{		
-		return new Point2D.Double(scaling_factor*point.getX(), scaling_factor*point.getY());
+		return new Point2D.Double(scalingFactor*point.getX(), scalingFactor*point.getY());
 	}
 	  
 	public static Line2D clipLine(Line2D line, Rectangle2D rect)
@@ -165,5 +170,10 @@ public class MyMath
 		double gaussian = sigma*random.nextGaussian();
 		if(Math.abs(gaussian) < max)return gaussian+mu;
 		return gaussian(mu, sigma, max);
+	}
+
+	static double nonZeroRandom()
+	{
+		return 1.0 - Math.random();
 	}
 }

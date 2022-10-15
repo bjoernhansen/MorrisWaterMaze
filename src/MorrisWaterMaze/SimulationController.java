@@ -45,13 +45,12 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 		LOG_DIRECTORY_NAME = "logs/";
 	
 	static boolean isStartingWithGui;
-	static int 	max_nr_of_pic_in_series;
-	private static int current_nr_of_pic_in_series = 0;
+	static int maxNrOfPicInSeries;
+	private static int currentNrOfPicInSeries = 0;
 	static int numberOfPics = 0;
-	static double pic_time_frame_upper_bound, 
+	static double picTimeFrameUpperBound,
 			      picTimeFrameLowerBound;
-	
-	private static int counter;
+
 	static boolean loop = false;
 	double picturesPerSecond = 75;
 	static final double ZOOM_FACTOR = 4;
@@ -68,7 +67,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 	
 	
 	
-	private static final ArrayList<Double> searchTime = new ArrayList<>(0);
+	private static final ArrayList<Double> searchTime = new ArrayList<>();
 	
 	private static final Rectangle2D platform = makePlatform();
 	static Point2D center_of_platform = new Point2D.Double(platform.getCenterX(), platform.getCenterY());
@@ -125,7 +124,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 		this.animator = new Thread(this);		
 		this.animator.start();
 		
-		restart();
+		reset();
 	}
 	
 	private static Graphics2D getGraphics(Image Image)
@@ -153,6 +152,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 				e.printStackTrace();
 				break;
 			}
+			calculateSim();
 			repaint();
 		}
 	}	
@@ -163,8 +163,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 		{
 			if(mouse.isSwimming)
 			{
-				counter++;
-				double timeStep = Math.log(mouse.stepLengthBias / nonZeroRandom());
+				double timeStep = Math.log(mouse.stepLengthBias / Calculations.nonZeroRandom());
 				
 				mouse.move(pool, platform, timeStep);
 			}
@@ -177,7 +176,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 				System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations + 1) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
 				remainingNumberOfSimulations--;
 				
-				if(	numberOfPics > 0 && lastSearchTime >= picTimeFrameLowerBound && lastSearchTime <= pic_time_frame_upper_bound)
+				if(	numberOfPics > 0 && lastSearchTime >= picTimeFrameLowerBound && lastSearchTime <= picTimeFrameUpperBound)
 			    {					
 					saveImage();					
 			    }
@@ -190,8 +189,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 					String file_name_temp = LOG_DIRECTORY_NAME + fileName + "/" + fileName + ".txt";
 					System.out.println("Schreibe Datei: " + file_name_temp);				
 				    try 
-				    {				    	
-				    	searchTime.size();
+				    {
 				        bw = new BufferedWriter(new FileWriter(file_name_temp));
 						for (Double aDouble : searchTime)
 						{
@@ -204,40 +202,14 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 				    	System.out.println("caught error: " + ioe);
 				    }				    
 				}				
-				restart();
+				reset();
 			}
 		}
 	}
-	
-	private static double nonZeroRandom()
-	{
-		return 1.0 - Math.random();
-	}
-	
-	static void drawOffImage()
-	{		
-		if(isStartingWithGui || current_nr_of_pic_in_series == 1)
-		{
-			// weißer Hintergrund
-			offGraphics.setColor(Color.white);
-			offGraphics.fillRect(0, 0, (int) ZOOM_FACTOR *dim.height, (int) ZOOM_FACTOR *dim.width);
-			
-			// der Pool
-			pool.paint(offGraphics, AFFINE_TRANSFORMATION);
-			
-			// die Plattform
-			offGraphics.setColor(dark_grey);
-			offGraphics.fill(AFFINE_TRANSFORMATION.createTransformedShape(platform));
-			offGraphics.setColor(Color.black);
-			offGraphics.fillOval((int)(ZOOM_FACTOR *(IMAGE_CENTER -1)), (int)(ZOOM_FACTOR *(IMAGE_CENTER -1)), (int)(2* ZOOM_FACTOR), (int)(2* ZOOM_FACTOR));
-		}
-		mouse.paint_trajectory(offGraphics);
-	}	
-		
+
 	@Override
 	public void paintComponent(Graphics g)
 	{
-		calculateSim();
 		if(this.picturesPerSecond != 0 && System.currentTimeMillis() - this.lastPainted > 1000/this.picturesPerSecond)
 		{		
 			Graphics2D g2 = (Graphics2D) g.create();		
@@ -249,12 +221,33 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 			this.lastPainted = System.currentTimeMillis();
 		}	
 	}
-			
-	static void restart()
+
+	static void drawOffImage()
 	{
-		counter = 0;
-		if(isStartingWithGui){
-			startAndPauseButton.setText("Starten");}
+		if(isStartingWithGui || currentNrOfPicInSeries == 1)
+		{
+			// weißer Hintergrund
+			offGraphics.setColor(Color.white);
+			offGraphics.fillRect(0, 0, (int) ZOOM_FACTOR *dim.height, (int) ZOOM_FACTOR *dim.width);
+
+			// der Pool
+			pool.paint(offGraphics, AFFINE_TRANSFORMATION);
+
+			// die Plattform
+			offGraphics.setColor(dark_grey);
+			offGraphics.fill(AFFINE_TRANSFORMATION.createTransformedShape(platform));
+			offGraphics.setColor(Color.black);
+			offGraphics.fillOval((int)(ZOOM_FACTOR *(IMAGE_CENTER -1)), (int)(ZOOM_FACTOR *(IMAGE_CENTER -1)), (int)(2* ZOOM_FACTOR), (int)(2* ZOOM_FACTOR));
+		}
+		mouse.paintTrajectory(offGraphics);
+	}
+			
+	static void reset()
+	{
+		if(isStartingWithGui)
+		{
+			startAndPauseButton.setText("Starten");
+		}
 		mouse.getRandomStartingPosition(pool);
 	}
 		
@@ -278,7 +271,7 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 		} 
 		else if(o == this.restartButton)
 		{
-			restart();
+			reset();
 			loop = false;
 			remainingNumberOfSimulations = totalNumberOfSimulations;
 			searchTime.clear();
@@ -338,16 +331,19 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 	
 	public static void startSim()
 	{					
-		restart();
-		while(remainingNumberOfSimulations >= 1){
-			calculateSim();}
+		reset();
+		while(remainingNumberOfSimulations >= 1)
+		{
+			calculateSim();
+		}
 	}
 	
 	public static void saveImage()
 	{
-		if(!isStartingWithGui){current_nr_of_pic_in_series++;}
+		if(!isStartingWithGui){
+			currentNrOfPicInSeries++;}
 		drawOffImage();	
-		if(isStartingWithGui || current_nr_of_pic_in_series == max_nr_of_pic_in_series)
+		if(isStartingWithGui || currentNrOfPicInSeries == maxNrOfPicInSeries)
 		{
 			try
 			{
@@ -358,9 +354,9 @@ public class SimulationController extends JPanel implements Runnable, ActionList
 			}
 			catch(Exception exc){System.out.println(exc);}
 		}
-		if(!isStartingWithGui && current_nr_of_pic_in_series == max_nr_of_pic_in_series)
+		if(!isStartingWithGui && currentNrOfPicInSeries == maxNrOfPicInSeries)
 		{
-			current_nr_of_pic_in_series = 0;
+			currentNrOfPicInSeries = 0;
 		}
 	}
 	

@@ -49,12 +49,12 @@ public class MorrisWaterMaze extends JFrame
     	{
     		SimulationController.numberOfPics = parameterAccessor.getNumberOfPics();
     		SimulationController.picTimeFrameLowerBound = parameterAccessor.getLowerBoundOfPictureTimeFrame();
-    		SimulationController.pic_time_frame_upper_bound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
-    		SimulationController.max_nr_of_pic_in_series = parameterAccessor.getMaximumTrajectoriesPerPicture();
+    		SimulationController.picTimeFrameUpperBound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
+    		SimulationController.maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
     	}
     	
     	if(SimulationController.isStartingWithGui)
-        {        	
+        {
     		SimulationController simulationController = new SimulationController();
 			simulationController.addParameterAccessor(parameterAccessor);
     		JFrame f = new MorrisWaterMaze(simulationController);
