@@ -6,7 +6,7 @@ public interface ParameterAccessor
     int getMaximumMouseSwimmingTime();
     double getMouseTrainingLevel();
     double getStepLengthBias();
-    boolean isMouseStartPositionLeft();
+    boolean isMouseStartingPositionLeft();
     double mouseSpeed();
     boolean isStartingWithGui();
     int getNumberOfPics();

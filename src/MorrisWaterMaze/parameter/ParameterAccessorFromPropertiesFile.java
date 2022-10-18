@@ -104,7 +104,7 @@ public class ParameterAccessorFromPropertiesFile extends AbstractParameterAccess
     }
     
     @Override
-    public boolean isMouseStartPositionLeft()
+    public boolean isMouseStartingPositionLeft()
     {
         return isMouseStartPositionLeft;
     }

@@ -20,7 +20,7 @@ public abstract class AbstractParameterAccessor implements ParameterAccessor
               .add(String.valueOf(getMaximumMouseSwimmingTime()))
               .add(String.valueOf(getMouseTrainingLevel()))
               .add(String.valueOf(getStepLengthBias()))
-              .add(String.valueOf(isMouseStartPositionLeft()))
+              .add(String.valueOf(isMouseStartingPositionLeft()))
               .add(String.valueOf(mouseSpeed()))
               .add(String.valueOf(isStartingWithGui()))
               .add(String.valueOf(getNumberOfPics()))

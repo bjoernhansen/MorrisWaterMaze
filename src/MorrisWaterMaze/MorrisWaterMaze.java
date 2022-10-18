@@ -39,8 +39,6 @@ public class MorrisWaterMaze extends JFrame
 		ParameterAccessor parameterAccessor = makeParameterAccessorInstance(args);
 		Simulation simulation = new Simulation(parameterAccessor);
 
-		Controller.totalNumberOfSimulations = parameterAccessor.getNumberOfSimulations();
-		Controller.remainingNumberOfSimulations = Controller.totalNumberOfSimulations;
     	Controller.isStartingWithGui = parameterAccessor.isStartingWithGui();
     	Controller.fileName = parameterAccessor.getFilename();
 		Controller.makeDirectory();
@@ -64,7 +62,7 @@ public class MorrisWaterMaze extends JFrame
     	{
 			Controller.simulation = simulation;
 			Controller.reset();
-			while(Controller.remainingNumberOfSimulations >= 1)
+			while(simulation.isNotFinished())
 			{
 				simulation.nextStep();
 			}

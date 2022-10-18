@@ -16,11 +16,17 @@ import java.io.IOException;
 
 public class Simulation
 {
+    private int remainingNumberOfSimulations;
+
+    private int totalNumberOfSimulations;
+
     private final Mouse mouse;
 
-    final Pool pool;
+    private final Pool pool;
 
-    final Platform platform;
+    private final Platform platform;
+
+
 
 
     public Simulation(ParameterAccessor parameterAccessor)
@@ -28,34 +34,37 @@ public class Simulation
         this.mouse = new Mouse(parameterAccessor);
         this.pool = new Pool();
         this.platform = new Platform();
+
+        totalNumberOfSimulations = parameterAccessor.getNumberOfSimulations();
+        remainingNumberOfSimulations = totalNumberOfSimulations;
     }
 
 
     void nextStep()
     {
-        if(mouse.isSwimming)
+        if(mouse.isSwimming())
         {
             double timeStep = Math.log(mouse.stepLengthBias / Calculations.nonZeroRandom());
 
             mouse.move(pool, platform, timeStep);
         }
-        else if (Controller.remainingNumberOfSimulations >= 1)
+        else if (remainingNumberOfSimulations >= 1)
         {
             double lastSearchTime = mouse.timeSteps.get(mouse.timeSteps.size()-1);
             Controller.searchTime.add(lastSearchTime);
             Controller.sumOfSearchTime += lastSearchTime;
 
-            System.out.println("Simulation " + (Controller.totalNumberOfSimulations - Controller.remainingNumberOfSimulations + 1) + " of " + Controller.totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
-            Controller.remainingNumberOfSimulations--;
+            remainingNumberOfSimulations--;
+            System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
 
             if(	Controller.numberOfPics > 0 && lastSearchTime >= Controller.picTimeFrameLowerBound && lastSearchTime <= Controller.picTimeFrameUpperBound)
             {
                 saveImage();
             }
 
-            if(Controller.remainingNumberOfSimulations == 0)
+            if(remainingNumberOfSimulations == 0)
             {
-                System.out.println("\nDurchschnittliche Suchzeit: " + (Controller.sumOfSearchTime / Controller.totalNumberOfSimulations) + "\n");
+                System.out.println("\nDurchschnittliche Suchzeit: " + (Controller.sumOfSearchTime / totalNumberOfSimulations) + "\n");
 
                 BufferedWriter bw;
                 String file_name_temp = Controller.LOG_DIRECTORY_NAME + Controller.fileName + "/" + Controller.fileName + ".txt";
@@ -124,5 +133,22 @@ public class Simulation
 
     public Shape getPlatformBounds() {
         return platform.getBounds();
+    }
+
+    public boolean isNotFinished() {
+        return remainingNumberOfSimulations >= 1;
+    }
+
+    public void setRemainingAndTotalNumberOfSimulations(int numberOfSimulations) {
+        totalNumberOfSimulations = numberOfSimulations;
+        remainingNumberOfSimulations = totalNumberOfSimulations;
+    }
+
+    public void resetRemainingNumberOfSimulations() {
+        remainingNumberOfSimulations = totalNumberOfSimulations;
+    }
+
+    public int getTotalNumberOfSimulations() {
+        return totalNumberOfSimulations;
     }
 }

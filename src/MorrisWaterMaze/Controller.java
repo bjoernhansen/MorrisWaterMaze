@@ -21,8 +21,6 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -49,16 +47,13 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 	double picturesPerSecond = 75;
 	public static final double ZOOM_FACTOR = 4;
 
+	private static final int IMAGE_SIZE = (int) (2.0 * ZOOM_FACTOR * Pool.CENTER_TO_BORDER_DISTANCE);
 
-	private static final double IMAGE_SIZE = 2 * Pool.CENTER_TO_BORDER_DISTANCE;
-	private static final Dimension dim = new Dimension((int)(ZOOM_FACTOR * IMAGE_SIZE), (int)(ZOOM_FACTOR * IMAGE_SIZE));
-		
-	static int totalNumberOfSimulations,
-			   remainingNumberOfSimulations;
+	private static final Dimension dim = new Dimension(IMAGE_SIZE, IMAGE_SIZE);
+
 	static double sumOfSearchTime = 0;
+
 	private long lastPainted = System.currentTimeMillis();
-	
-	
 	
 	static final ArrayList<Double> searchTime = new ArrayList<>();
 	
@@ -78,8 +73,8 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 	static String fileName;
 	static File pictureDirectory;
 	
-	static Color dark_grey = new Color(75, 75, 75);	
-	public static Color light_grey = new Color(150, 150, 150);
+	private static final Color DARK_GREY = new Color(75, 75, 75);
+
 	
 	private ParameterAccessor
 		parameterAccessor;
@@ -99,7 +94,7 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 		this.restartButton = new JButton("Neustart");
 		this.mouseTrainingLevelSpinner = new JSpinner(new SpinnerNumberModel(simulation.getMouseTrainingLevel(), 0.0, 1.0, 0.01));
 		this.mouseTrainingLevelSpinner.addChangeListener(this);
-		this.numberOfSimulationsSpinner = new JSpinner(new SpinnerNumberModel(totalNumberOfSimulations, 1.0, Double.MAX_VALUE, 1.00));
+		this.numberOfSimulationsSpinner = new JSpinner(new SpinnerNumberModel(simulation.getTotalNumberOfSimulations(), 1.0, Double.MAX_VALUE, 1.00));
 		this.numberOfSimulationsSpinner.addChangeListener(this);
 		JPanel mainPanel = new JPanel(new GridLayout(3, 2));
 		mainPanel.setBounds(675, 25, 300, 120);
@@ -184,7 +179,7 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 
 
 			// die Plattform
-			offGraphics.setColor(dark_grey);
+			offGraphics.setColor(DARK_GREY);
 			offGraphics.fill(AFFINE_TRANSFORMATION.createTransformedShape(simulation.getPlatformBounds()));
 			offGraphics.setColor(Color.black);
 			offGraphics.fillOval((int)(ZOOM_FACTOR *(Pool.CENTER_TO_BORDER_DISTANCE -1)), (int)(ZOOM_FACTOR *(Pool.CENTER_TO_BORDER_DISTANCE -1)), (int)(2* ZOOM_FACTOR), (int)(2* ZOOM_FACTOR));
@@ -196,7 +191,7 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 	{
 		if(isStartingWithGui)
 		{
-			startAndPauseButton.setText("Starten");
+			startAndPauseButton.setText("Start");
 		}
 		simulation.determineMouseStartingPosition();
 	}
@@ -209,11 +204,11 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 		{
 			if(loop)
 			{
-				startAndPauseButton.setText("Starten");
+				startAndPauseButton.setText("Start");
 			}
 			else
 			{
-				startAndPauseButton.setText("Anhalten");
+				startAndPauseButton.setText("Stop");
 			}
 			loop = !loop;
 			this.mouseTrainingLevelSpinner.setEnabled(false);
@@ -223,7 +218,7 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 		{
 			reset();
 			loop = false;
-			remainingNumberOfSimulations = totalNumberOfSimulations;
+			simulation.resetRemainingNumberOfSimulations();
 			searchTime.clear();
 			sumOfSearchTime = 0;
 			this.mouseTrainingLevelSpinner.setEnabled(true);
@@ -257,7 +252,8 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
             {
             	this.numberOfSimulationsSpinner.setValue(1.0);
             }
-            remainingNumberOfSimulations = totalNumberOfSimulations = (int)Double.valueOf((this.numberOfSimulationsSpinner).getValue().toString()).doubleValue();
+			int numberOfSimulations = Integer.parseInt(this.numberOfSimulationsSpinner.getValue().toString());
+            simulation.setRemainingAndTotalNumberOfSimulations(numberOfSimulations);
         }
     }
 

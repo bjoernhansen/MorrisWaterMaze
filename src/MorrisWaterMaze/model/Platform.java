@@ -1,9 +1,11 @@
 package MorrisWaterMaze.model;
 
+import MorrisWaterMaze.graphics.Paintable;
+
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-public class Platform
+public class Platform implements Paintable
 {
     private final Rectangle2D
             bounds;

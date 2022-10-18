@@ -2,6 +2,7 @@ package MorrisWaterMaze.model;
 
 import MorrisWaterMaze.Calculations;
 import MorrisWaterMaze.Controller;
+import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import java.awt.*;
@@ -10,16 +11,18 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Mouse 
+public class Mouse implements Paintable
 {
+	private static final Color LIGHT_GREY = new Color(150, 150, 150);
+
 	private Point2D position;				// aktueller Aufenthaltsort der Maus	
 	private final double speed;                    // Geschwindigkeit der Maus; default: 5
 	private double angle;                    // bestimmt in welche Richtung die Maus schwimmt
 	private final double maximumSwimmingTime;		// maximale Schwimmzeit; default: 0 (no restriction)
-	private final boolean isStartPositionLeft;	// gibt an, ob die Maus am linken oder rechten Rand des Pools erscheint; default: true
+	private final boolean isStartingPositionLeft;	// gibt an, ob die Maus am linken oder rechten Rand des Pools erscheint; default: true
 	private double trainingLevel;                    // Trainingslevel der Maus; [0, 1]; default: 0.5
 		   public double stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
-	public boolean isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
+	private boolean isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
 
 	private final ArrayList<Point2D> escapeRoutePoints = new ArrayList<>(0);
 	public ArrayList<Double> timeSteps = new ArrayList<>(0);
@@ -33,13 +36,13 @@ public class Mouse
 		this.maximumSwimmingTime = parameterAccessor.getMaximumMouseSwimmingTime();
 		this.trainingLevel = parameterAccessor.getMouseTrainingLevel();
 		this.stepLengthBias = parameterAccessor.getStepLengthBias();
-		this.isStartPositionLeft = parameterAccessor.isMouseStartPositionLeft();
+		this.isStartingPositionLeft = parameterAccessor.isMouseStartingPositionLeft();
 		this.speed = parameterAccessor.mouseSpeed();
 	}
 		
 	public void determineStartingPosition(Pool pool)// Startposition von der Maus
 	{
-		if(this.isStartPositionLeft)
+		if(this.isStartingPositionLeft)
 		{
 			this.position.setLocation(pool.border.getCenterX()- Pool.RADIUS + RADIUS, pool.border.getCenterY());
 		}
@@ -128,7 +131,7 @@ public class Mouse
 			}	
 			if(Controller.isStartingWithGui)
 			{
-				g2d.setColor(Controller.light_grey);
+				g2d.setColor(LIGHT_GREY);
 				g2d.fillOval(	(int)(Controller.ZOOM_FACTOR *(this.escapeRoutePoints.get(this.escapeRoutePoints.size()-1).getX()-RADIUS)),
 								(int)(Controller.ZOOM_FACTOR *(this.escapeRoutePoints.get(this.escapeRoutePoints.size()-1).getY()-RADIUS)),
 								(int)(Controller.ZOOM_FACTOR *RADIUS*2), (int)(Controller.ZOOM_FACTOR *RADIUS*2));
@@ -142,5 +145,9 @@ public class Mouse
 
 	public void setTrainingLevel(double trainingLevel) {
 		this.trainingLevel = trainingLevel;
+	}
+
+	public boolean isSwimming() {
+		return isSwimming;
 	}
 }
