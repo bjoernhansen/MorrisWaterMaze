@@ -3,38 +3,34 @@ package MorrisWaterMaze;
 import MorrisWaterMaze.model.Pool;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-public class Controller extends JPanel implements Runnable, ActionListener, ChangeListener
+public class Controller implements Runnable
 {
 	public static final int
 		PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS = 100;
-
-	private static final long
-		serialVersionUID = 4301592417000711331L;
 	
+	public static final double
+		ZOOM_FACTOR = 4;
+	
+	private static final int
+		IMAGE_SIZE = (int) (2.0 * ZOOM_FACTOR * Pool.CENTER_TO_BORDER_DISTANCE);
+		
 	static final String
 		LOG_DIRECTORY_NAME = "logs/";
+	
+	
 	
 	public static boolean isStartingWithGui;
 	static int maxNrOfPicInSeries;
@@ -44,16 +40,12 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 			      picTimeFrameLowerBound;
 
 	static boolean loop = false;
-	double picturesPerSecond = 75;
-	public static final double ZOOM_FACTOR = 4;
 
-	private static final int IMAGE_SIZE = (int) (2.0 * ZOOM_FACTOR * Pool.CENTER_TO_BORDER_DISTANCE);
 
-	private static final Dimension dim = new Dimension(IMAGE_SIZE, IMAGE_SIZE);
-
+	
 	static double sumOfSearchTime = 0;
 
-	private long lastPainted = System.currentTimeMillis();
+
 	
 	static final ArrayList<Double> searchTime = new ArrayList<>();
 	
@@ -61,12 +53,9 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 	static final AffineTransform AFFINE_TRANSFORMATION = new AffineTransform(ZOOM_FACTOR, 0, 0, ZOOM_FACTOR, 0, 0);
 	
 	private Thread animator;
-	static final Image offImage = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
+	static final Image offImage = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_RGB);
     private static final Graphics2D offGraphics = getGraphics(offImage);
-	private static JButton startAndPauseButton;
-	private final JButton restartButton;
-	private final JSpinner mouseTrainingLevelSpinner;
-	private final JSpinner numberOfSimulationsSpinner;
+	
 	
 
 
@@ -75,48 +64,52 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 	
 	private static final Color DARK_GREY = new Color(75, 75, 75);
 
-	
-	private ParameterAccessor
-		parameterAccessor;
 
-	static Simulation
+	private static Simulation
 		simulation;
 	
+	private static JFrame
+		simulationFrame;
 	
-	Controller(Simulation simulation)
+	private static SimulationPanel
+		simulationPanel;
+	
+
+	Controller(Simulation simulationInstance, ParameterAccessor parameterAccessor)
 	{
-		Controller.simulation = simulation;
-
-		this.setLayout(null);		
-		startAndPauseButton = new JButton("Starten");
-		JLabel mouse_level_label = new JLabel("training level");
-		JLabel number_of_sim_label = new JLabel("number of simulations");
-		this.restartButton = new JButton("Neustart");
-		this.mouseTrainingLevelSpinner = new JSpinner(new SpinnerNumberModel(simulation.getMouseTrainingLevel(), 0.0, 1.0, 0.01));
-		this.mouseTrainingLevelSpinner.addChangeListener(this);
-		this.numberOfSimulationsSpinner = new JSpinner(new SpinnerNumberModel(simulation.getTotalNumberOfSimulations(), 1.0, Double.MAX_VALUE, 1.00));
-		this.numberOfSimulationsSpinner.addChangeListener(this);
-		JPanel mainPanel = new JPanel(new GridLayout(3, 2));
-		mainPanel.setBounds(675, 25, 300, 120);
-		mainPanel.setBorder(BorderFactory.createEtchedBorder());
-		startAndPauseButton.addActionListener(this);
-		this.restartButton.addActionListener(this);
-		this.add(mainPanel);
-		mainPanel.add(startAndPauseButton);
-		mainPanel.add(this.restartButton);
-		mainPanel.add(mouse_level_label);
-		mainPanel.add(this.mouseTrainingLevelSpinner);
-		mainPanel.add(number_of_sim_label);
-		mainPanel.add(this.numberOfSimulationsSpinner);
+		simulation = simulationInstance;
+		isStartingWithGui = parameterAccessor.isStartingWithGui();
+		fileName = parameterAccessor.getFilename();
+		makeDirectory();
 		
-		this.animator = new Thread(this);		
-		this.animator.start();
+		if(parameterAccessor.getNumberOfPics() > 0)
+		{
+			numberOfPics = parameterAccessor.getNumberOfPics();
+			picTimeFrameLowerBound = parameterAccessor.getLowerBoundOfPictureTimeFrame();
+			picTimeFrameUpperBound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
+			maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
+		}
+		simulation.determineMouseStartingPosition();
 		
-		reset();
+		
+		if(isStartingWithGui)
+		{
+			simulationPanel = new SimulationPanel(simulation, parameterAccessor);
+			simulationFrame = new SimulationFrame(simulationPanel);
+			simulationFrame.setVisible(true);
+			
+			animator = new Thread(this);
+			animator.start();
+		}
+		else
+		{
+			while(simulation.isAnotherSimulationToBeStarted())
+			{
+				simulation.nextStep();
+			}
+		}
 	}
-
-
-
+	
 	private static Graphics2D getGraphics(Image Image)
 	{
 		Graphics2D graphics2D = (Graphics2D) Image.getGraphics();
@@ -131,12 +124,15 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 		pictureDirectory.mkdir();
 	}
 	
+	@Override
 	public void run()
 	{
 		while (Thread.currentThread() == this.animator)
 		{			
-			try{
-				Thread.sleep(PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS);}
+			try
+			{
+				Thread.sleep(PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS);
+			}
 			catch (InterruptedException e)
 			{
 				e.printStackTrace();
@@ -146,23 +142,8 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 			{
 				simulation.nextStep();
 			}
-			repaint();
+			simulationFrame.repaint();
 		}
-	}
-
-	@Override
-	public void paintComponent(Graphics g)
-	{
-		if(this.picturesPerSecond != 0 && System.currentTimeMillis() - this.lastPainted > 1000/this.picturesPerSecond)
-		{		
-			Graphics2D g2 = (Graphics2D) g.create();		
-			drawOffImage();				
-			super.paintComponent(g);
-			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);  
-	    	g2.drawImage(offImage, 25, 25, null);	
-			g2.dispose();
-			this.lastPainted = System.currentTimeMillis();
-		}	
 	}
 
 	static void drawOffImage()
@@ -171,13 +152,11 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 		{
 			// weißer Hintergrund
 			offGraphics.setColor(Color.white);
-			offGraphics.fillRect(0, 0, (int) ZOOM_FACTOR *dim.height, (int) ZOOM_FACTOR *dim.width);
+			offGraphics.fillRect(0, 0, (int) ZOOM_FACTOR * IMAGE_SIZE, (int) ZOOM_FACTOR * IMAGE_SIZE);
 
 			// der Pool
 			simulation.paintPool(offGraphics);
-
-
-
+			
 			// die Plattform
 			offGraphics.setColor(DARK_GREY);
 			offGraphics.fill(AFFINE_TRANSFORMATION.createTransformedShape(simulation.getPlatformBounds()));
@@ -191,76 +170,36 @@ public class Controller extends JPanel implements Runnable, ActionListener, Chan
 	{
 		if(isStartingWithGui)
 		{
-			startAndPauseButton.setText("Start");
+			simulationPanel.setStartAndPauseButtonText("Start");
 		}
 		simulation.determineMouseStartingPosition();
 	}
-		
-	public void actionPerformed(ActionEvent e)
+	
+	
+	public static void saveImage()
 	{
-		Object o = e.getSource();
-		
-		if (o == startAndPauseButton)
+		if(!Controller.isStartingWithGui)
 		{
-			if(loop)
-			{
-				startAndPauseButton.setText("Start");
-			}
-			else
-			{
-				startAndPauseButton.setText("Stop");
-			}
-			loop = !loop;
-			this.mouseTrainingLevelSpinner.setEnabled(false);
-			this.numberOfSimulationsSpinner.setEnabled(false);
-		} 
-		else if(o == this.restartButton)
-		{
-			reset();
-			loop = false;
-			simulation.resetRemainingNumberOfSimulations();
-			searchTime.clear();
-			sumOfSearchTime = 0;
-			this.mouseTrainingLevelSpinner.setEnabled(true);
-			this.numberOfSimulationsSpinner.setEnabled(true);
+			Controller.currentNrOfPicInSeries++;
 		}
-	}
-		
-	public void stateChanged(ChangeEvent e)
-    {
-        Object o = e.getSource();           
-        if(o==this.mouseTrainingLevelSpinner)
-        {
-            if( 0 > Double.parseDouble(this.mouseTrainingLevelSpinner.getValue().toString()))
-            {
-            	this.mouseTrainingLevelSpinner.setValue(0.0);
-            }
-            else if( 1 < Double.parseDouble(this.mouseTrainingLevelSpinner.getValue().toString()))
-            {
-            	this.mouseTrainingLevelSpinner.setValue(1.0);
-            }
-			double mouseTrainingLevel = Double.parseDouble(this.mouseTrainingLevelSpinner.getValue().toString());
-            simulation.setMouseTrainingLevel(mouseTrainingLevel);
-        }
-        if(o==this.numberOfSimulationsSpinner)
-        {
-            if( 0 > Double.parseDouble(this.mouseTrainingLevelSpinner.getValue().toString()))
-            {
-            	this.numberOfSimulationsSpinner.setValue(0.0);
-            }
-            else if( 1 < Double.parseDouble((this.mouseTrainingLevelSpinner).getValue().toString()))
-            {
-            	this.numberOfSimulationsSpinner.setValue(1.0);
-            }
-			int numberOfSimulations = Integer.parseInt(this.numberOfSimulationsSpinner.getValue().toString());
-            simulation.setRemainingAndTotalNumberOfSimulations(numberOfSimulations);
-        }
-    }
-
-
-
-	public void addParameterAccessor(ParameterAccessor parameterAccessor)
-	{
-		this.parameterAccessor = parameterAccessor;
+		Controller.drawOffImage();
+		if(Controller.isStartingWithGui || Controller.currentNrOfPicInSeries == Controller.maxNrOfPicInSeries)
+		{
+			try
+			{
+				String fileNameTemp = Controller.LOG_DIRECTORY_NAME + Controller.fileName + "/" + System.currentTimeMillis() + ".png";
+				System.out.println("\nSchreibe Datei: " + fileNameTemp + "\n");
+				ImageIO.write((RenderedImage)Controller.offImage, "png", new File(fileNameTemp));
+				Controller.numberOfPics--;
+			}
+			catch(Exception exception)
+			{
+				System.out.println(Arrays.toString(exception.getStackTrace()));
+			}
+		}
+		if(!Controller.isStartingWithGui && Controller.currentNrOfPicInSeries == Controller.maxNrOfPicInSeries)
+		{
+			Controller.currentNrOfPicInSeries = 0;
+		}
 	}
 }

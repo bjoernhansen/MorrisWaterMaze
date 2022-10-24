@@ -3,18 +3,16 @@ package MorrisWaterMaze;
 import MorrisWaterMaze.model.Mouse;
 import MorrisWaterMaze.model.Platform;
 import MorrisWaterMaze.model.Pool;
-import MorrisWaterMaze.parameter.ParameterAccessor;
+import MorrisWaterMaze.parameter.SimulationParameterAccessor;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.RenderedImage;
+import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 
-public class Simulation
+public class Simulation implements SettingModifier
 {
     private int remainingNumberOfSimulations;
 
@@ -27,9 +25,7 @@ public class Simulation
     private final Platform platform;
 
 
-
-
-    public Simulation(ParameterAccessor parameterAccessor)
+    public Simulation(SimulationParameterAccessor parameterAccessor)
     {
         this.mouse = new Mouse(parameterAccessor);
         this.pool = new Pool();
@@ -42,73 +38,65 @@ public class Simulation
 
     void nextStep()
     {
-        if(mouse.isSwimming())
+        if(isSimulationInProgress())
         {
-            double timeStep = Math.log(mouse.stepLengthBias / Calculations.nonZeroRandom());
-
-            mouse.move(pool, platform, timeStep);
+            double maximumDurationOfNextSimulationStep = calculateRandomSimulationStepDuration();
+            mouse.move(pool, platform, maximumDurationOfNextSimulationStep);
         }
-        else if (remainingNumberOfSimulations >= 1)
+        else
         {
-            double lastSearchTime = mouse.timeSteps.get(mouse.timeSteps.size()-1);
-            Controller.searchTime.add(lastSearchTime);
-            Controller.sumOfSearchTime += lastSearchTime;
-
-            remainingNumberOfSimulations--;
-            System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
-
-            if(	Controller.numberOfPics > 0 && lastSearchTime >= Controller.picTimeFrameLowerBound && lastSearchTime <= Controller.picTimeFrameUpperBound)
+            if(isAnotherSimulationToBeStarted())
             {
-                saveImage();
-            }
-
-            if(remainingNumberOfSimulations == 0)
-            {
-                System.out.println("\nDurchschnittliche Suchzeit: " + (Controller.sumOfSearchTime / totalNumberOfSimulations) + "\n");
-
-                BufferedWriter bw;
-                String file_name_temp = Controller.LOG_DIRECTORY_NAME + Controller.fileName + "/" + Controller.fileName + ".txt";
-                System.out.println("Schreibe Datei: " + file_name_temp);
-                try
+                double lastSearchTime = mouse.getTotalDurationOfCurrentSimulation();
+                Controller.searchTime.add(lastSearchTime);
+                Controller.sumOfSearchTime += lastSearchTime;
+        
+        
+                System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
+        
+                if(	Controller.numberOfPics > 0 && lastSearchTime >= Controller.picTimeFrameLowerBound && lastSearchTime <= Controller.picTimeFrameUpperBound)
                 {
-                    bw = new BufferedWriter(new FileWriter(file_name_temp));
-                    for (Double aDouble : Controller.searchTime)
+                    Controller.saveImage();
+                }
+        
+                if(remainingNumberOfSimulations == 1)
+                {
+                    System.out.println("\nDurchschnittliche Suchzeit: " + (Controller.sumOfSearchTime / totalNumberOfSimulations) + "\n");
+            
+                    BufferedWriter bw;
+                    String file_name_temp = Controller.LOG_DIRECTORY_NAME + Controller.fileName + "/" + Controller.fileName + ".txt";
+                    System.out.println("Schreibe Datei: " + file_name_temp);
+                    try
                     {
-                        bw.write(aDouble + System.getProperty("line.separator"));
+                        bw = new BufferedWriter(new FileWriter(file_name_temp));
+                        for (Double aDouble : Controller.searchTime)
+                        {
+                            bw.write(aDouble + System.getProperty("line.separator"));
+                        }
+                        bw.close();
                     }
-                    bw.close();
+                    catch (IOException ioe)
+                    {
+                        System.out.println("caught error: " + ioe);
+                    }
                 }
-                catch (IOException ioe)
-                {
-                    System.out.println("caught error: " + ioe);
-                }
+                Controller.reset();
+                remainingNumberOfSimulations--;
             }
-            Controller.reset();
         }
     }
-
-    public static void saveImage()
+    
+    private double calculateRandomSimulationStepDuration()
     {
-        if(!Controller.isStartingWithGui){
-            Controller.currentNrOfPicInSeries++;}
-        Controller.drawOffImage();
-        if(Controller.isStartingWithGui || Controller.currentNrOfPicInSeries == Controller.maxNrOfPicInSeries)
-        {
-            try
-            {
-                String fileNameTemp = Controller.LOG_DIRECTORY_NAME + Controller.fileName + "/" + System.currentTimeMillis() + ".png";
-                System.out.println("\nSchreibe Datei: " + fileNameTemp + "\n");
-                ImageIO.write((RenderedImage)Controller.offImage, "png", new File(fileNameTemp));
-                Controller.numberOfPics--;
-            }
-            catch(Exception exception){System.out.println(exception);}
-        }
-        if(!Controller.isStartingWithGui && Controller.currentNrOfPicInSeries == Controller.maxNrOfPicInSeries)
-        {
-            Controller.currentNrOfPicInSeries = 0;
-        }
+        return Calculations.calculateRandomDuration(mouse.stepLengthBias);
     }
-
+    
+    private boolean isSimulationInProgress()
+    {
+        return mouse.isSwimming();
+    }
+    
+    
     public double getMouseTrainingLevel()
     {
         return mouse.getTrainingLevel();
@@ -123,6 +111,7 @@ public class Simulation
         mouse.determineStartingPosition(pool);
     }
 
+    @Override
     public void setMouseTrainingLevel(double mouseTrainingLevel) {
         mouse.setTrainingLevel(mouseTrainingLevel);
     }
@@ -135,15 +124,17 @@ public class Simulation
         return platform.getBounds();
     }
 
-    public boolean isNotFinished() {
-        return remainingNumberOfSimulations >= 1;
+    public boolean isAnotherSimulationToBeStarted() {
+        return remainingNumberOfSimulations > 0;
     }
 
+    @Override
     public void setRemainingAndTotalNumberOfSimulations(int numberOfSimulations) {
         totalNumberOfSimulations = numberOfSimulations;
-        remainingNumberOfSimulations = totalNumberOfSimulations;
+        resetRemainingNumberOfSimulations();
     }
 
+    @Override
     public void resetRemainingNumberOfSimulations() {
         remainingNumberOfSimulations = totalNumberOfSimulations;
     }

@@ -171,8 +171,13 @@ public final class Calculations
 		if(Math.abs(gaussian) < max)return gaussian+mu;
 		return gaussian(mu, sigma, max);
 	}
-
-	static double nonZeroRandom()
+	
+	public static double calculateRandomDuration(double durationBias)
+	{
+		return Math.log(durationBias / Calculations.nonZeroRandom());
+	}
+	
+	private static double nonZeroRandom()
 	{
 		return 1.0 - Math.random();
 	}

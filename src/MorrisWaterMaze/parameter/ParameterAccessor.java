@@ -1,14 +1,7 @@
 package MorrisWaterMaze.parameter;
 
-public interface ParameterAccessor
+public interface ParameterAccessor extends SimulationParameterAccessor
 {
-    int getNumberOfSimulations();
-    int getMaximumMouseSwimmingTime();
-    double getMouseTrainingLevel();
-    double getStepLengthBias();
-    boolean isMouseStartingPositionLeft();
-    double mouseSpeed();
-    boolean isStartingWithGui();
     int getNumberOfPics();
     double getLowerBoundOfPictureTimeFrame();
     double getUpperBoundOfPictureTimeFrame();

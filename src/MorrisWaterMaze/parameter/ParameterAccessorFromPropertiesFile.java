@@ -2,6 +2,7 @@ package MorrisWaterMaze.parameter;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -47,7 +48,7 @@ public class ParameterAccessorFromPropertiesFile extends AbstractParameterAccess
         fileName;
     
     
-    public ParameterAccessorFromPropertiesFile()
+    public ParameterAccessorFromPropertiesFile(List<String> inputParameters)
     {
         Properties parameter = getParameter();
         numberOfSimulations = Integer.parseInt(parameter.getProperty("numberOfSimulations", "10"));
