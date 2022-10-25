@@ -18,10 +18,10 @@ public class Mouse implements Paintable
 
 	private Point2D coordinates;				// aktueller Aufenthaltsort der Maus
 	private final double speed;                    // Geschwindigkeit der Maus; default: 5
-	private double angle;                    // bestimmt in welche Richtung die Maus schwimmt
-	private final double maximumSwimmingTime;		// maximale Schwimmzeit; default: 0 (no restriction)
+	private double polarAngle;                    // bestimmt in welche Richtung die Maus schwimmt
+	private final double maximumSwimmingDuration;		// maximale Schwimmzeit; default: 0 (no restriction)
 	private final boolean isStartingPositionLeft;	// gibt an, ob die Maus am linken oder rechten Rand des Pools erscheint; default: true
-	private double trainingLevel;                    // Trainingslevel der Maus; [0, 1]; default: 0.5
+	private final double trainingLevel;                    // Trainingslevel der Maus; [0, 1]; default: 0.5
 	public double stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
 	private boolean isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
 
@@ -40,7 +40,7 @@ public class Mouse implements Paintable
 	public Mouse(MouseParameterAccessor parameterAccessor)
 	{		
 		coordinates = new Point2D.Double();
-		maximumSwimmingTime = parameterAccessor.getMaximumMouseSwimmingTime();
+		maximumSwimmingDuration = parameterAccessor.getMaximumMouseSwimmingTime();
 		trainingLevel = parameterAccessor.getMouseTrainingLevel();
 		stepLengthBias = parameterAccessor.getStepLengthBias();
 		isStartingPositionLeft = parameterAccessor.isMouseStartingPositionLeft();
@@ -58,7 +58,7 @@ public class Mouse implements Paintable
 		{
 			coordinates.setLocation(pool.border.getCenterX() + Pool.RADIUS - RADIUS, pool.border.getCenterY());
 		}
-		angle = Math.PI*(Math.random()-0.5) + Calculations.calculatePolarAngle(Calculations.calculateVector(coordinates, pool.center));
+		polarAngle = Math.PI*(Math.random()-0.5) + Calculations.calculatePolarAngle(Calculations.calculateVector(coordinates, pool.center));
 		isSwimming = true;
 		escapeRoutePoints.clear();
 		timeSteps.clear();
@@ -91,14 +91,14 @@ public class Mouse implements Paintable
 			{
 				meanAngle = Calculations.calculatePolarAngle(movementVector);
 			}			
-			angle = Calculations.gaussian(meanAngle, (1-trainingLevel)*22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
+			polarAngle = Calculations.gaussian(meanAngle, (1-trainingLevel)*22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
 		}
 		else // Schnittstelle von Pool und Mausschritt
 		{			
 			newCoordinates = Calculations.circleLineIntersection(pool.center, Pool.RADIUS - RADIUS, coordinates, newCoordinates);
 			Point2D newPosCenterVector = Calculations.calculateVector(newCoordinates, pool.center);
 			double direction = Line2D.relativeCCW(pool.center.getX(), pool.center.getY(), newCoordinates.getX(), newCoordinates.getY(), coordinates.getX(), coordinates.getY());
-			angle = Calculations.calculatePolarAngle(newPosCenterVector) - direction * (Math.PI/3 + Calculations.gaussian(0, Math.PI/12, Math.PI/6));
+			polarAngle = Calculations.calculatePolarAngle(newPosCenterVector) - direction * (Math.PI/3 + Calculations.gaussian(0, Math.PI/12, Math.PI/6));
 			isSwimming = true;
 		}		
 		Line2D lastMove = new Line2D.Double(coordinates, newCoordinates);
@@ -118,27 +118,28 @@ public class Mouse implements Paintable
 	private Point2D calculateNewCoordinates()
 	{
 		double stepLength = speed * durationOfNextSimulationStep;
-		return new Point2D.Double(	coordinates.getX() + stepLength * Math.cos(angle),
-									coordinates.getY() + stepLength * Math.sin(angle));
+		return new Point2D.Double(	coordinates.getX() + stepLength * Math.cos(polarAngle),
+									coordinates.getY() + stepLength * Math.sin(polarAngle));
 	}
 	
 	private double getDurationOfNextSimulationStep()
 	{
 		if(hasReachedSwimmingTimeLimit())
 		{
-			return maximumSwimmingTime - getTotalDurationOfCurrentSimulation();
+			return maximumSwimmingDuration - getTotalDurationOfCurrentSimulation();
 		}
 		return maximumDurationOfNextSimulationStep;
 	}
 	
 	private boolean hasReachedSwimmingTimeLimit()
 	{
-		return hasMaximumSwimmingTimeBeenSet() && maximumDurationOfNextSimulationStep + getTotalDurationOfCurrentSimulation() > maximumSwimmingTime;
+		return hasMaximumSwimmingTimeBeenSet()
+			&& maximumDurationOfNextSimulationStep + getTotalDurationOfCurrentSimulation() > maximumSwimmingDuration;
 	}
 	
 	private boolean hasMaximumSwimmingTimeBeenSet()
 	{
-		return maximumSwimmingTime != 0;
+		return maximumSwimmingDuration != 0;
 	}
 	
 	

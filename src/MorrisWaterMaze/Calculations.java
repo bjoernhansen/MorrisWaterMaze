@@ -53,12 +53,6 @@ public final class Calculations
 		return Math.atan2(vector.getY(), vector.getX());	
 	}
 
-	public static double calculateAngle(Point2D vector1, Point2D vector2)
-	{		
-		return Math.atan2(vector2.getY()-vector1.getY(), vector2.getX()-vector1.getX());		
-		//return Math.atan2(vector1.getY(),vector1.getX()) - Math.atan2(vector2.getY(),vector2.getX());
-	}
-
 	public static Point2D scalePoint(Point2D point, double scalingFactor)
 	{		
 		return new Point2D.Double(scalingFactor*point.getX(), scalingFactor*point.getY());
