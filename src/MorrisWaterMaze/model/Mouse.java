@@ -1,7 +1,7 @@
 package MorrisWaterMaze.model;
 
 import MorrisWaterMaze.Calculations;
-import MorrisWaterMaze.Controller;
+import MorrisWaterMaze.SimulationController;
 import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.parameter.MouseParameterAccessor;
 
@@ -151,19 +151,19 @@ public class Mouse implements Paintable
 			{
 				g2d.setColor(Color.BLACK);
 				g2d.draw(	new Line2D.Double(Calculations.scalePoint(escapeRoutePoints.get(i),
-							Controller.ZOOM_FACTOR),
+							SimulationController.ZOOM_FACTOR),
 							Calculations.scalePoint(escapeRoutePoints.get(i+1),
-							Controller.ZOOM_FACTOR)));
-				g2d.fillOval(	(int)(Controller.ZOOM_FACTOR *(escapeRoutePoints.get(i+1).getX()-0.5)),
-								(int)(Controller.ZOOM_FACTOR *(escapeRoutePoints.get(i+1).getY()-0.5)),
-								(int) Controller.ZOOM_FACTOR, (int) Controller.ZOOM_FACTOR);
+							SimulationController.ZOOM_FACTOR)));
+				g2d.fillOval(	(int)(SimulationController.ZOOM_FACTOR *(escapeRoutePoints.get(i+1).getX()-0.5)),
+								(int)(SimulationController.ZOOM_FACTOR *(escapeRoutePoints.get(i+1).getY()-0.5)),
+								(int) SimulationController.ZOOM_FACTOR, (int) SimulationController.ZOOM_FACTOR);
 			}	
 			if(isBodyToBeDrawn)
 			{
 				g2d.setColor(LIGHT_GREY);
-				g2d.fillOval(	(int)(Controller.ZOOM_FACTOR *(escapeRoutePoints.get(escapeRoutePoints.size()-1).getX()-RADIUS)),
-								(int)(Controller.ZOOM_FACTOR *(escapeRoutePoints.get(escapeRoutePoints.size()-1).getY()-RADIUS)),
-								(int)(Controller.ZOOM_FACTOR *RADIUS*2), (int)(Controller.ZOOM_FACTOR *RADIUS*2));
+				g2d.fillOval(	(int)(SimulationController.ZOOM_FACTOR *(escapeRoutePoints.get(escapeRoutePoints.size()-1).getX()-RADIUS)),
+								(int)(SimulationController.ZOOM_FACTOR *(escapeRoutePoints.get(escapeRoutePoints.size()-1).getY()-RADIUS)),
+								(int)(SimulationController.ZOOM_FACTOR *RADIUS*2), (int)(SimulationController.ZOOM_FACTOR *RADIUS*2));
 			}
 		}		
 	}

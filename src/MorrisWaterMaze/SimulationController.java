@@ -1,11 +1,9 @@
 package MorrisWaterMaze;
 
-import MorrisWaterMaze.graphics.painter.PaintManager;
 import MorrisWaterMaze.model.Pool;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -13,13 +11,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Optional;
 
-public class Controller implements Runnable, LoopController
+public abstract class SimulationController implements LoopController
 {
-	private static final int
-		PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS = 100;
-	
 	public static final double
 		ZOOM_FACTOR = 4;
 	
@@ -28,9 +22,6 @@ public class Controller implements Runnable, LoopController
 		
 	static final String
 		LOG_DIRECTORY_NAME = "logs/";
-	
-	private static Controller
-		instance;
 	
 	private final boolean
 		isStartingWithGui;
@@ -45,10 +36,6 @@ public class Controller implements Runnable, LoopController
 	double picTimeFrameUpperBound;
 	
 	double picTimeFrameLowerBound;
-
-
-	private Thread
-		animator;
 	
 	final Image
 		offImage = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_RGB);
@@ -62,24 +49,14 @@ public class Controller implements Runnable, LoopController
 	private final Simulation
 		simulation;
 	
-	private JFrame
-		simulationFrame;
 	
-	private SimulationPanel
-		simulationPanel;
-		
-	private final PaintManager
-		paintManager = new PaintManager();
-	
-
-	
-	Controller(Simulation simulationInstance, ParameterAccessor parameterAccessor)
+	SimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor)
 	{
-		instance = this;
 		simulation = simulationInstance;
 		isStartingWithGui = parameterAccessor.isStartingWithGui();
 		fileName = parameterAccessor.getFilename();
-		makeDirectory();
+		String directoryName = LOG_DIRECTORY_NAME + fileName;
+		makeDirectory(directoryName);
 		
 		if(parameterAccessor.getNumberOfPics() > 0)
 		{
@@ -89,24 +66,6 @@ public class Controller implements Runnable, LoopController
 			maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
 		}
 		simulation.determineMouseStartingPosition();
-		
-		
-		if(isStartingWithGui)
-		{
-			simulationPanel = new SimulationPanel(simulation, parameterAccessor, this);
-			simulationFrame = new SimulationFrame(simulationPanel);
-			simulationFrame.setVisible(true);
-			
-			animator = new Thread(this);
-			animator.start();
-		}
-		else
-		{
-			while(simulation.isAnotherSimulationToBeStarted())
-			{
-				simulation.nextStep(this);
-			}
-		}
 	}
 	
 	private Graphics2D getGraphics(Image Image)
@@ -116,35 +75,12 @@ public class Controller implements Runnable, LoopController
 		return graphics2D;
 	}
 	
-	public void makeDirectory()
+	public void makeDirectory(String directoryName)
 	{
-		String directoryName = LOG_DIRECTORY_NAME + fileName;
 		File pictureDirectory = new File(directoryName);
 		pictureDirectory.mkdir();
 	}
 	
-	@Override
-	public void run()
-	{
-		while (Thread.currentThread() == this.animator)
-		{			
-			try
-			{
-				Thread.sleep(PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS);
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-				break;
-			}
-			if(getLoopState())
-			{
-				simulation.nextStep(this);
-			}
-			simulationFrame.repaint();
-		}
-	}
-
 	void drawOffImage()
 	{
 		if(isStartingWithGui || currentNrOfPicInSeries == 1)
@@ -164,10 +100,6 @@ public class Controller implements Runnable, LoopController
 			
 	void reset()
 	{
-		if(isStartingWithGui)
-		{
-			simulationPanel.setStartAndPauseButtonText("Start");
-		}
 		simulation.determineMouseStartingPosition();
 	}
 	
@@ -198,11 +130,6 @@ public class Controller implements Runnable, LoopController
 		}
 	}
 	
-	public static Controller getInstance()
-	{
-		return Optional.of(instance).get();
-	}
-	
 	public String getFileName()
 	{
 		return fileName;
@@ -224,5 +151,10 @@ public class Controller implements Runnable, LoopController
 	public void stopLooping()
 	{
 		loop = false;
+	}
+	
+	protected Simulation getSimulation()
+	{
+		return simulation;
 	}
 }

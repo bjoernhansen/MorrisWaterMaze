@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class Simulation implements SettingModifier
 {
     static final AffineTransform
-        affineTransformation = new AffineTransform(Controller.ZOOM_FACTOR, 0, 0, Controller.ZOOM_FACTOR, 0, 0);
+        affineTransformation = new AffineTransform(SimulationController.ZOOM_FACTOR, 0, 0, SimulationController.ZOOM_FACTOR, 0, 0);
     
     private static final Color
         DARK_GREY = new Color(75, 75, 75);
@@ -50,7 +50,7 @@ public class Simulation implements SettingModifier
     }
 
 
-    void nextStep(Controller controller)
+    void nextStep(SimulationController simulationController)
     {
         if(isSimulationInProgress())
         {
@@ -66,9 +66,9 @@ public class Simulation implements SettingModifier
                 
                 System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
         
-                if(	controller.numberOfPics > 0 && lastSearchTime >= controller.picTimeFrameLowerBound && lastSearchTime <= controller.picTimeFrameUpperBound)
+                if(	simulationController.numberOfPics > 0 && lastSearchTime >= simulationController.picTimeFrameLowerBound && lastSearchTime <= simulationController.picTimeFrameUpperBound)
                 {
-                    controller.saveImage();
+                    simulationController.saveImage();
                 }
         
                 if(remainingNumberOfSimulations == 1)
@@ -77,8 +77,8 @@ public class Simulation implements SettingModifier
                     System.out.println("\nDurchschnittliche Suchzeit: " + (sumOfSearchTimes/totalNumberOfSimulations) + "\n");
             
                     BufferedWriter bw;
-                    String fileName = Controller.getInstance().getFileName();
-                    String fileNameTemp = Controller.LOG_DIRECTORY_NAME + fileName + "/" + fileName + ".txt";
+                    String fileName = simulationController.getFileName();
+                    String fileNameTemp = SimulationController.LOG_DIRECTORY_NAME + fileName + "/" + fileName + ".txt";
                     System.out.println("Schreibe Datei: " + fileNameTemp);
                     try
                     {
@@ -94,7 +94,7 @@ public class Simulation implements SettingModifier
                         System.out.println("caught error: " + ioe);
                     }
                 }
-                controller.reset();
+                simulationController.reset();
                 remainingNumberOfSimulations--;
             }
         }
@@ -173,8 +173,8 @@ public class Simulation implements SettingModifier
         g2d.setColor(Color.black);
         
         int y;
-        int x = y = (int)(Controller.ZOOM_FACTOR * (Pool.CENTER_TO_BORDER_DISTANCE - 1));
-        int size = (int) (2.0 * Controller.ZOOM_FACTOR);
+        int x = y = (int)(SimulationController.ZOOM_FACTOR * (Pool.CENTER_TO_BORDER_DISTANCE - 1));
+        int size = (int) (2.0 * SimulationController.ZOOM_FACTOR);
         
         g2d.fillOval(x, y, size, size);
     }
@@ -182,6 +182,6 @@ public class Simulation implements SettingModifier
     public void paintBackground(Graphics2D offGraphics)
     {
         offGraphics.setColor(Color.white);
-        offGraphics.fillRect(0, 0, (int) Controller.ZOOM_FACTOR * Controller.IMAGE_SIZE, (int) Controller.ZOOM_FACTOR * Controller.IMAGE_SIZE);
+        offGraphics.fillRect(0, 0, (int) SimulationController.ZOOM_FACTOR * SimulationController.IMAGE_SIZE, (int) SimulationController.ZOOM_FACTOR * SimulationController.IMAGE_SIZE);
     }
 }

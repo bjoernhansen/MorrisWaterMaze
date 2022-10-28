@@ -16,6 +16,13 @@ public class SimulationProcessor
     
     public void run()
     {
-        new Controller(simulation, parameterAccessor);
+        if(parameterAccessor.isStartingWithGui())
+        {
+            new SimulationControllerWithGui(simulation, parameterAccessor);
+        }
+        else
+        {
+            new BackgroundSimulationController(simulation, parameterAccessor);
+        }
     }
 }

@@ -31,12 +31,12 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
     
     private final SettingModifier settingModifier;
     
-    private final LoopController loopController;
+    private final SimulationController simulationController;
     
     
-    SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, LoopController loopController)
+    SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SimulationController simulationController)
     {
-        this.loopController = loopController;
+        this.simulationController = simulationController;
         this.settingModifier = settingModifier;
         setLayout(null);
         startAndPauseButton = new JButton("Starten");
@@ -67,10 +67,10 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
         if(numberOfPicturesPerSecond != 0 && System.currentTimeMillis() - lastPainted > 1000/numberOfPicturesPerSecond)
         {
             Graphics2D g2d = (Graphics2D) g.create();
-            Controller.getInstance().drawOffImage();
+            simulationController.drawOffImage();
             super.paintComponent(g);
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.drawImage(Controller.getInstance().offImage, 25, 25, null);
+            g2d.drawImage(simulationController.offImage, 25, 25, null);
             g2d.dispose();
             lastPainted = System.currentTimeMillis();
         }
@@ -79,12 +79,11 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
     @Override
     public void actionPerformed(ActionEvent e)
     {
-        Controller controller = Controller.getInstance();
         Object o = e.getSource();
         
         if (o == startAndPauseButton)
         {
-            if(loopController.getLoopState())
+            if(simulationController.getLoopState())
             {
                 startAndPauseButton.setText("Start");
             }
@@ -92,14 +91,14 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
             {
                 startAndPauseButton.setText("Stop");
             }
-            loopController.switchLoopState();
+            simulationController.switchLoopState();
             mouseTrainingLevelSpinner.setEnabled(false);
             numberOfSimulationsSpinner.setEnabled(false);
         }
         else if(o == restartButton)
         {
-            controller.reset();
-            loopController.stopLooping();
+            simulationController.reset();
+            simulationController.stopLooping();
             settingModifier.resetRemainingNumberOfSimulations();
             settingModifier.clearSearchTime();
             mouseTrainingLevelSpinner.setEnabled(true);
