@@ -5,17 +5,31 @@ import MorrisWaterMaze.model.Platform;
 import MorrisWaterMaze.model.Pool;
 import MorrisWaterMaze.parameter.SimulationParameterAccessor;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class Simulation implements SettingModifier
 {
+    static final AffineTransform
+        affineTransformation = new AffineTransform(Controller.ZOOM_FACTOR, 0, 0, Controller.ZOOM_FACTOR, 0, 0);
+    
+    private static final Color
+        DARK_GREY = new Color(75, 75, 75);
+    
+    
     private int remainingNumberOfSimulations;
-
+    
+    
+    private final ArrayList<Double>
+        searchTimes = new ArrayList<>();
+    
     private int totalNumberOfSimulations;
 
     private final Mouse mouse;
@@ -36,7 +50,7 @@ public class Simulation implements SettingModifier
     }
 
 
-    void nextStep()
+    void nextStep(Controller controller)
     {
         if(isSimulationInProgress())
         {
@@ -48,28 +62,28 @@ public class Simulation implements SettingModifier
             if(isAnotherSimulationToBeStarted())
             {
                 double lastSearchTime = mouse.getTotalDurationOfCurrentSimulation();
-                Controller.searchTime.add(lastSearchTime);
-                Controller.sumOfSearchTime += lastSearchTime;
-        
-        
+                searchTimes.add(lastSearchTime);
+                
                 System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
         
-                if(	Controller.numberOfPics > 0 && lastSearchTime >= Controller.picTimeFrameLowerBound && lastSearchTime <= Controller.picTimeFrameUpperBound)
+                if(	controller.numberOfPics > 0 && lastSearchTime >= controller.picTimeFrameLowerBound && lastSearchTime <= controller.picTimeFrameUpperBound)
                 {
-                    Controller.saveImage();
+                    controller.saveImage();
                 }
         
                 if(remainingNumberOfSimulations == 1)
                 {
-                    System.out.println("\nDurchschnittliche Suchzeit: " + (Controller.sumOfSearchTime / totalNumberOfSimulations) + "\n");
+                    double sumOfSearchTimes = calculateSumOfSearchTimes();
+                    System.out.println("\nDurchschnittliche Suchzeit: " + (sumOfSearchTimes/totalNumberOfSimulations) + "\n");
             
                     BufferedWriter bw;
-                    String file_name_temp = Controller.LOG_DIRECTORY_NAME + Controller.fileName + "/" + Controller.fileName + ".txt";
-                    System.out.println("Schreibe Datei: " + file_name_temp);
+                    String fileName = Controller.getInstance().getFileName();
+                    String fileNameTemp = Controller.LOG_DIRECTORY_NAME + fileName + "/" + fileName + ".txt";
+                    System.out.println("Schreibe Datei: " + fileNameTemp);
                     try
                     {
-                        bw = new BufferedWriter(new FileWriter(file_name_temp));
-                        for (Double aDouble : Controller.searchTime)
+                        bw = new BufferedWriter(new FileWriter(fileNameTemp));
+                        for (Double aDouble : searchTimes)
                         {
                             bw.write(aDouble + System.getProperty("line.separator"));
                         }
@@ -80,10 +94,17 @@ public class Simulation implements SettingModifier
                         System.out.println("caught error: " + ioe);
                     }
                 }
-                Controller.reset();
+                controller.reset();
                 remainingNumberOfSimulations--;
             }
         }
+    }
+    
+    private double calculateSumOfSearchTimes()
+    {
+        return searchTimes.stream()
+                          .mapToDouble(Double::doubleValue)
+                          .sum();
     }
     
     private double calculateRandomSimulationStepDuration()
@@ -117,7 +138,7 @@ public class Simulation implements SettingModifier
     }
 
     public void paintPool(Graphics2D offGraphics) {
-        pool.paint(offGraphics, Controller.AFFINE_TRANSFORMATION);
+        pool.paint(offGraphics, affineTransformation);
     }
 
     public Shape getPlatformBounds() {
@@ -133,13 +154,34 @@ public class Simulation implements SettingModifier
         totalNumberOfSimulations = numberOfSimulations;
         resetRemainingNumberOfSimulations();
     }
-
+    
+    @Override
+    public void clearSearchTime()
+    {
+        searchTimes.clear();
+    }
+  
     @Override
     public void resetRemainingNumberOfSimulations() {
         remainingNumberOfSimulations = totalNumberOfSimulations;
     }
-
-    public int getTotalNumberOfSimulations() {
-        return totalNumberOfSimulations;
+    
+    public void paintPlatform(Graphics2D g2d)
+    {
+        g2d.setColor(DARK_GREY);
+        g2d.fill(affineTransformation.createTransformedShape(getPlatformBounds()));
+        g2d.setColor(Color.black);
+        
+        int y;
+        int x = y = (int)(Controller.ZOOM_FACTOR * (Pool.CENTER_TO_BORDER_DISTANCE - 1));
+        int size = (int) (2.0 * Controller.ZOOM_FACTOR);
+        
+        g2d.fillOval(x, y, size, size);
+    }
+    
+    public void paintBackground(Graphics2D offGraphics)
+    {
+        offGraphics.setColor(Color.white);
+        offGraphics.fillRect(0, 0, (int) Controller.ZOOM_FACTOR * Controller.IMAGE_SIZE, (int) Controller.ZOOM_FACTOR * Controller.IMAGE_SIZE);
     }
 }

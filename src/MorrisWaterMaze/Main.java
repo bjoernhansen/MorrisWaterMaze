@@ -12,7 +12,7 @@ public class Main
     public static void main(String[] args)
     {
 		ParameterAccessor parameterAccessor = PARAMETER_SOURCE.makeParameterAccessorInstance(args);
-		Simulation simulation = new Simulation(parameterAccessor);
-		new Controller(simulation, parameterAccessor);
+		SimulationProcessor simulationProcessor = new SimulationProcessor(parameterAccessor);
+		simulationProcessor.run();
     }
 }

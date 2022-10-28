@@ -1,82 +1,81 @@
 package MorrisWaterMaze;
 
+import MorrisWaterMaze.graphics.painter.PaintManager;
 import MorrisWaterMaze.model.Pool;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
-public class Controller implements Runnable
+public class Controller implements Runnable, LoopController
 {
-	public static final int
+	private static final int
 		PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS = 100;
 	
 	public static final double
 		ZOOM_FACTOR = 4;
 	
-	private static final int
+	static final int
 		IMAGE_SIZE = (int) (2.0 * ZOOM_FACTOR * Pool.CENTER_TO_BORDER_DISTANCE);
 		
 	static final String
 		LOG_DIRECTORY_NAME = "logs/";
 	
+	private static Controller
+		instance;
+	
+	private final boolean
+		isStartingWithGui;
+	
+	private boolean
+		loop = false;
 	
 	
-	public static boolean isStartingWithGui;
-	static int maxNrOfPicInSeries;
-	static int currentNrOfPicInSeries = 0;
-	static int numberOfPics = 0;
-	static double picTimeFrameUpperBound,
-			      picTimeFrameLowerBound;
-
-	static boolean loop = false;
-
-
+	private int maxNrOfPicInSeries;
+	private int currentNrOfPicInSeries = 0;
+	int numberOfPics = 0;
+	double picTimeFrameUpperBound;
 	
-	static double sumOfSearchTime = 0;
+	double picTimeFrameLowerBound;
 
 
+	private Thread
+		animator;
 	
-	static final ArrayList<Double> searchTime = new ArrayList<>();
-	
+	final Image
+		offImage = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_RGB);
+  
+	private final Graphics2D
+		offGraphics = getGraphics(offImage);
 
-	static final AffineTransform AFFINE_TRANSFORMATION = new AffineTransform(ZOOM_FACTOR, 0, 0, ZOOM_FACTOR, 0, 0);
-	
-	private Thread animator;
-	static final Image offImage = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_RGB);
-    private static final Graphics2D offGraphics = getGraphics(offImage);
-	
-	
+	private final String
+		fileName;
 
-
-	static String fileName;
-	static File pictureDirectory;
-	
-	private static final Color DARK_GREY = new Color(75, 75, 75);
-
-
-	private static Simulation
+	private final Simulation
 		simulation;
 	
-	private static JFrame
+	private JFrame
 		simulationFrame;
 	
-	private static SimulationPanel
+	private SimulationPanel
 		simulationPanel;
+		
+	private final PaintManager
+		paintManager = new PaintManager();
 	
 
+	
 	Controller(Simulation simulationInstance, ParameterAccessor parameterAccessor)
 	{
+		instance = this;
 		simulation = simulationInstance;
 		isStartingWithGui = parameterAccessor.isStartingWithGui();
 		fileName = parameterAccessor.getFilename();
@@ -94,7 +93,7 @@ public class Controller implements Runnable
 		
 		if(isStartingWithGui)
 		{
-			simulationPanel = new SimulationPanel(simulation, parameterAccessor);
+			simulationPanel = new SimulationPanel(simulation, parameterAccessor, this);
 			simulationFrame = new SimulationFrame(simulationPanel);
 			simulationFrame.setVisible(true);
 			
@@ -105,22 +104,22 @@ public class Controller implements Runnable
 		{
 			while(simulation.isAnotherSimulationToBeStarted())
 			{
-				simulation.nextStep();
+				simulation.nextStep(this);
 			}
 		}
 	}
 	
-	private static Graphics2D getGraphics(Image Image)
+	private Graphics2D getGraphics(Image Image)
 	{
 		Graphics2D graphics2D = (Graphics2D) Image.getGraphics();
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
 		return graphics2D;
 	}
 	
-	public static void makeDirectory()
+	public void makeDirectory()
 	{
 		String directoryName = LOG_DIRECTORY_NAME + fileName;
-		pictureDirectory = new File(directoryName);
+		File pictureDirectory = new File(directoryName);
 		pictureDirectory.mkdir();
 	}
 	
@@ -138,35 +137,32 @@ public class Controller implements Runnable
 				e.printStackTrace();
 				break;
 			}
-			if(loop)
+			if(getLoopState())
 			{
-				simulation.nextStep();
+				simulation.nextStep(this);
 			}
 			simulationFrame.repaint();
 		}
 	}
 
-	static void drawOffImage()
+	void drawOffImage()
 	{
 		if(isStartingWithGui || currentNrOfPicInSeries == 1)
 		{
 			// weiﬂer Hintergrund
-			offGraphics.setColor(Color.white);
-			offGraphics.fillRect(0, 0, (int) ZOOM_FACTOR * IMAGE_SIZE, (int) ZOOM_FACTOR * IMAGE_SIZE);
-
+			simulation.paintBackground(offGraphics);
+			
 			// der Pool
 			simulation.paintPool(offGraphics);
 			
 			// die Plattform
-			offGraphics.setColor(DARK_GREY);
-			offGraphics.fill(AFFINE_TRANSFORMATION.createTransformedShape(simulation.getPlatformBounds()));
-			offGraphics.setColor(Color.black);
-			offGraphics.fillOval((int)(ZOOM_FACTOR *(Pool.CENTER_TO_BORDER_DISTANCE -1)), (int)(ZOOM_FACTOR *(Pool.CENTER_TO_BORDER_DISTANCE -1)), (int)(2* ZOOM_FACTOR), (int)(2* ZOOM_FACTOR));
+			simulation.paintPlatform(offGraphics);
+		
 		}
 		simulation.paintMouseTrajectory(offGraphics);
 	}
 			
-	static void reset()
+	void reset()
 	{
 		if(isStartingWithGui)
 		{
@@ -175,31 +171,58 @@ public class Controller implements Runnable
 		simulation.determineMouseStartingPosition();
 	}
 	
-	
-	public static void saveImage()
+	public void saveImage()
 	{
-		if(!Controller.isStartingWithGui)
+		if(!isStartingWithGui)
 		{
-			Controller.currentNrOfPicInSeries++;
+			currentNrOfPicInSeries++;
 		}
-		Controller.drawOffImage();
-		if(Controller.isStartingWithGui || Controller.currentNrOfPicInSeries == Controller.maxNrOfPicInSeries)
+		drawOffImage();
+		if(isStartingWithGui || currentNrOfPicInSeries == maxNrOfPicInSeries)
 		{
 			try
 			{
-				String fileNameTemp = Controller.LOG_DIRECTORY_NAME + Controller.fileName + "/" + System.currentTimeMillis() + ".png";
+				String fileNameTemp = LOG_DIRECTORY_NAME + fileName + "/" + System.currentTimeMillis() + ".png";
 				System.out.println("\nSchreibe Datei: " + fileNameTemp + "\n");
-				ImageIO.write((RenderedImage)Controller.offImage, "png", new File(fileNameTemp));
-				Controller.numberOfPics--;
+				ImageIO.write((RenderedImage)offImage, "png", new File(fileNameTemp));
+				numberOfPics--;
 			}
 			catch(Exception exception)
 			{
 				System.out.println(Arrays.toString(exception.getStackTrace()));
 			}
 		}
-		if(!Controller.isStartingWithGui && Controller.currentNrOfPicInSeries == Controller.maxNrOfPicInSeries)
+		if(!isStartingWithGui && currentNrOfPicInSeries == maxNrOfPicInSeries)
 		{
-			Controller.currentNrOfPicInSeries = 0;
+			currentNrOfPicInSeries = 0;
 		}
+	}
+	
+	public static Controller getInstance()
+	{
+		return Optional.of(instance).get();
+	}
+	
+	public String getFileName()
+	{
+		return fileName;
+	}
+	
+	@Override
+	public void switchLoopState()
+	{
+		loop = !loop;
+	}
+	
+	@Override
+	public boolean getLoopState()
+	{
+		return loop;
+	}
+	
+	@Override
+	public void stopLooping()
+	{
+		loop = false;
 	}
 }

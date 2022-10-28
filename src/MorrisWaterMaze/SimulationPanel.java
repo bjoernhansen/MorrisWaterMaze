@@ -16,7 +16,6 @@ import java.awt.GridLayout;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Optional;
 
 
 public class SimulationPanel extends JPanel implements ActionListener, ChangeListener
@@ -32,9 +31,12 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
     
     private final SettingModifier settingModifier;
     
+    private final LoopController loopController;
     
-    SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor)
+    
+    SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, LoopController loopController)
     {
+        this.loopController = loopController;
         this.settingModifier = settingModifier;
         setLayout(null);
         startAndPauseButton = new JButton("Starten");
@@ -64,12 +66,12 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
     {
         if(numberOfPicturesPerSecond != 0 && System.currentTimeMillis() - lastPainted > 1000/numberOfPicturesPerSecond)
         {
-            Graphics2D g2 = (Graphics2D) g.create();
-            Controller.drawOffImage();
+            Graphics2D g2d = (Graphics2D) g.create();
+            Controller.getInstance().drawOffImage();
             super.paintComponent(g);
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.drawImage(Controller.offImage, 25, 25, null);
-            g2.dispose();
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.drawImage(Controller.getInstance().offImage, 25, 25, null);
+            g2d.dispose();
             lastPainted = System.currentTimeMillis();
         }
     }
@@ -77,11 +79,12 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
     @Override
     public void actionPerformed(ActionEvent e)
     {
+        Controller controller = Controller.getInstance();
         Object o = e.getSource();
         
         if (o == startAndPauseButton)
         {
-            if(Controller.loop)
+            if(loopController.getLoopState())
             {
                 startAndPauseButton.setText("Start");
             }
@@ -89,17 +92,16 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
             {
                 startAndPauseButton.setText("Stop");
             }
-            Controller.loop = !Controller.loop;
+            loopController.switchLoopState();
             mouseTrainingLevelSpinner.setEnabled(false);
             numberOfSimulationsSpinner.setEnabled(false);
         }
         else if(o == restartButton)
         {
-            Controller.reset();
-            Controller.loop = false;
+            controller.reset();
+            loopController.stopLooping();
             settingModifier.resetRemainingNumberOfSimulations();
-            Controller.searchTime.clear();
-            Controller.sumOfSearchTime = 0;
+            settingModifier.clearSearchTime();
             mouseTrainingLevelSpinner.setEnabled(true);
             numberOfSimulationsSpinner.setEnabled(true);
         }

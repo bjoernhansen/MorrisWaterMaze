@@ -3,6 +3,7 @@ package MorrisWaterMaze.graphics.painter;
 import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.model.Mouse;
+import MorrisWaterMaze.model.Pool;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,12 +11,14 @@ import java.util.Optional;
 
 public class PaintManager extends Painter<Paintable>
 {
-    Map<Class<? extends Paintable>, Painter<? extends Paintable>> painter = new HashMap<>();
+    Map<Class<? extends Paintable>, Painter<? extends Paintable>>
+        painter = new HashMap<>();
     
     
-    PaintManager()
+    public PaintManager()
     {
         painter.put(Mouse.class, new MousePainter());
+        painter.put(Pool.class, new PoolPainter());
     }
     
     @Override

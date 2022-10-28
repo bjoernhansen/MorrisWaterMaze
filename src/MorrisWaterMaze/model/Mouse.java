@@ -21,7 +21,7 @@ public class Mouse implements Paintable
 	private double polarAngle;                    // bestimmt in welche Richtung die Maus schwimmt
 	private final double maximumSwimmingDuration;		// maximale Schwimmzeit; default: 0 (no restriction)
 	private final boolean isStartingPositionLeft;	// gibt an, ob die Maus am linken oder rechten Rand des Pools erscheint; default: true
-	private final double trainingLevel;                    // Trainingslevel der Maus; [0, 1]; default: 0.5
+	private double trainingLevel;                    // Trainingslevel der Maus; [0, 1]; default: 0.5
 	public double stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
 	private boolean isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
 
@@ -173,7 +173,7 @@ public class Mouse implements Paintable
 	}
 
 	public void setTrainingLevel(double trainingLevel) {
-		trainingLevel = trainingLevel;
+		this.trainingLevel = trainingLevel;
 	}
 
 	public boolean isSwimming() {
