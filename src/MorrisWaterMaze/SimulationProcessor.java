@@ -4,8 +4,10 @@ import MorrisWaterMaze.parameter.ParameterAccessor;
 
 public class SimulationProcessor
 {
-    private final ParameterAccessor parameterAccessor;
-    private final Simulation simulation;
+    private final ParameterAccessor
+        parameterAccessor;
+    private final Simulation
+        simulation;
     
     
     public SimulationProcessor(ParameterAccessor parameterAccessor)

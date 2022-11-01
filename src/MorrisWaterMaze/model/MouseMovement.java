@@ -11,11 +11,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Mouse implements Paintable
+public class MouseMovement implements Paintable
 {
-	private static final Color
-		LIGHT_GREY = new Color(150, 150, 150);
-
 	private Point2D coordinates;				// aktueller Aufenthaltsort der Maus
 	private final double speed;                    // Geschwindigkeit der Maus; default: 5
 	private double polarAngle;                    // bestimmt in welche Richtung die Maus schwimmt
@@ -28,16 +25,16 @@ public class Mouse implements Paintable
 	private final boolean
 		isBodyToBeDrawn;
 	
-	private final ArrayList<Point2D> escapeRoutePoints = new ArrayList<>(0);
+	public final ArrayList<Point2D> escapeRoutePoints = new ArrayList<>();
 	private final ArrayList<Double>
 		timeSteps = new ArrayList<>();
 		
-	static final double RADIUS = 3;							// Radius des die Maus repräsentierenden Kreises
+	public static final double RADIUS = 3;							// Radius des die Maus repräsentierenden Kreises
 	private static final double FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180�
 	private double maximumDurationOfNextSimulationStep;
 	private double durationOfNextSimulationStep;
 	
-	public Mouse(MouseParameterAccessor parameterAccessor)
+	public MouseMovement(MouseParameterAccessor parameterAccessor)
 	{		
 		coordinates = new Point2D.Double();
 		maximumSwimmingDuration = parameterAccessor.getMaximumMouseSwimmingTime();
@@ -142,35 +139,6 @@ public class Mouse implements Paintable
 		return maximumSwimmingDuration != 0;
 	}
 	
-	
-	public void paintTrajectory(Graphics2D g2d)
-	{
-		if(!escapeRoutePoints.isEmpty())
-		{			
-			for (int i = 0; i< escapeRoutePoints.size()-1; i++)
-			{
-				g2d.setColor(Color.BLACK);
-				g2d.draw(	new Line2D.Double(Calculations.scalePoint(escapeRoutePoints.get(i),
-							SimulationController.ZOOM_FACTOR),
-							Calculations.scalePoint(escapeRoutePoints.get(i+1),
-							SimulationController.ZOOM_FACTOR)));
-				g2d.fillOval(	(int)(SimulationController.ZOOM_FACTOR *(escapeRoutePoints.get(i+1).getX()-0.5)),
-								(int)(SimulationController.ZOOM_FACTOR *(escapeRoutePoints.get(i+1).getY()-0.5)),
-								(int) SimulationController.ZOOM_FACTOR, (int) SimulationController.ZOOM_FACTOR);
-			}	
-			if(isBodyToBeDrawn)
-			{
-				g2d.setColor(LIGHT_GREY);
-				g2d.fillOval(	(int)(SimulationController.ZOOM_FACTOR *(escapeRoutePoints.get(escapeRoutePoints.size()-1).getX()-RADIUS)),
-								(int)(SimulationController.ZOOM_FACTOR *(escapeRoutePoints.get(escapeRoutePoints.size()-1).getY()-RADIUS)),
-								(int)(SimulationController.ZOOM_FACTOR *RADIUS*2), (int)(SimulationController.ZOOM_FACTOR *RADIUS*2));
-			}
-		}		
-	}
-
-	public double getTrainingLevel() {
-		return trainingLevel;
-	}
 
 	public void setTrainingLevel(double trainingLevel) {
 		this.trainingLevel = trainingLevel;
@@ -183,5 +151,10 @@ public class Mouse implements Paintable
 	public double getTotalDurationOfCurrentSimulation()
 	{
 		return timeSteps.get(timeSteps.size()-1);
+	}
+	
+	public boolean isBodyToBeDrawn()
+	{
+		return isBodyToBeDrawn;
 	}
 }

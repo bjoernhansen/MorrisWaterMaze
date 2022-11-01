@@ -1,18 +1,16 @@
 package MorrisWaterMaze.graphics.painter;
 
-import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.model.Pool;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 
-public class PoolPainter extends Painter<Pool>
+class PoolPainter extends Painter<Pool>
 {
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Pool paintableEntity)
+    public void paint(Graphics2D g2d, Pool pool)
     {
-    
+        g2d.setColor(Color.black);
+        g2d.draw(affineTransformation.createTransformedShape(pool.getBorder()));
     }
-    
 }

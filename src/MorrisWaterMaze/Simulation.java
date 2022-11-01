@@ -1,29 +1,19 @@
 package MorrisWaterMaze;
 
-import MorrisWaterMaze.model.Mouse;
+import MorrisWaterMaze.graphics.Paintable;
+import MorrisWaterMaze.model.MouseMovement;
 import MorrisWaterMaze.model.Platform;
 import MorrisWaterMaze.model.Pool;
 import MorrisWaterMaze.parameter.SimulationParameterAccessor;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class Simulation implements SettingModifier
+public class Simulation implements SettingModifier, Paintable
 {
-    static final AffineTransform
-        affineTransformation = new AffineTransform(SimulationController.ZOOM_FACTOR, 0, 0, SimulationController.ZOOM_FACTOR, 0, 0);
-    
-    private static final Color
-        DARK_GREY = new Color(75, 75, 75);
-    
-    
     private int remainingNumberOfSimulations;
     
     
@@ -32,7 +22,7 @@ public class Simulation implements SettingModifier
     
     private int totalNumberOfSimulations;
 
-    private final Mouse mouse;
+    private final MouseMovement mouseMovement;
 
     private final Pool pool;
 
@@ -41,7 +31,7 @@ public class Simulation implements SettingModifier
 
     public Simulation(SimulationParameterAccessor parameterAccessor)
     {
-        this.mouse = new Mouse(parameterAccessor);
+        this.mouseMovement = new MouseMovement(parameterAccessor);
         this.pool = new Pool();
         this.platform = new Platform();
 
@@ -55,49 +45,47 @@ public class Simulation implements SettingModifier
         if(isSimulationInProgress())
         {
             double maximumDurationOfNextSimulationStep = calculateRandomSimulationStepDuration();
-            mouse.move(pool, platform, maximumDurationOfNextSimulationStep);
+            mouseMovement.move(pool, platform, maximumDurationOfNextSimulationStep);
         }
-        else
+        else if(isAnotherSimulationToBeStarted())
         {
-            if(isAnotherSimulationToBeStarted())
-            {
-                double lastSearchTime = mouse.getTotalDurationOfCurrentSimulation();
-                searchTimes.add(lastSearchTime);
-                
-                System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
-        
-                if(	simulationController.numberOfPics > 0 && lastSearchTime >= simulationController.picTimeFrameLowerBound && lastSearchTime <= simulationController.picTimeFrameUpperBound)
-                {
-                    simulationController.saveImage();
-                }
-        
-                if(remainingNumberOfSimulations == 1)
-                {
-                    double sumOfSearchTimes = calculateSumOfSearchTimes();
-                    System.out.println("\nDurchschnittliche Suchzeit: " + (sumOfSearchTimes/totalNumberOfSimulations) + "\n");
+            double lastSearchTime = mouseMovement.getTotalDurationOfCurrentSimulation();
+            searchTimes.add(lastSearchTime);
             
-                    BufferedWriter bw;
-                    String fileName = simulationController.getFileName();
-                    String fileNameTemp = SimulationController.LOG_DIRECTORY_NAME + fileName + "/" + fileName + ".txt";
-                    System.out.println("Schreibe Datei: " + fileNameTemp);
-                    try
-                    {
-                        bw = new BufferedWriter(new FileWriter(fileNameTemp));
-                        for (Double aDouble : searchTimes)
-                        {
-                            bw.write(aDouble + System.getProperty("line.separator"));
-                        }
-                        bw.close();
-                    }
-                    catch (IOException ioe)
-                    {
-                        System.out.println("caught error: " + ioe);
-                    }
-                }
-                simulationController.reset();
-                remainingNumberOfSimulations--;
+            System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
+    
+            if(	simulationController.numberOfPics > 0 && lastSearchTime >= simulationController.picTimeFrameLowerBound && lastSearchTime <= simulationController.picTimeFrameUpperBound)
+            {
+                simulationController.saveImage();
             }
+    
+            if(remainingNumberOfSimulations == 1)
+            {
+                double sumOfSearchTimes = calculateSumOfSearchTimes();
+                System.out.println("\nDurchschnittliche Suchzeit: " + (sumOfSearchTimes/totalNumberOfSimulations) + "\n");
+        
+                BufferedWriter bw;
+                String fileName = simulationController.getFileName();
+                String fileNameTemp = SimulationController.LOG_DIRECTORY_NAME + fileName + "/" + fileName + ".txt";
+                System.out.println("Schreibe Datei: " + fileNameTemp);
+                try
+                {
+                    bw = new BufferedWriter(new FileWriter(fileNameTemp));
+                    for (Double aDouble : searchTimes)
+                    {
+                        bw.write(aDouble + System.getProperty("line.separator"));
+                    }
+                    bw.close();
+                }
+                catch (IOException ioe)
+                {
+                    System.out.println("caught error: " + ioe);
+                }
+            }
+            simulationController.reset();
+            remainingNumberOfSimulations--;
         }
+        
     }
     
     private double calculateSumOfSearchTimes()
@@ -109,40 +97,21 @@ public class Simulation implements SettingModifier
     
     private double calculateRandomSimulationStepDuration()
     {
-        return Calculations.calculateRandomDuration(mouse.stepLengthBias);
+        return Calculations.calculateRandomDuration(mouseMovement.stepLengthBias);
     }
     
     private boolean isSimulationInProgress()
     {
-        return mouse.isSwimming();
-    }
-    
-    
-    public double getMouseTrainingLevel()
-    {
-        return mouse.getTrainingLevel();
-    }
-
-    public void paintMouseTrajectory(Graphics2D offGraphics)
-    {
-        mouse.paintTrajectory(offGraphics);
+        return mouseMovement.isSwimming();
     }
 
     public void determineMouseStartingPosition() {
-        mouse.determineStartingPosition(pool);
+        mouseMovement.determineStartingPosition(pool);
     }
 
     @Override
     public void setMouseTrainingLevel(double mouseTrainingLevel) {
-        mouse.setTrainingLevel(mouseTrainingLevel);
-    }
-
-    public void paintPool(Graphics2D offGraphics) {
-        pool.paint(offGraphics, affineTransformation);
-    }
-
-    public Shape getPlatformBounds() {
-        return platform.getBounds();
+        mouseMovement.setTrainingLevel(mouseTrainingLevel);
     }
 
     public boolean isAnotherSimulationToBeStarted() {
@@ -166,22 +135,18 @@ public class Simulation implements SettingModifier
         remainingNumberOfSimulations = totalNumberOfSimulations;
     }
     
-    public void paintPlatform(Graphics2D g2d)
+    public Paintable getPool()
     {
-        g2d.setColor(DARK_GREY);
-        g2d.fill(affineTransformation.createTransformedShape(getPlatformBounds()));
-        g2d.setColor(Color.black);
-        
-        int y;
-        int x = y = (int)(SimulationController.ZOOM_FACTOR * (Pool.CENTER_TO_BORDER_DISTANCE - 1));
-        int size = (int) (2.0 * SimulationController.ZOOM_FACTOR);
-        
-        g2d.fillOval(x, y, size, size);
+        return pool;
     }
     
-    public void paintBackground(Graphics2D offGraphics)
+    public Paintable getPlatform()
     {
-        offGraphics.setColor(Color.white);
-        offGraphics.fillRect(0, 0, (int) SimulationController.ZOOM_FACTOR * SimulationController.IMAGE_SIZE, (int) SimulationController.ZOOM_FACTOR * SimulationController.IMAGE_SIZE);
+        return platform;
+    }
+    
+    public Paintable getMouseMovement()
+    {
+        return mouseMovement;
     }
 }

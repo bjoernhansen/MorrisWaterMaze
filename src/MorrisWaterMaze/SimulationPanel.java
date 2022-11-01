@@ -1,5 +1,6 @@
 package MorrisWaterMaze;
 
+import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.swing.BorderFactory;
@@ -13,6 +14,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,13 +33,24 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
     
     private final SettingModifier settingModifier;
     
-    private final SimulationController simulationController;
+    private final SimulationControllerWithGui
+        simulationController;
+    
+    private final ImagePainter
+        imagePainter;
+    
+    private final Paintable
+        paintableEntity;
     
     
-    SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SimulationController simulationController)
+    
+    SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SimulationControllerWithGui simulationController, ImagePainter imagePainter, Paintable paintableEntity)
     {
         this.simulationController = simulationController;
         this.settingModifier = settingModifier;
+        this.imagePainter = imagePainter;
+        this.paintableEntity = paintableEntity;
+        
         setLayout(null);
         startAndPauseButton = new JButton("Starten");
         JLabel mouseLevelLabel = new JLabel("training level");
@@ -62,15 +75,16 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
     }
     
     @Override
-    public void paintComponent(Graphics g)
+    public void paintComponent(Graphics graphics)
     {
         if(numberOfPicturesPerSecond != 0 && System.currentTimeMillis() - lastPainted > 1000/numberOfPicturesPerSecond)
         {
-            Graphics2D g2d = (Graphics2D) g.create();
-            simulationController.drawOffImage();
-            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) graphics.create();
+            
+            super.paintComponent(graphics);
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2d.drawImage(simulationController.offImage, 25, 25, null);
+            Image image = imagePainter.paintImageOf(paintableEntity);
+            g2d.drawImage(image, 25, 25, null);
             g2d.dispose();
             lastPainted = System.currentTimeMillis();
         }
