@@ -1,13 +1,14 @@
 package MorrisWaterMaze.graphics.painter;
 
-import MorrisWaterMaze.SimulationController;
+import MorrisWaterMaze.control.SimulationController;
 import MorrisWaterMaze.model.Platform;
 import MorrisWaterMaze.model.Pool;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class PlatformPainter extends Painter<Platform>
+
+class PlatformPainter extends Painter<Platform>
 {
     private static final Color
         DARK_GREY = new Color(75, 75, 75);

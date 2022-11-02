@@ -1,7 +1,6 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.graphics.painter;
 
 import MorrisWaterMaze.graphics.Paintable;
-import MorrisWaterMaze.graphics.painter.PaintManager;
 
 import java.awt.Graphics2D;
 import java.awt.Image;

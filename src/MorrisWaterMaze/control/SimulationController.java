@@ -1,5 +1,8 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.control;
 
+import MorrisWaterMaze.model.Simulation;
+import MorrisWaterMaze.graphics.painter.ImagePainter;
+import MorrisWaterMaze.graphics.painter.ImagePainterImplementation;
 import MorrisWaterMaze.model.Pool;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
@@ -17,7 +20,7 @@ public abstract class SimulationController
 	public static final int
 		IMAGE_SIZE = (int) (2.0 * ZOOM_FACTOR * Pool.CENTER_TO_BORDER_DISTANCE);
 		
-	static final String
+	public static final String
 		LOG_DIRECTORY_NAME = "logs/";
 	
 	private final boolean
@@ -27,10 +30,10 @@ public abstract class SimulationController
 	
 	private int maxNrOfPicInSeries;
 	private int currentNrOfPicInSeries = 0;
-	int numberOfPics = 0;
-	double picTimeFrameUpperBound;
+	public int numberOfPics = 0;
+	public double picTimeFrameUpperBound;
 	
-	double picTimeFrameLowerBound;
+	public double picTimeFrameLowerBound;
 	
 	private final String
 		fileName;
@@ -69,7 +72,7 @@ public abstract class SimulationController
 		pictureDirectory.mkdir();
 	}
 	
-	void reset()
+	public void reset()
 	{
 		simulation.reset();
 	}

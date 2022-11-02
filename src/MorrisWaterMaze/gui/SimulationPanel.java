@@ -1,6 +1,9 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.gui;
 
+import MorrisWaterMaze.model.SettingModifier;
+import MorrisWaterMaze.control.SimulationControllerWithGui;
 import MorrisWaterMaze.graphics.Paintable;
+import MorrisWaterMaze.graphics.painter.ImagePainter;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.swing.BorderFactory;
@@ -44,7 +47,7 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
     
     
     
-    SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SimulationControllerWithGui simulationController, ImagePainter imagePainter, Paintable paintableEntity)
+    public SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SimulationControllerWithGui simulationController, ImagePainter imagePainter, Paintable paintableEntity)
     {
         this.simulationController = simulationController;
         this.settingModifier = settingModifier;

@@ -1,23 +1,24 @@
 package MorrisWaterMaze.graphics.painter;
 
-import MorrisWaterMaze.Simulation;
 import MorrisWaterMaze.graphics.Paintable;
-import MorrisWaterMaze.model.MouseMovement;
-import MorrisWaterMaze.model.Platform;
-import MorrisWaterMaze.model.Pool;
 
 import java.awt.Graphics2D;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
-public class PaintManager
+import static java.util.stream.Collectors.toUnmodifiableMap;
+
+
+class PaintManager
 {
-    Map<Class<? extends Paintable>, Painter<? extends Paintable>>
-        painter = new HashMap<>();
-        
     private static PaintManager
         instance;
+        
+    private final Map<Class<? extends Paintable>, Painter<? extends Paintable>>
+        painter = PaintableEntityType.getValues()
+                                     .stream()
+                                     .collect(toUnmodifiableMap(PaintableEntityType::getPaintableEntityClass, PaintableEntityType::makePainterInstance));
     
     
     public static PaintManager getInstance()
@@ -27,14 +28,6 @@ public class PaintManager
             instance = new PaintManager();
         }
         return instance;
-    }
-    
-    private PaintManager()
-    {
-        painter.put(MouseMovement.class, new MouseMovementPainter());
-        painter.put(Pool.class, new PoolPainter());
-        painter.put(Simulation.class, new SimulationPainter());
-        painter.put(Platform.class, new PlatformPainter());
     }
     
     public void paint(Graphics2D graphicsAdapter, Paintable paintableEntity)    {

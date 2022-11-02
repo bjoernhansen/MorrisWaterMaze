@@ -1,4 +1,4 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.graphics.painter;
 
 import MorrisWaterMaze.graphics.Paintable;
 

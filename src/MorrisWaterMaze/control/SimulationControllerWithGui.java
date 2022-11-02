@@ -1,5 +1,8 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.control;
 
+import MorrisWaterMaze.model.Simulation;
+import MorrisWaterMaze.gui.SimulationFrame;
+import MorrisWaterMaze.gui.SimulationPanel;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.swing.JFrame;
@@ -23,7 +26,7 @@ public class SimulationControllerWithGui extends SimulationController implements
         simulationPanel;
     
 
-    SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor)
+    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor)
     {
         super(simulationInstance, parameterAccessor);
     
@@ -58,7 +61,7 @@ public class SimulationControllerWithGui extends SimulationController implements
     }
     
     @Override
-    void reset()
+    public void reset()
     {
         Optional.ofNullable(simulationPanel).ifPresent(
             panel -> panel.setStartAndPauseButtonText("Start"));

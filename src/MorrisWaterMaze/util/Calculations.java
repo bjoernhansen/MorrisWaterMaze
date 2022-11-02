@@ -1,9 +1,6 @@
-package MorrisWaterMaze;
-
-import MorrisWaterMaze.util.Point;
+package MorrisWaterMaze.util;
 
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 import java.util.Random;

@@ -1,10 +1,9 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.model;
 
+import MorrisWaterMaze.control.SimulationController;
 import MorrisWaterMaze.graphics.Paintable;
-import MorrisWaterMaze.model.MouseMovement;
-import MorrisWaterMaze.model.Platform;
-import MorrisWaterMaze.model.Pool;
 import MorrisWaterMaze.parameter.SimulationParameterAccessor;
+import MorrisWaterMaze.util.Calculations;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -45,7 +44,7 @@ public class Simulation implements SettingModifier, Paintable
         remainingNumberOfSimulations = totalNumberOfSimulations;
     }
 
-    void nextStep(SimulationController simulationController)
+    public void nextStep(SimulationController simulationController)
     {
         if(isSimulationInProgress())
         {

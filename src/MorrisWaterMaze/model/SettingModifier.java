@@ -1,4 +1,4 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.model;
 
 public interface SettingModifier
 {

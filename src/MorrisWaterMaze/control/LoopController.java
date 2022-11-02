@@ -1,4 +1,4 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.control;
 
 public interface LoopController
 {

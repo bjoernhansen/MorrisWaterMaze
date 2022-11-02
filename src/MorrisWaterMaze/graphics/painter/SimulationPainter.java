@@ -1,7 +1,7 @@
 package MorrisWaterMaze.graphics.painter;
 
-import MorrisWaterMaze.Simulation;
-import MorrisWaterMaze.SimulationController;
+import MorrisWaterMaze.model.Simulation;
+import MorrisWaterMaze.control.SimulationController;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,9 +12,9 @@ class SimulationPainter extends Painter<Simulation>
     public void paint(Graphics2D graphicsAdapter, Simulation simulation)
     {
         paintBackground(graphicsAdapter);
-        PAINT_MANAGER.paint(graphicsAdapter, simulation.getPool());
-        PAINT_MANAGER.paint(graphicsAdapter, simulation.getPlatform());
-        PAINT_MANAGER.paint(graphicsAdapter, simulation.getMouseMovement());
+        paintEntity(graphicsAdapter, simulation.getPool());
+        paintEntity(graphicsAdapter, simulation.getPlatform());
+        paintEntity(graphicsAdapter, simulation.getMouseMovement());
     }
     
     private void paintBackground(Graphics2D offGraphics)

@@ -1,6 +1,6 @@
 package MorrisWaterMaze.model;
 
-import MorrisWaterMaze.Calculations;
+import MorrisWaterMaze.util.Calculations;
 import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.parameter.MouseParameterAccessor;
 import MorrisWaterMaze.util.Point;

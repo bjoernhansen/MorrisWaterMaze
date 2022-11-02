@@ -1,5 +1,6 @@
 package MorrisWaterMaze;
 
+import MorrisWaterMaze.control.SimulationProcessor;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 import MorrisWaterMaze.parameter.ParameterSource;
 

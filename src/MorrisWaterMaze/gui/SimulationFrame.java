@@ -1,4 +1,4 @@
-package MorrisWaterMaze;
+package MorrisWaterMaze.gui;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,7 +15,7 @@ public class SimulationFrame extends JFrame
         APPLICATION_DIMENSION = new Dimension(1024, 768);
     
     
-    SimulationFrame(JPanel panel)
+    public SimulationFrame(JPanel panel)
     {
         super(APPLICATION_NAME);
         setSize(APPLICATION_DIMENSION);
