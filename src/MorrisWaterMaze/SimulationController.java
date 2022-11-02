@@ -58,7 +58,7 @@ public abstract class SimulationController
 			picTimeFrameUpperBound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
 			maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
 		}
-		simulation.determineMouseStartingPosition();
+		reset();
 	}
 	
 
@@ -69,8 +69,6 @@ public abstract class SimulationController
 		pictureDirectory.mkdir();
 	}
 	
-	
-			
 	void reset()
 	{
 		simulation.determineMouseStartingPosition();

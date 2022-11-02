@@ -3,6 +3,7 @@ package MorrisWaterMaze;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.swing.JFrame;
+import java.util.Optional;
 
 public class SimulationControllerWithGui extends SimulationController implements Runnable, LoopController
 {
@@ -59,7 +60,8 @@ public class SimulationControllerWithGui extends SimulationController implements
     @Override
     void reset()
     {
-        simulationPanel.setStartAndPauseButtonText("Start");
+        Optional.ofNullable(simulationPanel).ifPresent(
+            panel -> panel.setStartAndPauseButtonText("Start"));
         super.reset();
     }
     

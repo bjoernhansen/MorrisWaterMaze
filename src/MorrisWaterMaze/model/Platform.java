@@ -1,23 +1,24 @@
 package MorrisWaterMaze.model;
 
 import MorrisWaterMaze.graphics.Paintable;
+import MorrisWaterMaze.util.Point;
 
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+
 
 public class Platform implements Paintable
 {
     private final Rectangle2D
             bounds;
 
-    private final Point2D
+    private final Point
             center;
 
 
     public Platform()
     {
         bounds = createBounds();
-        center = new Point2D.Double(bounds.getCenterX(), bounds.getCenterY());
+        center = Point.newInstance(bounds.getCenterX(), bounds.getCenterY());
     }
 
     private static Rectangle2D createBounds()
@@ -35,7 +36,7 @@ public class Platform implements Paintable
         return bounds;
     }
 
-    public Point2D getCenter() {
+    public Point getCenter() {
         return center;
     }
 }

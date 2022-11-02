@@ -31,10 +31,10 @@ public class Simulation implements SettingModifier, Paintable
 
     public Simulation(SimulationParameterAccessor parameterAccessor)
     {
-        this.mouseMovement = new MouseMovement(parameterAccessor);
         this.pool = new Pool();
         this.platform = new Platform();
-
+        this.mouseMovement = new MouseMovement(parameterAccessor);
+        
         totalNumberOfSimulations = parameterAccessor.getNumberOfSimulations();
         remainingNumberOfSimulations = totalNumberOfSimulations;
     }
@@ -52,14 +52,15 @@ public class Simulation implements SettingModifier, Paintable
             double lastSearchTime = mouseMovement.getTotalDurationOfCurrentSimulation();
             searchTimes.add(lastSearchTime);
             
-            System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
-    
             if(	simulationController.numberOfPics > 0 && lastSearchTime >= simulationController.picTimeFrameLowerBound && lastSearchTime <= simulationController.picTimeFrameUpperBound)
             {
                 simulationController.saveImage();
             }
     
-            if(remainingNumberOfSimulations == 1)
+            remainingNumberOfSimulations--;
+            System.out.println("Simulation " + (totalNumberOfSimulations - remainingNumberOfSimulations) + " of " + totalNumberOfSimulations + ", simulation time: " + lastSearchTime);
+    
+            if(remainingNumberOfSimulations == 0)
             {
                 double sumOfSearchTimes = calculateSumOfSearchTimes();
                 System.out.println("\nDurchschnittliche Suchzeit: " + (sumOfSearchTimes/totalNumberOfSimulations) + "\n");
@@ -83,7 +84,6 @@ public class Simulation implements SettingModifier, Paintable
                 }
             }
             simulationController.reset();
-            remainingNumberOfSimulations--;
         }
         
     }

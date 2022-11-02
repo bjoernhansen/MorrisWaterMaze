@@ -1,10 +1,12 @@
 package MorrisWaterMaze.parameter;
 
+import MorrisWaterMaze.model.StartingSide;
+
 public interface MouseParameterAccessor extends GeneralParameterAccessor
 {
     int getMaximumMouseSwimmingTime();
     double getMouseTrainingLevel();
     double getStepLengthBias();
-    boolean isMouseStartingPositionLeft();
+    StartingSide getStartingPosition();
     double mouseSpeed();
 }

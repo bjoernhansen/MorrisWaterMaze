@@ -1,9 +1,10 @@
 package MorrisWaterMaze.model;
 
 import MorrisWaterMaze.graphics.Paintable;
+import MorrisWaterMaze.util.Point;
 
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
+
 
 public class Pool implements Paintable
 {
@@ -17,7 +18,7 @@ public class Pool implements Paintable
 		CENTER_TO_BORDER_DISTANCE = RADIUS + BORDER_DISTANCE;
 
 	
-	Point2D
+	Point
 		center;			// Mittelpunkt des Pools
 	
 	Ellipse2D
@@ -28,7 +29,7 @@ public class Pool implements Paintable
 	
 	public Pool()
 	{
-		this.center = new Point2D.Double(CENTER_TO_BORDER_DISTANCE, CENTER_TO_BORDER_DISTANCE);
+		this.center = Point.newInstance(CENTER_TO_BORDER_DISTANCE, CENTER_TO_BORDER_DISTANCE);
 		this.collisionSize = new Ellipse2D.Double(	center.getX() - RADIUS + MouseMovement.RADIUS,
 													center.getY() - RADIUS + MouseMovement.RADIUS,
 													2 * (RADIUS - MouseMovement.RADIUS),

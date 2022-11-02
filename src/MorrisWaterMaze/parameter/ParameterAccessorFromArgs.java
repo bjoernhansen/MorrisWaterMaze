@@ -1,6 +1,7 @@
 package MorrisWaterMaze.parameter;
 
 import MorrisWaterMaze.Main;
+import MorrisWaterMaze.model.StartingSide;
 
 import java.util.List;
 
@@ -19,8 +20,8 @@ public class ParameterAccessorFromArgs extends AbstractParameterAccessor
     private final double
         stepLengthBias;
     
-    private final boolean
-        isMouseStartPositionLeft;
+    private final StartingSide
+        startingSide;
     
     private final double
         mouseSpeed;
@@ -51,7 +52,7 @@ public class ParameterAccessorFromArgs extends AbstractParameterAccessor
         maximumMouseSwimmingTime = Integer.parseInt(inputParameters.get(1));
         mouseTrainingLevel = Double.parseDouble(inputParameters.get(2));
         stepLengthBias = Double.parseDouble(inputParameters.get(3));
-        isMouseStartPositionLeft = Boolean.parseBoolean(inputParameters.get(4));
+        startingSide = Boolean.parseBoolean(inputParameters.get(4)) ? StartingSide.LEFT : StartingSide.RIGHT;
         mouseSpeed = Double.parseDouble(inputParameters.get(5));
         isStartingWithGui = Boolean.parseBoolean(inputParameters.get(6));
     
@@ -116,9 +117,9 @@ public class ParameterAccessorFromArgs extends AbstractParameterAccessor
     }
     
     @Override
-    public boolean isMouseStartingPositionLeft()
+    public StartingSide getStartingPosition()
     {
-        return isMouseStartPositionLeft;
+        return startingSide;
     }
     
     @Override

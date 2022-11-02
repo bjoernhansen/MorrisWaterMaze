@@ -1,61 +1,69 @@
 package MorrisWaterMaze;
 
+import MorrisWaterMaze.util.Point;
+
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Objects;
 import java.util.Random;
+
 
 public final class Calculations
 {
+	public static final Point
+		ORIGIN = Point.newInstance(0, 0);
+	
+	private static final Random
+		random = new Random();
+	
+	
 	private Calculations()
 	{
 		throw new UnsupportedOperationException();
 	}
 
-	private static final Point2D p0 = new Point2D.Float(0,0);
-	private static final Random random = new Random();
-
-	public static Point2D circleLineIntersection(Point2D p1, double r, Point2D p2, Point2D p3)
+	public static Point circleLineIntersection(Point circleCenter, double radius, Point lineStart, Point lineEnd)
 	{
 		// Source: http://www.seibsprogrammladen.de/frame1.html?Prgm/Algorithmen/Schnittpunkte
-		double rr = r * r;
-		double x21 = p3.getX() - p2.getX(), y21 = p3.getY() - p2.getY();
-		double x10 = p2.getX() - p1.getX(), y10 = p2.getY() - p1.getY();
+		double rr = radius * radius;
+		double x21 = lineEnd.getX() - lineStart.getX(), y21 = lineEnd.getY() - lineStart.getY();
+		double x10 = lineStart.getX() - circleCenter.getX(), y10 = lineStart.getY() - circleCenter.getY();
 		double a = (x21 * x21 + y21 * y21) / rr;
 		double b = (x21 * x10 + y21 * y10) / rr;
 		double c = (x10 * x10 + y10 * y10) / rr;
 		double d = b * b - a * (c - 1);
-		Point2D intersect = new Point2D.Double(0.0, 0.0);
+		
+		Point intersect = null;
 		if (d >= 0)
 		{
 			double e = Math.sqrt(d);
 			double u1 = (-b - e) / a, u2 = (-b + e) / a;
 			if (0 <= u1 && u1 <= 1)
 			{
-				intersect = new Point2D.Double(p2.getX() + x21 * u1, p2.getY()
-						+ y21 * u1);
-			} else
+				intersect = Point.newInstance(lineStart.getX() + x21 * u1, lineStart.getY() + y21 * u1);
+			}
+			else
 			{
-				intersect = new Point2D.Double(p2.getX() + x21 * u2, p2.getY()
-						+ y21 * u2);
+				intersect = Point.newInstance(lineStart.getX() + x21 * u2, lineStart.getY() + y21 * u2);
 			}
 		}
-		return intersect;
+		return Objects.requireNonNull(intersect);
 	}
 
-	public static Point2D calculateVector(Point2D startPointX, Point2D endPoint)
+	public static Point calculateVector(Point startPointX, Point endPoint)
 	{
-		return new Point2D.Double(endPoint.getX()-startPointX.getX(), endPoint.getY()- startPointX.getY());
+		return Point.newInstance(endPoint.getX()-startPointX.getX(), endPoint.getY()- startPointX.getY());
 	}
 
-	public static double calculatePolarAngle(Point2D vector)
+	public static double calculatePolarAngle(Point vector)
 	{		
 		return Math.atan2(vector.getY(), vector.getX());	
 	}
 
-	public static Point2D scalePoint(Point2D point, double scalingFactor)
+	public static Point scalePoint(Point point, double scalingFactor)
 	{		
-		return new Point2D.Double(scalingFactor*point.getX(), scalingFactor*point.getY());
+		return Point.newInstance(scalingFactor * point.getX(), scalingFactor * point.getY());
 	}
 
 	public static Line2D clipLine(Line2D line, Rectangle2D rect)
@@ -141,18 +149,11 @@ public final class Calculations
 		return new Line2D.Double(x1, y1, x2, y2);
 	}
 	
-	public static double angle(Point2D point1, Point2D point2)
+	public static double angle(Point point1, Point point2)
 	{
 		double scalar = point1.getX() * point2.getX() + point1.getY() * point2.getY();
-		return Math.acos(scalar/(point1.distance(p0) * point2.distance(p0)));
+		return Math.acos(scalar/(point1.distance(ORIGIN) * point2.distance(ORIGIN)));
 	}
-
-	static double signedAngle(Point2D p1, Point2D p2)
-	{
-		return Math.atan2(p2.getY(), p2.getX()) - Math.atan2(p1.getY(), p1.getX());
-	}
-
-	static double vectorLength(Point2D vector){return vector.distance(p0);}
 	
 	public static double gaussian(double mu, double sigma)
 	{
