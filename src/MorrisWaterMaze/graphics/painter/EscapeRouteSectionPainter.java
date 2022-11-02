@@ -1,11 +1,11 @@
 package MorrisWaterMaze.graphics.painter;
 
 import MorrisWaterMaze.control.SimulationController;
+import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.model.EscapeRouteSection;
 import MorrisWaterMaze.util.Calculations;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 
 
@@ -16,7 +16,7 @@ public class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
     
     
     @Override
-    public void paint(Graphics2D graphicsAdapter, EscapeRouteSection escapeRouteSection)
+    public void paint(GraphicsAdapter graphicsAdapter, EscapeRouteSection escapeRouteSection)
     {
         Line2D.Double escapeRouteSectionLine = getEscapeRouteSectionLine(escapeRouteSection);
         graphicsAdapter.setColor(Color.BLACK);

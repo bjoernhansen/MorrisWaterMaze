@@ -1,9 +1,8 @@
 package MorrisWaterMaze.graphics.painter;
 
+import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.graphics.Paintable;
 
-import java.awt.Graphics2D;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,7 +29,7 @@ class PaintManager
         return instance;
     }
     
-    public void paint(Graphics2D graphicsAdapter, Paintable paintableEntity)    {
+    public void paint(GraphicsAdapter graphicsAdapter, Paintable paintableEntity)    {
         Optional.ofNullable(getPainter(paintableEntity)).ifPresent(
             painter -> painter.paint(graphicsAdapter, paintableEntity));
     }

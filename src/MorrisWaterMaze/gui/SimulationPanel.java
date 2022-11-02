@@ -1,9 +1,11 @@
 package MorrisWaterMaze.gui;
 
-import MorrisWaterMaze.model.SettingModifier;
 import MorrisWaterMaze.control.SimulationControllerWithGui;
+import MorrisWaterMaze.graphics.Graphics2DAdapter;
+import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.graphics.painter.ImagePainter;
+import MorrisWaterMaze.model.SettingModifier;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.swing.BorderFactory;
@@ -15,10 +17,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -82,13 +82,11 @@ public class SimulationPanel extends JPanel implements ActionListener, ChangeLis
     {
         if(numberOfPicturesPerSecond != 0 && System.currentTimeMillis() - lastPainted > 1000/numberOfPicturesPerSecond)
         {
-            Graphics2D g2d = (Graphics2D) graphics.create();
-            
             super.paintComponent(graphics);
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(graphics);
+            graphicsAdapter.turnAntialiasingOn();
             Image image = imagePainter.paintImageOf(paintableEntity);
-            g2d.drawImage(image, 25, 25, null);
-            g2d.dispose();
+            graphicsAdapter.drawImage(image, 25, 25, null);
             lastPainted = System.currentTimeMillis();
         }
     }

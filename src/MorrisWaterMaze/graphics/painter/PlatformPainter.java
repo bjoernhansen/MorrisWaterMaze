@@ -1,11 +1,11 @@
 package MorrisWaterMaze.graphics.painter;
 
 import MorrisWaterMaze.control.SimulationController;
+import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.model.Platform;
 import MorrisWaterMaze.model.Pool;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 
 
 class PlatformPainter extends Painter<Platform>
@@ -14,7 +14,7 @@ class PlatformPainter extends Painter<Platform>
         DARK_GREY = new Color(75, 75, 75);
     
     @Override
-    public void paint(Graphics2D graphicsAdapter, Platform platform)
+    public void paint(GraphicsAdapter graphicsAdapter, Platform platform)
     {
         graphicsAdapter.setColor(DARK_GREY);
         graphicsAdapter.fill(affineTransformation.createTransformedShape(platform.getBounds()));

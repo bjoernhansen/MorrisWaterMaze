@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ImageObserver;
 
+
 public interface GraphicsAdapter
 {
     void setColor(Color c);
@@ -32,4 +33,5 @@ public interface GraphicsAdapter
     void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight);
     void fillPolygon(Polygon p);
     void drawPolygon(Polygon p);
+    void turnAntialiasingOn();
 }

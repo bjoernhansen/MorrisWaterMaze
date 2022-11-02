@@ -8,6 +8,7 @@ import MorrisWaterMaze.parameter.ParameterAccessor;
 import javax.swing.JFrame;
 import java.util.Optional;
 
+
 public class SimulationControllerWithGui extends SimulationController implements Runnable, LoopController
 {
     private static final int
