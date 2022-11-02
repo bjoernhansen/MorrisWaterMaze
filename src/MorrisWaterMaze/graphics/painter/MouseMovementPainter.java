@@ -25,22 +25,12 @@ class MouseMovementPainter extends Painter<MouseMovement>
     {
         this.graphicsAdapter = graphicsAdapter;
         mouseMovement.forEachEscapeRouteSection(this::paintEscapeRouteSection);
-      
         
         if(mouseMovement.isBodyToBeDrawn())
         {
-            double zoomFactor = SimulationController.ZOOM_FACTOR;
-            double radius = MouseMovement.RADIUS;
-            Point currentMousePosition = mouseMovement.getCurrentPosition();
-            
             graphicsAdapter.setColor(LIGHT_GREY);
-            graphicsAdapter.fillOval(
-                (int)(zoomFactor * currentMousePosition.getX()-radius),
-                (int)(zoomFactor * currentMousePosition.getY()-radius),
-                (int)(zoomFactor * radius * 2),
-                (int)(zoomFactor * radius * 2));
+            paintCircleOnTopOfAPoint(mouseMovement.getCurrentPosition(), MouseMovement.RADIUS);
         }
-        
     }
     
     private void paintEscapeRouteSection(EscapeRouteSection escapeRouteSection)
@@ -48,18 +38,24 @@ class MouseMovementPainter extends Painter<MouseMovement>
         double zoomFactor = SimulationController.ZOOM_FACTOR;
         Point sectionStart = escapeRouteSection.getStart();
         Point sectionEnd = escapeRouteSection.getEnd();
-        
+    
         Line2D.Double escapeRouteSectionLine = new Line2D.Double(
             Calculations.scalePoint(sectionStart, zoomFactor).asPoint2D(),
             Calculations.scalePoint(sectionEnd, zoomFactor).asPoint2D());
-        
+    
         graphicsAdapter.setColor(Color.BLACK);
         graphicsAdapter.draw(escapeRouteSectionLine);
-        
+        paintCircleOnTopOfAPoint(sectionEnd, 0.5);
+    }
+    
+    
+    private void paintCircleOnTopOfAPoint(Point point, double radius)
+    {
+        double zoomFactor = SimulationController.ZOOM_FACTOR;
         graphicsAdapter.fillOval(
-            (int) (zoomFactor * (sectionEnd.getX() - 0.5)),
-            (int) (zoomFactor * (sectionEnd.getY() - 0.5)),
-            (int)  zoomFactor,
-            (int)  zoomFactor);
+            (int)(zoomFactor * (point.getX() - radius)),
+            (int)(zoomFactor * (point.getY() - radius)),
+            (int)(zoomFactor * radius * 2),
+            (int)(zoomFactor * radius * 2));
     }
 }

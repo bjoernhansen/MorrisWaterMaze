@@ -24,8 +24,7 @@ public class MouseMovement implements Paintable
 	private final double speed;                    // Geschwindigkeit der Maus; default: 5
 	private double polarAngle;                    // bestimmt in welche Richtung die Maus schwimmt
 	private final double maximumSwimmingDuration;		// maximale Schwimmzeit; default: 0 (no restriction)
-	private final boolean
-		isStartingPositionLeft;	// gibt an, ob die Maus am linken oder rechten Rand des Pools erscheint; default: true
+	
 	private double trainingLevel;                    // Trainingslevel der Maus; [0, 1]; default: 0.5
 	public double stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
 	private boolean isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
@@ -41,33 +40,48 @@ public class MouseMovement implements Paintable
 	private double
 		durationOfNextSimulationStep;
 	
+	private final Point
+		startPosition;
+		
 	private final EscapeRoute
-		escapeRoute = new EscapeRoute();
+		escapeRoute;
 	
-	public MouseMovement(MouseParameterAccessor parameterAccessor)
+	private final Point
+		poolCenter;
+	
+	public MouseMovement(MouseParameterAccessor parameterAccessor, Pool pool)
 	{
-		coordinates = Point.newInstance(0,0); // TODO gleich die richtigen Werte setzen
+		startPosition = getStartPosition(parameterAccessor, pool);
+		escapeRoute = new EscapeRoute(startPosition);
+		coordinates = startPosition;
 		maximumSwimmingDuration = parameterAccessor.getMaximumMouseSwimmingTime();
 		trainingLevel = parameterAccessor.getMouseTrainingLevel();
 		stepLengthBias = parameterAccessor.getStepLengthBias();
-		isStartingPositionLeft = parameterAccessor.getStartingPosition() == StartingSide.LEFT;
 		speed = parameterAccessor.mouseSpeed();
 		isBodyToBeDrawn = parameterAccessor.isStartingWithGui();
+		poolCenter = pool.center;
 	}
-		
-	public void determineStartingPosition(Pool pool)// Startposition von der Maus
+	
+	private Point getStartPosition(MouseParameterAccessor parameterAccessor, Pool pool)
 	{
-		if(isStartingPositionLeft)
+		if(parameterAccessor.getStartingSide() == StartingSide.LEFT)
 		{
-			coordinates = Point.newInstance(pool.border.getCenterX()- Pool.RADIUS + RADIUS, pool.border.getCenterY());
+			return Point.newInstance(pool.border.getCenterX()- Pool.RADIUS + RADIUS, pool.border.getCenterY());
 		}
-		else
-		{
-			coordinates = Point.newInstance(pool.border.getCenterX() + Pool.RADIUS - RADIUS, pool.border.getCenterY());
-		}
-		polarAngle = Math.PI*(Math.random()-0.5) + Calculations.calculatePolarAngle(Calculations.calculateVector(coordinates, pool.center));
+		return Point.newInstance(pool.border.getCenterX() + Pool.RADIUS - RADIUS, pool.border.getCenterY());
+	}
+	
+	public void resetForNextEscapeRun()// Startposition von der Maus
+	{
+		escapeRoute.reset();
+		resetTimeSteps();
+		polarAngle = Math.PI*(Math.random()-0.5) + Calculations.calculatePolarAngle(Calculations.calculateVector(startPosition, poolCenter));
+		coordinates = startPosition;
 		isSwimming = true;
-		escapeRoute.resetTo(coordinates);
+	}
+	
+	private void resetTimeSteps()
+	{
 		timeSteps.clear();
 		timeSteps.add(0.0);
 	}
@@ -178,6 +192,6 @@ public class MouseMovement implements Paintable
 	
 	public Point getCurrentPosition()
 	{
-		return coordinates;
+		return escapeRoute.getLastPosition();
 	}
 }

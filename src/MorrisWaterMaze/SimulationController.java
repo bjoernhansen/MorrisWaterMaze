@@ -71,7 +71,7 @@ public abstract class SimulationController
 	
 	void reset()
 	{
-		simulation.determineMouseStartingPosition();
+		simulation.reset();
 	}
 	
 	public void saveImage()

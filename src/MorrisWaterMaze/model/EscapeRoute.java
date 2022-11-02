@@ -12,33 +12,32 @@ public final class EscapeRoute
     private final Stack<EscapeRouteSection>
         escapeRouteSections = new Stack<>();
     
-    private Point
+    private final Point
         startPosition;
         
     
+    EscapeRoute(Point startPosition)
+    {
+        this.startPosition = startPosition;
+    }
+    
     public void addNextSectionTo(Point nextPosition)
     {
-        Point previousPosition = getPreviousPosition();
+        Point previousPosition = getLastPosition();
         EscapeRouteSection nextSection = new EscapeRouteSection(previousPosition, nextPosition);
         escapeRouteSections.push(nextSection);
     }
     
-    private Point getPreviousPosition()
+    public Point getLastPosition()
     {
         return Optional.ofNullable(escapeRouteSections.peek())
                        .map(EscapeRouteSection::getEnd)
                        .orElse(startPosition);
     }
     
-    public EscapeRouteSection getLastSection()
-    {
-        return escapeRouteSections.peek();
-    }
-    
-    public void resetTo(Point startPosition)
+    public void reset()
     {
         escapeRouteSections.clear();
-        this.startPosition = startPosition;
     }
     
     public void forEachSection(Consumer<? super EscapeRouteSection> action)

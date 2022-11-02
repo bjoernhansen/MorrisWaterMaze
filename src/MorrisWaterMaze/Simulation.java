@@ -14,31 +14,36 @@ import java.util.ArrayList;
 
 public class Simulation implements SettingModifier, Paintable
 {
-    private int remainingNumberOfSimulations;
+    private final Pool
+        pool;
     
+    private final Platform
+        platform;
+    
+    private final MouseMovement
+        mouseMovement;
+        
+    private int
+        remainingNumberOfSimulations;
+    
+    private int
+        totalNumberOfSimulations;
     
     private final ArrayList<Double>
         searchTimes = new ArrayList<>();
     
-    private int totalNumberOfSimulations;
 
-    private final MouseMovement mouseMovement;
-
-    private final Pool pool;
-
-    private final Platform platform;
 
 
     public Simulation(SimulationParameterAccessor parameterAccessor)
     {
-        this.pool = new Pool();
-        this.platform = new Platform();
-        this.mouseMovement = new MouseMovement(parameterAccessor);
-        
+        pool = new Pool();
+        platform = new Platform();
+        mouseMovement = new MouseMovement(parameterAccessor, pool);
+    
         totalNumberOfSimulations = parameterAccessor.getNumberOfSimulations();
         remainingNumberOfSimulations = totalNumberOfSimulations;
     }
-
 
     void nextStep(SimulationController simulationController)
     {
@@ -105,8 +110,8 @@ public class Simulation implements SettingModifier, Paintable
         return mouseMovement.isSwimming();
     }
 
-    public void determineMouseStartingPosition() {
-        mouseMovement.determineStartingPosition(pool);
+    public void reset() {
+        mouseMovement.resetForNextEscapeRun();
     }
 
     @Override

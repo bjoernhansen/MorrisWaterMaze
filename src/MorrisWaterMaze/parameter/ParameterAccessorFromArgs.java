@@ -117,7 +117,7 @@ public class ParameterAccessorFromArgs extends AbstractParameterAccessor
     }
     
     @Override
-    public StartingSide getStartingPosition()
+    public StartingSide getStartingSide()
     {
         return startingSide;
     }

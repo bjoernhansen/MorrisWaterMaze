@@ -109,7 +109,7 @@ public class ParameterAccessorFromPropertiesFile extends AbstractParameterAccess
     }
     
     @Override
-    public StartingSide getStartingPosition()
+    public StartingSide getStartingSide()
     {
         return startingSide;
     }

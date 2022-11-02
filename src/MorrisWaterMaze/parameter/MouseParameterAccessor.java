@@ -7,6 +7,6 @@ public interface MouseParameterAccessor extends GeneralParameterAccessor
     int getMaximumMouseSwimmingTime();
     double getMouseTrainingLevel();
     double getStepLengthBias();
-    StartingSide getStartingPosition();
+    StartingSide getStartingSide();
     double mouseSpeed();
 }
