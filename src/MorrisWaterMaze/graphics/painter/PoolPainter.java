@@ -6,7 +6,7 @@ import MorrisWaterMaze.model.Pool;
 import java.awt.Color;
 
 
-class PoolPainter extends Painter<Pool>
+final class PoolPainter extends Painter<Pool>
 {
     @Override
     public void paint(GraphicsAdapter graphicsAdapter, Pool pool)

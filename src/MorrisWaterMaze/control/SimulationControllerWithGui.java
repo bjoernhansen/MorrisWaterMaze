@@ -1,15 +1,13 @@
 package MorrisWaterMaze.control;
 
 import MorrisWaterMaze.model.Simulation;
-import MorrisWaterMaze.gui.SimulationFrame;
-import MorrisWaterMaze.gui.SimulationPanel;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.swing.JFrame;
 import java.util.Optional;
 
 
-public class SimulationControllerWithGui extends SimulationController implements Runnable, LoopController
+final class SimulationControllerWithGui extends SimulationController implements Runnable, LoopController
 {
     private static final int
         PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS = 100;
@@ -36,6 +34,12 @@ public class SimulationControllerWithGui extends SimulationController implements
         simulationFrame.setVisible(true);
     
         animator = new Thread(this);
+        
+    }
+    
+    @Override
+    public void start()
+    {
         animator.start();
     }
     

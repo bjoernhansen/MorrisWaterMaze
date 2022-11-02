@@ -23,7 +23,7 @@ abstract class Painter<E extends Paintable>
         PAINT_MANAGER.paint(graphics2D, paintableEntity);
     }
     
-    protected final void paintCircleOnTopOfAPoint(GraphicsAdapter graphicsAdapter, Point point, double radius)
+    final void paintCircleOnTopOfAPoint(GraphicsAdapter graphicsAdapter, Point point, double radius)
     {
         double zoomFactor = SimulationController.ZOOM_FACTOR;
         graphicsAdapter.fillOval(

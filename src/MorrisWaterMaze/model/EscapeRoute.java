@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 
-public final class EscapeRoute
+final class EscapeRoute
 {
     private final Stack<EscapeRouteSection>
         escapeRouteSections = new Stack<>();

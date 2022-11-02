@@ -8,7 +8,7 @@ import MorrisWaterMaze.model.Pool;
 import java.awt.Color;
 
 
-class PlatformPainter extends Painter<Platform>
+final class PlatformPainter extends Painter<Platform>
 {
     private static final Color
         DARK_GREY = new Color(75, 75, 75);
@@ -26,9 +26,4 @@ class PlatformPainter extends Painter<Platform>
     
         graphicsAdapter.fillOval(x, y, size, size);
     }
-    
-    
-    
-    
-    
 }

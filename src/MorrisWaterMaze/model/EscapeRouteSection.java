@@ -4,7 +4,7 @@ import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.util.Point;
 
 
-public class EscapeRouteSection implements Paintable
+public final class EscapeRouteSection implements Paintable
 {
     private final Point
         start;

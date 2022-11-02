@@ -1,4 +1,4 @@
-package MorrisWaterMaze.gui;
+package MorrisWaterMaze.control;
 
 import MorrisWaterMaze.control.SimulationControllerWithGui;
 import MorrisWaterMaze.graphics.Graphics2DAdapter;
@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
-public class SimulationPanel extends JPanel implements ActionListener, ChangeListener
+final class SimulationPanel extends JPanel implements ActionListener, ChangeListener
 {
     private long lastPainted = System.currentTimeMillis();
     

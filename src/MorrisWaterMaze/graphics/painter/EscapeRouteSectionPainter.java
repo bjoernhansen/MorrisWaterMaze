@@ -9,7 +9,7 @@ import java.awt.Color;
 import java.awt.geom.Line2D;
 
 
-public class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
+final class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
 {
     private final double
         DELIMITER_CIRCLE_RADIUS = 0.5;

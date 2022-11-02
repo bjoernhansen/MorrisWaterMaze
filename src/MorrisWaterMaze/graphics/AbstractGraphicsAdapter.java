@@ -2,7 +2,8 @@ package MorrisWaterMaze.graphics;
 
 import java.util.Objects;
 
-public abstract class AbstractGraphicsAdapter<E> implements GraphicsAdapter
+
+abstract class AbstractGraphicsAdapter<E> implements GraphicsAdapter
 {
     protected final E graphics;
     

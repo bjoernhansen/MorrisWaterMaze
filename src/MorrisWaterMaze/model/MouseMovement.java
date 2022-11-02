@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 
-public class MouseMovement implements Paintable
+public final class MouseMovement implements Paintable
 {
 	private static final double
 		FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180°

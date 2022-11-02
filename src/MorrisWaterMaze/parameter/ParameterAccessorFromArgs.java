@@ -6,7 +6,7 @@ import MorrisWaterMaze.model.StartingSide;
 import java.util.List;
 
 
-public class ParameterAccessorFromArgs extends AbstractParameterAccessor
+final class ParameterAccessorFromArgs extends AbstractParameterAccessor
 {
     private final int
         numberOfSimulations;

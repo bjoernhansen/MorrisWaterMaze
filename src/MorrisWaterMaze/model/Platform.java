@@ -6,7 +6,7 @@ import MorrisWaterMaze.util.Point;
 import java.awt.geom.Rectangle2D;
 
 
-public class Platform implements Paintable
+public final class Platform implements Paintable
 {
     private final Rectangle2D
             bounds;

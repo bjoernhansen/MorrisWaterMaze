@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.Arrays;
 
 
+// TODO Klasse überarbeiten
 public abstract class SimulationController
 {
     public static final double
@@ -111,4 +112,6 @@ public abstract class SimulationController
     {
         return simulation;
     }
+    
+    public abstract void start();
 }

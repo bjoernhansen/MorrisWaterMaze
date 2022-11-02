@@ -7,7 +7,7 @@ import MorrisWaterMaze.model.MouseMovement;
 import java.awt.Color;
 
 
-class MouseMovementPainter extends Painter<MouseMovement>
+final class MouseMovementPainter extends Painter<MouseMovement>
 {
     private static final Color
         LIGHT_GREY = new Color(150, 150, 150);

@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 
-public class ParameterAccessorFromPropertiesFile extends AbstractParameterAccessor
+final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccessor
 {
     private static final String
         PARAMETER_PROPERTIES_FILE_NAME = "parameter.properties";

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class Simulation implements SettingModifier, Paintable
+public final class Simulation implements SettingModifier, Paintable
 {
     private final Pool
         pool;

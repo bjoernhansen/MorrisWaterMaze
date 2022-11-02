@@ -8,7 +8,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 
-public class ImagePainterImplementation implements ImagePainter
+public final class ImagePainterImplementation implements ImagePainter
 {
     private final Image
         image;

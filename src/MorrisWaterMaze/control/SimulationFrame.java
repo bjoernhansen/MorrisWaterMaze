@@ -1,4 +1,4 @@
-package MorrisWaterMaze.gui;
+package MorrisWaterMaze.control;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -6,7 +6,7 @@ import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class SimulationFrame extends JFrame
+final class SimulationFrame extends JFrame
 {
     private static final String
         APPLICATION_NAME = "Morris Water Maze Simulation";

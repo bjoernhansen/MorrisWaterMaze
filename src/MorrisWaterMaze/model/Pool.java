@@ -6,7 +6,7 @@ import MorrisWaterMaze.util.Point;
 import java.awt.geom.Ellipse2D;
 
 
-public class Pool implements Paintable
+public final class Pool implements Paintable
 {
 	public static final double
 		RADIUS = 65;

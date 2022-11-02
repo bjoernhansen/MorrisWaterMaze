@@ -7,7 +7,7 @@ import MorrisWaterMaze.model.Simulation;
 import java.awt.Color;
 
 
-class SimulationPainter extends Painter<Simulation>
+final class SimulationPainter extends Painter<Simulation>
 {
     @Override
     public void paint(GraphicsAdapter graphicsAdapter, Simulation simulation)

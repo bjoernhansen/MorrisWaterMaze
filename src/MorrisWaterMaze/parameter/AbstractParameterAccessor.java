@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.StringJoiner;
 
-public abstract class AbstractParameterAccessor implements ParameterAccessor
+abstract class AbstractParameterAccessor implements ParameterAccessor
 {
     String generateFilename()
     {
