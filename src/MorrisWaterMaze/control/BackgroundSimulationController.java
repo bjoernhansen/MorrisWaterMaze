@@ -1,14 +1,15 @@
 package MorrisWaterMaze.control;
 
+import MorrisWaterMaze.graphics.painter.ImagePainter;
 import MorrisWaterMaze.model.Simulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 
 final class BackgroundSimulationController extends SimulationController
 {
-    BackgroundSimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor)
+    BackgroundSimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainter)
     {
-        super(simulationInstance, parameterAccessor);
+        super(simulationInstance, parameterAccessor, imagePainter);
     }
     
     @Override

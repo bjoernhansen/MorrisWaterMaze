@@ -1,5 +1,6 @@
 package MorrisWaterMaze.control;
 
+import MorrisWaterMaze.graphics.painter.ImagePainter;
 import MorrisWaterMaze.model.Simulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
@@ -25,9 +26,9 @@ final class SimulationControllerWithGui extends SimulationController implements 
         simulationPanel;
     
 
-    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor)
+    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainter)
     {
-        super(simulationInstance, parameterAccessor);
+        super(simulationInstance, parameterAccessor, imagePainter);
     
         simulationPanel = new SimulationPanel(getSimulation(), parameterAccessor, this, imagePainter, getSimulation());
         simulationFrame = new SimulationFrame(simulationPanel);

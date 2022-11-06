@@ -1,7 +1,6 @@
 package MorrisWaterMaze.control;
 
 import MorrisWaterMaze.graphics.painter.ImagePainter;
-import MorrisWaterMaze.graphics.painter.ImagePainterImplementation;
 import MorrisWaterMaze.model.Pool;
 import MorrisWaterMaze.model.Simulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
@@ -19,7 +18,7 @@ public abstract class SimulationController
     public static final double
         ZOOM_FACTOR = 4;
     
-    public static final int
+    public static final int // TODO ggf. umziehen nach Main
         IMAGE_SIZE = (int) (2.0 * ZOOM_FACTOR * Pool.CENTER_TO_BORDER_DISTANCE);
     
     public static final String
@@ -28,12 +27,14 @@ public abstract class SimulationController
     private final boolean
         isStartingWithGui;
     
-    private int maxNrOfPicInSeries;
-    private int currentNrOfPicInSeries = 0;
-    public int numberOfPics = 0;
-    public double picTimeFrameUpperBound;
+    private final int
+        maxNrOfPicInSeries;
+        
+    public final double
+        upperBoundOfPictureTimeFrame;
     
-    public double picTimeFrameLowerBound;
+    public final double
+        lowerBoundOfPictureTimeFrame;
     
     private final String
         fileName;
@@ -41,26 +42,29 @@ public abstract class SimulationController
     private final Simulation
         simulation;
     
-    protected final ImagePainter
+    private final ImagePainter
         imagePainter;
     
+    private int
+        currentNrOfPicInSeries = 0;
     
-    SimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor)
+    private int
+        missingPicturesCount;
+    
+    
+    SimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainterInstance)
     {
         simulation = simulationInstance;
         isStartingWithGui = parameterAccessor.isStartingWithGui();
         fileName = parameterAccessor.getFilename();
         String directoryName = LOG_DIRECTORY_NAME + fileName;
         makeDirectory(directoryName);
-        imagePainter = new ImagePainterImplementation(IMAGE_SIZE);
+        imagePainter = imagePainterInstance;
+        missingPicturesCount = parameterAccessor.getNumberOfPics();
+        lowerBoundOfPictureTimeFrame = parameterAccessor.getLowerBoundOfPictureTimeFrame();
+        upperBoundOfPictureTimeFrame = parameterAccessor.getUpperBoundOfPictureTimeFrame();
+        maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
         
-        if (parameterAccessor.getNumberOfPics() > 0)
-        {
-            numberOfPics = parameterAccessor.getNumberOfPics();
-            picTimeFrameLowerBound = parameterAccessor.getLowerBoundOfPictureTimeFrame();
-            picTimeFrameUpperBound = parameterAccessor.getUpperBoundOfPictureTimeFrame();
-            maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
-        }
         reset();
     }
     
@@ -78,6 +82,7 @@ public abstract class SimulationController
     
     public void saveImage()
     {
+        // TODO vor dem Refactoring sicher gehen, dass es aktuell richtig funktioniert: Werden mehrere Trajektorien im Bild gespeichert?
         if (!isStartingWithGui)
         {
             currentNrOfPicInSeries++;
@@ -87,11 +92,15 @@ public abstract class SimulationController
             try
             {
                 String fileNameTemp = LOG_DIRECTORY_NAME + fileName + "/" + System.currentTimeMillis() + ".png";
+                System.out.println();
                 System.out.println("\nSchreibe Datei: " + fileNameTemp + "\n");
                 Image image = imagePainter.paintImageOf(simulation);
                 ImageIO.write((RenderedImage) image, "png", new File(fileNameTemp));
-                numberOfPics--;
-            } catch (Exception exception)
+                missingPicturesCount--;
+                System.out.println("Missing Pictures: " + missingPicturesCount);
+                System.out.println();
+            }
+            catch (Exception exception)
             {
                 System.out.println(Arrays.toString(exception.getStackTrace()));
             }
@@ -114,4 +123,14 @@ public abstract class SimulationController
     }
     
     public abstract void start();
+    
+    public boolean isAnotherPictureToBePainted()
+    {
+        return missingPicturesCount > 0;
+    }
+    
+    public boolean isSearchTimesWithinSpecifiedTimeFrame(double lastSearchTime)
+    {
+        return lastSearchTime >= lowerBoundOfPictureTimeFrame && lastSearchTime <= upperBoundOfPictureTimeFrame;
+    }
 }

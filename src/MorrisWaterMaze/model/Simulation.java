@@ -56,7 +56,8 @@ public final class Simulation implements SettingModifier, Paintable
             double lastSearchTime = mouseMovement.getTotalDurationOfCurrentSimulation();
             searchTimes.add(lastSearchTime);
             
-            if(	simulationController.numberOfPics > 0 && lastSearchTime >= simulationController.picTimeFrameLowerBound && lastSearchTime <= simulationController.picTimeFrameUpperBound)
+            // TODO Funktionsneid
+            if(	simulationController.isAnotherPictureToBePainted() && simulationController.isSearchTimesWithinSpecifiedTimeFrame(lastSearchTime))
             {
                 simulationController.saveImage();
             }
