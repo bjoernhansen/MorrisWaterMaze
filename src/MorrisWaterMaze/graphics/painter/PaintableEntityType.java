@@ -1,6 +1,7 @@
 package MorrisWaterMaze.graphics.painter;
 
-import MorrisWaterMaze.model.Simulation;
+import MorrisWaterMaze.model.Background;
+import MorrisWaterMaze.model.WaterMorrisMazeSimulation;
 import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.model.EscapeRouteSection;
 import MorrisWaterMaze.model.MouseMovement;
@@ -13,11 +14,12 @@ import java.util.function.Supplier;
 
 enum PaintableEntityType
 {
-    SIMULATION(Simulation.class, SimulationPainter::new),
+    SIMULATION(WaterMorrisMazeSimulation.class, SimulationPainter::new),
     MOUSE_MOVEMENT(MouseMovement .class, MouseMovementPainter::new),
     PLATFORM(Platform.class, PlatformPainter::new),
     POOL(Pool.class, PoolPainter::new),
-    ESCAPE_ROUTE_SECTION(EscapeRouteSection.class, EscapeRouteSectionPainter::new);
+    ESCAPE_ROUTE_SECTION(EscapeRouteSection.class, EscapeRouteSectionPainter::new),
+    BACKGROUND(Background.class, BackgroundPainter::new );
     
     
     private static final List<PaintableEntityType>

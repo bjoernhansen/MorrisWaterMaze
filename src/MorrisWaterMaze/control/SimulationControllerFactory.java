@@ -1,13 +1,13 @@
 package MorrisWaterMaze.control;
 
 import MorrisWaterMaze.graphics.painter.ImagePainter;
-import MorrisWaterMaze.model.Simulation;
+import MorrisWaterMaze.model.WaterMorrisMazeSimulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 
 public final class SimulationControllerFactory
 {
-    public static SimulationController newInstance(Simulation simulation, ParameterAccessor parameterAccessor, ImagePainter imagePainter)
+    public static SimulationController newInstance(WaterMorrisMazeSimulation simulation, ParameterAccessor parameterAccessor, ImagePainter imagePainter)
     {
         if(parameterAccessor.isStartingWithGui())
         {

@@ -27,9 +27,9 @@ final class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
     private Line2D.Double getEscapeRouteSectionLine(EscapeRouteSection escapeRouteSection)
     {
         return new Line2D.Double(
-            Calculations.scalePoint(escapeRouteSection.getStart(), SimulationController.ZOOM_FACTOR)
+            Calculations.scalePoint(escapeRouteSection.getStart(), ZOOM_FACTOR)
                         .asPoint2D(),
-            Calculations.scalePoint(escapeRouteSection.getEnd(), SimulationController.ZOOM_FACTOR)
+            Calculations.scalePoint(escapeRouteSection.getEnd(), ZOOM_FACTOR)
                         .asPoint2D());
     }
 }

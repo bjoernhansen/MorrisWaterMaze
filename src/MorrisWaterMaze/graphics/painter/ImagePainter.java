@@ -7,5 +7,13 @@ import java.awt.Image;
 
 public interface ImagePainter
 {
-    Image paintImageOf(Paintable paintableEntity);
+    void paint(Paintable paintableEntity);
+    
+    Image getImage();
+    
+    void setBackground(Paintable paintable);
+    
+    void initializeImage();
+    
+    ImagePainter makeCopy();
 }

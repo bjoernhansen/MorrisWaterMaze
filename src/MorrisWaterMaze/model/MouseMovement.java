@@ -86,9 +86,9 @@ public final class MouseMovement implements Paintable
 		timeSteps.add(0.0);
 	}
 	
-	public void move(Pool pool, Platform platform, double maximumDurationOfNextSimulationStepValue)
+	public void move(Pool pool, Platform platform)
 	{
-		maximumDurationOfNextSimulationStep = maximumDurationOfNextSimulationStepValue;
+		maximumDurationOfNextSimulationStep = calculateRandomSimulationStepDuration();
 		durationOfNextSimulationStep = getDurationOfNextSimulationStep();
 		
 		if(hasReachedSwimmingTimeLimit())
@@ -193,5 +193,10 @@ public final class MouseMovement implements Paintable
 	public Point getCurrentPosition()
 	{
 		return escapeRoute.getLastPosition();
+	}
+	
+	private double calculateRandomSimulationStepDuration()
+	{
+		return Calculations.calculateRandomDuration(stepLengthBias);
 	}
 }

@@ -21,12 +21,16 @@ final class MouseMovementPainter extends Painter<MouseMovement>
     {
         this.graphicsAdapter = graphicsAdapter;
         mouseMovement.forEachEscapeRouteSection(this::paintEscapeRouteSection);
-        
         if(mouseMovement.isBodyToBeDrawn())
         {
-            graphicsAdapter.setColor(LIGHT_GREY);
-            paintCircleOnTopOfAPoint(graphicsAdapter, mouseMovement.getCurrentPosition(), MouseMovement.RADIUS);
+            paintMouseBody(graphicsAdapter, mouseMovement);
         }
+    }
+
+    private void paintMouseBody(GraphicsAdapter graphicsAdapter, MouseMovement mouseMovement)
+    {
+        graphicsAdapter.setColor(LIGHT_GREY);
+        paintCircleOnTopOfAPoint(graphicsAdapter, mouseMovement.getCurrentPosition(), MouseMovement.RADIUS);
     }
     
     private void paintEscapeRouteSection(EscapeRouteSection escapeRouteSection)

@@ -21,8 +21,8 @@ final class PlatformPainter extends Painter<Platform>
         graphicsAdapter.setColor(Color.black);
     
         int y;
-        int x = y = (int)(SimulationController.ZOOM_FACTOR * (Pool.CENTER_TO_BORDER_DISTANCE - 1));
-        int size = (int) (2.0 * SimulationController.ZOOM_FACTOR);
+        int x = y = (int)(ZOOM_FACTOR * (Pool.CENTER_TO_BORDER_DISTANCE - 1));
+        int size = (int) (2.0 * ZOOM_FACTOR);
     
         graphicsAdapter.fillOval(x, y, size, size);
     }

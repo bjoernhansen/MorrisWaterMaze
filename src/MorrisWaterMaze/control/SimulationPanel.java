@@ -1,6 +1,5 @@
 package MorrisWaterMaze.control;
 
-import MorrisWaterMaze.control.SimulationControllerWithGui;
 import MorrisWaterMaze.graphics.Graphics2DAdapter;
 import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.graphics.Paintable;
@@ -45,6 +44,9 @@ final class SimulationPanel extends JPanel implements ActionListener, ChangeList
     private final Paintable
         paintableEntity;
     
+
+    
+    
     
     
     public SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SimulationControllerWithGui simulationController, ImagePainter imagePainter, Paintable paintableEntity)
@@ -85,7 +87,9 @@ final class SimulationPanel extends JPanel implements ActionListener, ChangeList
             super.paintComponent(graphics);
             GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(graphics);
             graphicsAdapter.turnAntialiasingOn();
-            Image image = imagePainter.paintImageOf(paintableEntity);
+            imagePainter.initializeImage();
+            imagePainter.paint(paintableEntity);
+            Image image = imagePainter.getImage();
             graphicsAdapter.drawImage(image, 25, 25, null);
             lastPainted = System.currentTimeMillis();
         }

@@ -1,35 +1,29 @@
 package MorrisWaterMaze.control;
 
+import MorrisWaterMaze.control.observer.SimulationCompletionObserver;
+import MorrisWaterMaze.control.observer.SimulationStepObserver;
 import MorrisWaterMaze.graphics.painter.ImagePainter;
-import MorrisWaterMaze.model.Pool;
-import MorrisWaterMaze.model.Simulation;
+import MorrisWaterMaze.model.WaterMorrisMazeSimulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.imageio.ImageIO;
-import java.awt.Image;
 import java.awt.image.RenderedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 
 
 // TODO Klasse überarbeiten
-public abstract class SimulationController
+public abstract class SimulationController implements SimulationStepObserver, SimulationCompletionObserver
 {
-    public static final double
-        ZOOM_FACTOR = 4;
-    
-    public static final int // TODO ggf. umziehen nach Main
-        IMAGE_SIZE = (int) (2.0 * ZOOM_FACTOR * Pool.CENTER_TO_BORDER_DISTANCE);
-    
     public static final String
         LOG_DIRECTORY_NAME = "logs/";
     
-    private final boolean
-        isStartingWithGui;
-    
     private final int
         maxNrOfPicInSeries;
-        
+    
     public final double
         upperBoundOfPictureTimeFrame;
     
@@ -39,7 +33,7 @@ public abstract class SimulationController
     private final String
         fileName;
     
-    private final Simulation
+    private final WaterMorrisMazeSimulation
         simulation;
     
     private final ImagePainter
@@ -52,10 +46,12 @@ public abstract class SimulationController
         missingPicturesCount;
     
     
-    SimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainterInstance)
+    SimulationController(WaterMorrisMazeSimulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainterInstance)
     {
         simulation = simulationInstance;
-        isStartingWithGui = parameterAccessor.isStartingWithGui();
+        simulation.registerSimulationStepObserver(this);
+        simulation.registerSimulationCompletionObserver(this);
+        makeLogDirectoryIfNotExistent();
         fileName = parameterAccessor.getFilename();
         String directoryName = LOG_DIRECTORY_NAME + fileName;
         makeDirectory(directoryName);
@@ -68,6 +64,14 @@ public abstract class SimulationController
         reset();
     }
     
+    private void makeLogDirectoryIfNotExistent()
+    {
+        File logDirectory = new File(LOG_DIRECTORY_NAME);
+        if (!logDirectory.exists())
+        {
+            logDirectory.mkdir();
+        }
+    }
     
     public void makeDirectory(String directoryName)
     {
@@ -82,42 +86,33 @@ public abstract class SimulationController
     
     public void saveImage()
     {
-        // TODO vor dem Refactoring sicher gehen, dass es aktuell richtig funktioniert: Werden mehrere Trajektorien im Bild gespeichert?
-        if (!isStartingWithGui)
-        {
-            currentNrOfPicInSeries++;
-        }
-        if (isStartingWithGui || currentNrOfPicInSeries == maxNrOfPicInSeries)
+        currentNrOfPicInSeries++;
+        imagePainter.paint(simulation);
+        
+        if (isPictureSeriesComplete())
         {
             try
             {
                 String fileNameTemp = LOG_DIRECTORY_NAME + fileName + "/" + System.currentTimeMillis() + ".png";
-                System.out.println();
-                System.out.println("\nSchreibe Datei: " + fileNameTemp + "\n");
-                Image image = imagePainter.paintImageOf(simulation);
-                ImageIO.write((RenderedImage) image, "png", new File(fileNameTemp));
+                System.out.println("\nSchreibe Datei: " + fileNameTemp);
+                ImageIO.write((RenderedImage) imagePainter.getImage(), "png", new File(fileNameTemp));
                 missingPicturesCount--;
-                System.out.println("Missing Pictures: " + missingPicturesCount);
-                System.out.println();
-            }
-            catch (Exception exception)
+                System.out.println("Missing Pictures: " + missingPicturesCount + "\n");
+            } catch (Exception exception)
             {
                 System.out.println(Arrays.toString(exception.getStackTrace()));
             }
-        }
-        if (!isStartingWithGui && currentNrOfPicInSeries == maxNrOfPicInSeries)
-        {
             currentNrOfPicInSeries = 0;
+            imagePainter.initializeImage();
         }
     }
     
-    public String getFileName()
+    private boolean isPictureSeriesComplete()
     {
-        return fileName;
+        return currentNrOfPicInSeries == maxNrOfPicInSeries;
     }
-    
-    
-    protected Simulation getSimulation()
+  
+    protected WaterMorrisMazeSimulation getSimulation()
     {
         return simulation;
     }
@@ -129,8 +124,50 @@ public abstract class SimulationController
         return missingPicturesCount > 0;
     }
     
-    public boolean isSearchTimesWithinSpecifiedTimeFrame(double lastSearchTime)
+    public boolean isSearchTimesWithinSpecifiedTimeFrame()
     {
-        return lastSearchTime >= lowerBoundOfPictureTimeFrame && lastSearchTime <= upperBoundOfPictureTimeFrame;
+        return simulation.getLastSearchTime() >= lowerBoundOfPictureTimeFrame
+            && simulation.getLastSearchTime() <= upperBoundOfPictureTimeFrame;
+    }
+    
+    @Override
+    public void beNotifiedAboutEndOfSimulation()
+    {
+        double sumOfSearchTimes = simulation.calculateSumOfSearchTimes();
+        System.out.println("\nDurchschnittliche Suchzeit: " + (sumOfSearchTimes/simulation.getTotalNumberOfSimulations()) + "\n");
+        String fileNameTemp = SimulationController.LOG_DIRECTORY_NAME + fileName + "/" + fileName + ".txt";
+        System.out.println("Schreibe Datei: " + fileNameTemp);
+        BufferedWriter bufferedWriter;
+        try
+        {
+            bufferedWriter = new BufferedWriter(new FileWriter(fileNameTemp));
+            for (Double searchTime : simulation.getSearchTimes())
+            {
+                bufferedWriter.write(searchTime + System.getProperty("line.separator"));
+            }
+            bufferedWriter.close();
+        }
+        catch (IOException ioe)
+        {
+            System.out.println("caught error: " + ioe);
+        }
+    }
+    
+    @Override
+    public void beNotifiedAboutEndOfLastSimulationStep()
+    {
+        System.out.println(getSimulationStepCompletionMessage());
+        if (isAnotherPictureToBePainted() && isSearchTimesWithinSpecifiedTimeFrame())
+        {
+            saveImage();
+        }
+        reset();
+    }
+    
+    private String getSimulationStepCompletionMessage()
+    {
+        return  "Simulation " + simulation.getNumberOfCompletedSimulations()
+                + " of " + simulation.getTotalNumberOfSimulations()
+                + ", simulation time: " + simulation.getLastSearchTime();
     }
 }

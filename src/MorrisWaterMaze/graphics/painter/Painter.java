@@ -1,5 +1,6 @@
 package MorrisWaterMaze.graphics.painter;
 
+import MorrisWaterMaze.Main;
 import MorrisWaterMaze.control.SimulationController;
 import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.graphics.Paintable;
@@ -10,12 +11,16 @@ import java.awt.geom.AffineTransform;
 
 abstract class Painter<E extends Paintable>
 {
+    final static double
+        ZOOM_FACTOR = Main.ZOOM_FACTOR;
+    
     private static final PaintManager
         PAINT_MANAGER = PaintManager.getInstance();
     
     static final AffineTransform
-        affineTransformation = new AffineTransform(SimulationController.ZOOM_FACTOR, 0, 0, SimulationController.ZOOM_FACTOR, 0, 0);
+        affineTransformation = new AffineTransform(ZOOM_FACTOR, 0, 0, ZOOM_FACTOR, 0, 0);
         
+    
     abstract public void paint(GraphicsAdapter graphicsAdapter, E paintableEntity);
     
     void paintEntity(GraphicsAdapter graphics2D, Paintable paintableEntity)
@@ -25,7 +30,7 @@ abstract class Painter<E extends Paintable>
     
     final void paintCircleOnTopOfAPoint(GraphicsAdapter graphicsAdapter, Point point, double radius)
     {
-        double zoomFactor = SimulationController.ZOOM_FACTOR;
+        double zoomFactor = ZOOM_FACTOR;
         graphicsAdapter.fillOval(
             (int)(zoomFactor * (point.getX() - radius)),
             (int)(zoomFactor * (point.getY() - radius)),

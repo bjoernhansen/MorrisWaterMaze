@@ -1,13 +1,13 @@
 package MorrisWaterMaze.control;
 
 import MorrisWaterMaze.graphics.painter.ImagePainter;
-import MorrisWaterMaze.model.Simulation;
+import MorrisWaterMaze.model.WaterMorrisMazeSimulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 
 final class BackgroundSimulationController extends SimulationController
 {
-    BackgroundSimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainter)
+    BackgroundSimulationController(WaterMorrisMazeSimulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainter)
     {
         super(simulationInstance, parameterAccessor, imagePainter);
     }
@@ -15,9 +15,10 @@ final class BackgroundSimulationController extends SimulationController
     @Override
     public void start()
     {
-        while(getSimulation().isAnotherSimulationToBeStarted())
+        WaterMorrisMazeSimulation simulation = getSimulation();
+        while(simulation.isNotFinished())
         {
-            getSimulation().nextStep(this);
+            simulation.nextStep();
         }
     }
 }
