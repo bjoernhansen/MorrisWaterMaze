@@ -7,6 +7,7 @@ import MorrisWaterMaze.graphics.painter.ImagePainter;
 import MorrisWaterMaze.graphics.painter.ImagePainterImplementation;
 import MorrisWaterMaze.model.Background;
 import MorrisWaterMaze.model.Pool;
+import MorrisWaterMaze.model.Simulation;
 import MorrisWaterMaze.model.WaterMorrisMazeSimulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 import MorrisWaterMaze.parameter.ParameterSource;
@@ -30,7 +31,7 @@ public final class Main
     public static void main(String[] args)
     {
 		ParameterAccessor parameterAccessor = PARAMETER_SOURCE.makeParameterAccessorInstance(args);
-		WaterMorrisMazeSimulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
+		Simulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
 		Paintable background = new Background(BACKGROUND_SIDE_LENGTH);
 		ImagePainter imagePainter = ImagePainterImplementation.newInstanceWithBackground(IMAGE_SIZE, background);
 		SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor, imagePainter);

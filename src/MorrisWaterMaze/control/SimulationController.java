@@ -3,7 +3,7 @@ package MorrisWaterMaze.control;
 import MorrisWaterMaze.control.observer.SimulationCompletionObserver;
 import MorrisWaterMaze.control.observer.SimulationStepObserver;
 import MorrisWaterMaze.graphics.painter.ImagePainter;
-import MorrisWaterMaze.model.WaterMorrisMazeSimulation;
+import MorrisWaterMaze.model.Simulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.imageio.ImageIO;
@@ -33,7 +33,7 @@ public abstract class SimulationController implements SimulationStepObserver, Si
     private final String
         fileName;
     
-    private final WaterMorrisMazeSimulation
+    private final Simulation
         simulation;
     
     private final ImagePainter
@@ -46,7 +46,7 @@ public abstract class SimulationController implements SimulationStepObserver, Si
         missingPicturesCount;
     
     
-    SimulationController(WaterMorrisMazeSimulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainterInstance)
+    SimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainterInstance)
     {
         simulation = simulationInstance;
         simulation.registerSimulationStepObserver(this);
@@ -112,7 +112,7 @@ public abstract class SimulationController implements SimulationStepObserver, Si
         return currentNrOfPicInSeries == maxNrOfPicInSeries;
     }
   
-    protected WaterMorrisMazeSimulation getSimulation()
+    protected Simulation getSimulation()
     {
         return simulation;
     }

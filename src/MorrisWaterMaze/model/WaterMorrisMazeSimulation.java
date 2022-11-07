@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public final class WaterMorrisMazeSimulation implements SettingModifier, Paintable
+public final class WaterMorrisMazeSimulation implements Simulation
 {
     private final Pool
         pool;
@@ -49,6 +49,7 @@ public final class WaterMorrisMazeSimulation implements SettingModifier, Paintab
         remainingNumberOfSimulations = totalNumberOfSimulations;
     }
 
+    @Override
     public void nextStep()
     {
         if(isSimulationInProgress())
@@ -90,10 +91,12 @@ public final class WaterMorrisMazeSimulation implements SettingModifier, Paintab
         remainingNumberOfSimulations = totalNumberOfSimulations;
     }
     
+    @Override
     public boolean isNotFinished() {
         return !isCurrentSimulationStepLastStep();
     }
     
+    @Override
     public double calculateSumOfSearchTimes()
     {
         return searchTimes.stream()
@@ -101,6 +104,7 @@ public final class WaterMorrisMazeSimulation implements SettingModifier, Paintab
                           .sum();
     }
     
+    @Override
     public void reset() {
         mouseMovement.resetForNextEscapeRun();
     }
@@ -120,31 +124,37 @@ public final class WaterMorrisMazeSimulation implements SettingModifier, Paintab
         return mouseMovement;
     }
     
+    @Override
     public void registerSimulationStepObserver(SimulationStepObserver simulationStepObserver)
     {
         simulationStepObservers.add(simulationStepObserver);
     }
     
+    @Override
     public void registerSimulationCompletionObserver(SimulationCompletionObserver simulationCompletionObserver)
     {
         simulationCompletionObservers.add(simulationCompletionObserver);
     }
     
+    @Override
     public int getNumberOfCompletedSimulations()
     {
         return totalNumberOfSimulations - remainingNumberOfSimulations;
     }
     
+    @Override
     public int getTotalNumberOfSimulations()
     {
         return totalNumberOfSimulations;
     }
     
+    @Override
     public double getLastSearchTime()
     {
         return lastSearchTime;
     }
     
+    @Override
     public List<Double> getSearchTimes()
     {
         return Collections.unmodifiableList(searchTimes);
@@ -169,6 +179,4 @@ public final class WaterMorrisMazeSimulation implements SettingModifier, Paintab
     {
         return remainingNumberOfSimulations <= 0;
     }
-    
-
 }
