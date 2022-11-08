@@ -1,4 +1,4 @@
-package MorrisWaterMaze.control;
+package MorrisWaterMaze.control.gui;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;

@@ -1,5 +1,7 @@
-package MorrisWaterMaze.control;
+package MorrisWaterMaze.control.gui;
 
+import MorrisWaterMaze.control.FileNameProvider;
+import MorrisWaterMaze.control.SimulationController;
 import MorrisWaterMaze.graphics.painter.ImagePainter;
 import MorrisWaterMaze.model.simulation.Simulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
@@ -8,7 +10,7 @@ import javax.swing.JFrame;
 import java.util.Optional;
 
 
-final class SimulationControllerWithGui extends SimulationController implements Runnable
+public final class SimulationControllerWithGui extends SimulationController implements Runnable
 {
     private static final int
         PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS = 100;
@@ -26,7 +28,7 @@ final class SimulationControllerWithGui extends SimulationController implements 
         simulationPanel;
     
 
-    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainter, FileNameProvider fileNameProvider)
+    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainter)
     {
         super(simulationInstance);
     
@@ -68,7 +70,7 @@ final class SimulationControllerWithGui extends SimulationController implements 
     public void reset()
     {
         Optional.ofNullable(simulationPanel).ifPresent(
-            panel -> panel.setStartAndPauseButtonText("Start"));
+            SimulationPanel::resetStartAndPauseButton);
         getSimulation().reset();
     }
     

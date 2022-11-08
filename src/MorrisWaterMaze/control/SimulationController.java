@@ -8,13 +8,13 @@ public abstract class SimulationController
     private final Simulation
         simulation;
     
-    SimulationController(Simulation simulationInstance)
+    protected SimulationController(Simulation simulationInstance)
     {
         simulation = simulationInstance;
         simulation.reset();
     }
     
-    Simulation getSimulation()
+    protected Simulation getSimulation()
     {
         return simulation;
     }

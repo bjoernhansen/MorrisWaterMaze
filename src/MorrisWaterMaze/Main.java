@@ -37,25 +37,33 @@ public final class Main
 		throw new UnsupportedOperationException();
 	}
 	
-	// TODO verbessern in kleinere Methoden auslagern
     public static void main(String[] args)
     {
 		ParameterAccessor parameterAccessor = PARAMETER_SOURCE.makeParameterAccessorInstance(args);
-		Simulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
-		Paintable background = new Background(BACKGROUND_SIDE_LENGTH);
-		ImagePainter imagePainter = ImagePainterImplementation.newInstanceWithBackground(IMAGE_SIZE, background);
-	
 		FileNameProvider fileNameProvider = new FileNameProvider(parameterAccessor);
-		DirectoryCreator directoryCreator = new DirectoryCreator(fileNameProvider);
-		directoryCreator.makeDirectories();
-	
+		createDirectories(fileNameProvider);
+		ImagePainter imagePainter = makeImagePainter();
+		
 		ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainter, parameterAccessor, fileNameProvider);
-		simulation.registerSimulationStepObservers(imageFileCreator);
-	
 		ReportWriter reportWriter = new ReportWriter(fileNameProvider);
+		
+		Simulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
+		simulation.registerSimulationStepObservers(imageFileCreator);
 		simulation.registerSimulationCompletionObservers(reportWriter);
 		
-		SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor, imagePainter, fileNameProvider);
+		SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor, imagePainter);
 		simulationController.start();
     }
+	
+	private static void createDirectories(FileNameProvider fileNameProvider)
+	{
+		DirectoryCreator directoryCreator = new DirectoryCreator(fileNameProvider);
+		directoryCreator.makeDirectories();
+	}
+	
+	private static ImagePainter makeImagePainter()
+	{
+		Paintable background = new Background(BACKGROUND_SIDE_LENGTH);
+		return ImagePainterImplementation.newInstanceWithBackground(IMAGE_SIZE, background);
+	}
 }
