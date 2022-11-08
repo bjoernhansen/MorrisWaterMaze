@@ -1,7 +1,7 @@
 package MorrisWaterMaze.graphics.painter;
 
 import MorrisWaterMaze.graphics.GraphicsAdapter;
-import MorrisWaterMaze.model.WaterMorrisMazeSimulation;
+import MorrisWaterMaze.model.simulation.WaterMorrisMazeSimulation;
 
 
 final class SimulationPainter extends Painter<WaterMorrisMazeSimulation>

@@ -1,6 +1,5 @@
 package MorrisWaterMaze.graphics.painter;
 
-import MorrisWaterMaze.control.SimulationController;
 import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.model.EscapeRouteSection;
 import MorrisWaterMaze.util.Calculations;
@@ -21,7 +20,7 @@ final class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
         Line2D.Double escapeRouteSectionLine = getEscapeRouteSectionLine(escapeRouteSection);
         graphicsAdapter.setColor(Color.BLACK);
         graphicsAdapter.draw(escapeRouteSectionLine);
-        paintCircleOnTopOfAPoint(graphicsAdapter, escapeRouteSection.getEnd(), DELIMITER_CIRCLE_RADIUS);
+        graphicsAdapter.paintCircleOnTopOfAPoint(escapeRouteSection.getEnd().asPoint2D(), DELIMITER_CIRCLE_RADIUS, ZOOM_FACTOR);
     }
     
     private Line2D.Double getEscapeRouteSectionLine(EscapeRouteSection escapeRouteSection)

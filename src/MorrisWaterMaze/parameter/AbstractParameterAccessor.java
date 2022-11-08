@@ -6,7 +6,7 @@ import java.util.StringJoiner;
 
 abstract class AbstractParameterAccessor implements ParameterAccessor
 {
-    String generateFilename()
+    String generateSimulationId()
     {
         Date date = new Date(System.currentTimeMillis());
         SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy_MM_dd_HH_mm_ss" );

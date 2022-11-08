@@ -1,12 +1,17 @@
 package MorrisWaterMaze.graphics;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Paint;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.Point2D;
 import java.awt.image.ImageObserver;
 
 
-public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
+public final class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
 {
     public static GraphicsAdapter of(Graphics graphics){
         return new Graphics2DAdapter((Graphics2D)graphics);
@@ -40,27 +45,9 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void setStroke(Stroke s)
-    {
-        graphics.setStroke(s);
-    }
-    
-    @Override
-    public void drawLine(int x1, int y1, int x2, int y2)
-    {
-        graphics.drawLine(x1, y1, x2, y2);
-    }
-    
-    @Override
     public void drawPoint(int x, int y)
     {
         graphics.drawLine(x, y, x, y);
-    }
-    
-    @Override
-    public void drawPoint(Point point)
-    {
-        drawPoint(point.x, point.y);
     }
     
     @Override
@@ -70,21 +57,9 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight)
-    {
-        graphics.fillRoundRect(x, y, width, height, arcWidth, arcHeight);
-    }
-    
-    @Override
     public void fillRect(int x, int y, int width, int height)
     {
         graphics.fillRect(x, y, width, height);
-    }
-    
-    @Override
-    public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle)
-    {
-        graphics.fillArc(x, y, width, height, startAngle, arcAngle);
     }
     
     @Override
@@ -100,82 +75,20 @@ public class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void setFont(Font font)
-    {
-        graphics.setFont(font);
-    }
-    
-    @Override
-    public void drawString(String str, int x, int y)
-    {
-        graphics.drawString(str, x, y);
-    }
-    
-    @Override
-    public FontMetrics getFontMetrics()
-    {
-        return graphics.getFontMetrics();
-    }
-    
-    @Override
-    public void drawRect(int x, int y, int width, int height)
-    {
-        graphics.drawRect(x, y, width, height);
-    }
-    
-    @Override
-    public void setRenderingHint(RenderingHints.Key hintKey, Object hintValue)
-    {
-        graphics.setRenderingHint(hintKey, hintValue);
-    }
-    
-    @Override
-    public void setClip(Shape clip)
-    {
-        graphics.setClip(clip);
-    }
-    
-    @Override
-    public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y)
-    {
-        graphics.drawImage(img, op, x, y);
-    }
-    
-    @Override
-    public void setComposite(Composite comp)
-    {
-        graphics.setComposite(comp);
-    }
-    
-    @Override
-    public void drawOval(int x, int y, int width, int height)
-    {
-        graphics.drawOval(x, y, width, height);
-    }
-    
-    @Override
-    public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight)
-    {
-        graphics.drawRoundRect(x, y, width, height, arcWidth, arcHeight);
-    }
-    
-    @Override
-    public void fillPolygon(Polygon p)
-    {
-        graphics.fillPolygon(p);
-    }
-    
-    @Override
-    public void drawPolygon(Polygon p)
-    {
-        graphics.drawPolygon(p);
-    }
-    
-    @Override
     public void turnAntialiasingOn()
     {
         graphics.setRenderingHint(
             RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_ON);
+    }
+    
+    @Override
+    public void paintCircleOnTopOfAPoint(Point2D point, double radius, double zoomFactor)
+    {
+        graphics.fillOval(
+            (int)(zoomFactor * (point.getX() - radius)),
+            (int)(zoomFactor * (point.getY() - radius)),
+            (int)(zoomFactor * radius * 2),
+            (int)(zoomFactor * radius * 2));
     }
 }

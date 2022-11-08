@@ -1,6 +1,5 @@
 package MorrisWaterMaze.graphics.painter;
 
-import MorrisWaterMaze.control.SimulationController;
 import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.model.Platform;
 import MorrisWaterMaze.model.Pool;

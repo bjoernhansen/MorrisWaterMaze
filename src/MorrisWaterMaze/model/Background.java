@@ -3,7 +3,7 @@ package MorrisWaterMaze.model;
 import MorrisWaterMaze.graphics.Paintable;
 
 
-public class Background implements Paintable
+public final class Background implements Paintable
 {
     private final int
         height;

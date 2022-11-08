@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-
+// TODO Implementierung verbessern
 public final class MouseMovement implements Paintable
 {
 	private static final double

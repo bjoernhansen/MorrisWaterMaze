@@ -1,14 +1,14 @@
 package MorrisWaterMaze.control;
 
 import MorrisWaterMaze.graphics.painter.ImagePainter;
-import MorrisWaterMaze.model.Simulation;
+import MorrisWaterMaze.model.simulation.Simulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
 
 import javax.swing.JFrame;
 import java.util.Optional;
 
 
-final class SimulationControllerWithGui extends SimulationController implements Runnable, LoopController
+final class SimulationControllerWithGui extends SimulationController implements Runnable
 {
     private static final int
         PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS = 100;
@@ -26,9 +26,9 @@ final class SimulationControllerWithGui extends SimulationController implements 
         simulationPanel;
     
 
-    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainter)
+    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainter, FileNameProvider fileNameProvider)
     {
-        super(simulationInstance, parameterAccessor, imagePainter);
+        super(simulationInstance);
     
         simulationPanel = new SimulationPanel(getSimulation(), parameterAccessor, this, imagePainter.makeCopy(), getSimulation());
         simulationFrame = new SimulationFrame(simulationPanel);
@@ -65,27 +65,23 @@ final class SimulationControllerWithGui extends SimulationController implements 
         }
     }
     
-    @Override
     public void reset()
     {
         Optional.ofNullable(simulationPanel).ifPresent(
             panel -> panel.setStartAndPauseButtonText("Start"));
-        super.reset();
+        getSimulation().reset();
     }
     
-    @Override
     public void switchLoopState()
     {
         loop = !loop;
     }
     
-    @Override
     public boolean getLoopState()
     {
         return loop;
     }
     
-    @Override
     public void stopLooping()
     {
         loop = false;

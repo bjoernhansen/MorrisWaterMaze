@@ -48,7 +48,7 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
         maximumTrajectoriesPerPicture;
     
     private final String
-        fileName;
+        simulationId;
     
     
     public ParameterAccessorFromPropertiesFile(List<String> inputParameters)
@@ -67,7 +67,7 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
         lowerBoundOfPictureTimeFrame = Double.parseDouble(parameter.getProperty("lowerBoundOfPictureTimeFrame", "10.74"));
         upperBoundOfPictureTimeFrame = Double.parseDouble(parameter.getProperty("upperBoundOfPictureTimeFrame", "25.76"));
         maximumTrajectoriesPerPicture = Integer.parseInt(parameter.getProperty("maximumTrajectoriesPerPicture", "25"));
-        fileName = generateFilename();
+        simulationId = generateSimulationId();
     }
     
     private Properties getParameter()
@@ -152,8 +152,8 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
     }
     
     @Override
-    public String getFilename()
+    public String getSimulationId()
     {
-        return fileName;
+        return simulationId;
     }
 }

@@ -30,7 +30,7 @@ final class MouseMovementPainter extends Painter<MouseMovement>
     private void paintMouseBody(GraphicsAdapter graphicsAdapter, MouseMovement mouseMovement)
     {
         graphicsAdapter.setColor(LIGHT_GREY);
-        paintCircleOnTopOfAPoint(graphicsAdapter, mouseMovement.getCurrentPosition(), MouseMovement.RADIUS);
+        graphicsAdapter.paintCircleOnTopOfAPoint(mouseMovement.getCurrentPosition().asPoint2D(), MouseMovement.RADIUS, ZOOM_FACTOR);
     }
     
     private void paintEscapeRouteSection(EscapeRouteSection escapeRouteSection)

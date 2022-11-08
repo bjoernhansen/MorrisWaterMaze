@@ -42,7 +42,7 @@ final class ParameterAccessorFromArgs extends AbstractParameterAccessor
         maximumTrajectoriesPerPicture;
     
     private final String
-        fileName;
+        simulationId;
     
     
     public ParameterAccessorFromArgs(List<String> inputParameters)
@@ -71,7 +71,7 @@ final class ParameterAccessorFromArgs extends AbstractParameterAccessor
             upperBoundOfPictureTimeFrame = 0;
             maximumTrajectoriesPerPicture = 0;
         }
-        fileName = generateFilename();
+        simulationId = generateSimulationId();
     }
     
     private void checkArgumentVector(List<String> inputParameters)
@@ -159,8 +159,8 @@ final class ParameterAccessorFromArgs extends AbstractParameterAccessor
     }
     
     @Override
-    public String getFilename()
+    public String getSimulationId()
     {
-        return fileName;
+        return simulationId;
     }
 }

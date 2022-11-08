@@ -21,7 +21,7 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
+// TODO Klasse verbessern
 final class SimulationPanel extends JPanel implements ActionListener, ChangeListener
 {
     private long lastPainted = System.currentTimeMillis();
@@ -43,12 +43,9 @@ final class SimulationPanel extends JPanel implements ActionListener, ChangeList
     
     private final Paintable
         paintableEntity;
+ 
     
-
-    
-    
-    
-    
+    // TODO verbessern --> in Methoden auslagern
     public SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SimulationControllerWithGui simulationController, ImagePainter imagePainter, Paintable paintableEntity)
     {
         this.simulationController = simulationController;

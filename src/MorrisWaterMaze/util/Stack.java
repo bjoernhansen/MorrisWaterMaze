@@ -1,9 +1,13 @@
 package MorrisWaterMaze.util;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 
 public final class Stack<T> implements Iterable<T>
@@ -36,6 +40,12 @@ public final class Stack<T> implements Iterable<T>
     @Override
     public void forEach(Consumer<? super T> action)
     {
-        deque.forEach(action);
+        deque.descendingIterator()
+             .forEachRemaining(action);
+    }
+    
+    public Stream<T> stream()
+    {
+        return deque.stream();
     }
 }

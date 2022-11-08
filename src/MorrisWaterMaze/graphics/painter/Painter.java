@@ -27,14 +27,4 @@ abstract class Painter<E extends Paintable>
     {
         PAINT_MANAGER.paint(graphics2D, paintableEntity);
     }
-    
-    final void paintCircleOnTopOfAPoint(GraphicsAdapter graphicsAdapter, Point point, double radius)
-    {
-        double zoomFactor = ZOOM_FACTOR;
-        graphicsAdapter.fillOval(
-            (int)(zoomFactor * (point.getX() - radius)),
-            (int)(zoomFactor * (point.getY() - radius)),
-            (int)(zoomFactor * radius * 2),
-            (int)(zoomFactor * radius * 2));
-    }
 }

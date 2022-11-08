@@ -6,7 +6,7 @@ import MorrisWaterMaze.model.Background;
 import java.awt.Color;
 
 
-public class BackgroundPainter extends Painter<Background>
+public final class BackgroundPainter extends Painter<Background>
 {
     @Override
     public void paint(GraphicsAdapter graphicsAdapter, Background background)

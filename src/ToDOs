@@ -1,8 +1,11 @@
+
 - Bilder als SVG ausgeben können
 https://xmlgraphics.apache.org/batik/using/svg-generator.html
 
 Verändern der Anzahl der Simulationen während der Simulation geht nicht mehr
 
-Kontrolle: Klappt es mit den Bildern und der Anzahl der Trajektorien noch?
+Einige Klassen nochmal verbessern: Main, SimulationPanel, MouseMovement, Simulation
 
-Einige Klassen nochmal verbessern: SimulationController, SimulationPanel, MouseMOvement, Simulation
+JavaFX verwenden
+
+UnitTest und Gradle verwenden

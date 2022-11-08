@@ -1,7 +1,7 @@
 package MorrisWaterMaze.graphics.painter;
 
 import MorrisWaterMaze.model.Background;
-import MorrisWaterMaze.model.WaterMorrisMazeSimulation;
+import MorrisWaterMaze.model.simulation.WaterMorrisMazeSimulation;
 import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.model.EscapeRouteSection;
 import MorrisWaterMaze.model.MouseMovement;
