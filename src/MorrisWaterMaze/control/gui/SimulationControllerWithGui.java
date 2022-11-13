@@ -1,6 +1,5 @@
 package MorrisWaterMaze.control.gui;
 
-import MorrisWaterMaze.control.FileNameProvider;
 import MorrisWaterMaze.control.SimulationController;
 import MorrisWaterMaze.graphics.painter.ImagePainter;
 import MorrisWaterMaze.model.simulation.Simulation;

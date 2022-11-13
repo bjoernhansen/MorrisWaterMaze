@@ -1,24 +1,28 @@
 package MorrisWaterMaze.model.simulation;
 
-import MorrisWaterMaze.control.observer.SimulationCompletionObserver;
-import MorrisWaterMaze.control.observer.SimulationStepObserver;
+import MorrisWaterMaze.control.observer.SimulationSeriesCompletionObserver;
+import MorrisWaterMaze.control.observer.SimulationRunCompletionObserver;
 import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.model.SettingModifier;
 
 
-public interface Simulation extends SearchTimeProvider, SettingModifier, Paintable
+public interface Simulation extends SettingModifier, Paintable
 {
     void nextStep();
     
-    boolean isNotFinished();
+    boolean areAllSimulationRunsCompleted();
     
     void reset();
     
-    void registerSimulationStepObservers(SimulationStepObserver simulationStepObserver);
+    void registerSimulationStepObservers(SimulationRunCompletionObserver simulationRunCompletionObserver);
     
-    void registerSimulationCompletionObservers(SimulationCompletionObserver simulationCompletionObserver);
+    void registerSimulationSeriesCompletionObservers(SimulationSeriesCompletionObserver simulationSeriesCompletionObserver);
     
-    int getNumberOfCompletedSimulations();
+    int getNumberOfCompletedSimulationRuns();
     
-    int getTotalNumberOfSimulations();
+    int getTotalNumberOfSimulationRuns();
+    
+    double getAverageSearchTime();
+    
+    SearchTimeProvider getSearchTimeProvider();
 }

@@ -6,8 +6,6 @@ import MorrisWaterMaze.graphics.Paintable;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public final class ImagePainterImplementation implements ImagePainter

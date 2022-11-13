@@ -99,7 +99,7 @@ public final class MouseMovement implements Paintable
 		Point newCoordinates = calculateNewCoordinates(pool, platform);
 		
 		double timeOfLastMove = coordinates.distance(newCoordinates)/speed;
-		double totalSimulationTime = timeOfLastMove + getTotalDurationOfCurrentSimulation();
+		double totalSimulationTime = timeOfLastMove + getTotalDurationOfCurrentSimulationRun();
 				
 		timeSteps.add(totalSimulationTime);
 		escapeRoute.addNextSectionTo(newCoordinates);
@@ -150,7 +150,7 @@ public final class MouseMovement implements Paintable
 	{
 		if(hasReachedSwimmingTimeLimit())
 		{
-			return maximumSwimmingDuration - getTotalDurationOfCurrentSimulation();
+			return maximumSwimmingDuration - getTotalDurationOfCurrentSimulationRun();
 		}
 		return maximumDurationOfNextSimulationStep;
 	}
@@ -158,7 +158,7 @@ public final class MouseMovement implements Paintable
 	private boolean hasReachedSwimmingTimeLimit()
 	{
 		return hasMaximumSwimmingTimeBeenSet()
-			&& maximumDurationOfNextSimulationStep + getTotalDurationOfCurrentSimulation() > maximumSwimmingDuration;
+			&& maximumDurationOfNextSimulationStep + getTotalDurationOfCurrentSimulationRun() > maximumSwimmingDuration;
 	}
 	
 	private boolean hasMaximumSwimmingTimeBeenSet()
@@ -175,7 +175,7 @@ public final class MouseMovement implements Paintable
 		return isSwimming;
 	}
 	
-	public double getTotalDurationOfCurrentSimulation()
+	public double getTotalDurationOfCurrentSimulationRun()
 	{
 		return timeSteps.get(timeSteps.size()-1);
 	}

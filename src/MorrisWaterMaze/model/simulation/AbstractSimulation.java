@@ -15,38 +15,39 @@ abstract class AbstractSimulation implements Simulation
     AbstractSimulation(SimulationParameterAccessor parameterAccessor)
     {
         int numberOfSimulations = parameterAccessor.getNumberOfSimulations();
-        setRemainingAndTotalNumberOfSimulations(numberOfSimulations);
+        setRemainingAndTotalNumberOfSimulationRuns(numberOfSimulations);
     }
     
     @Override
-    public final void setRemainingAndTotalNumberOfSimulations(int numberOfSimulations) {
+    public final void setRemainingAndTotalNumberOfSimulationRuns(int numberOfSimulations) {
         totalNumberOfSimulations = numberOfSimulations;
-        resetRemainingNumberOfSimulations();
+        resetRemainingNumberOfSimulationRuns();
     }
     
     @Override
-    public void resetRemainingNumberOfSimulations() {
+    public void resetRemainingNumberOfSimulationRuns() {
         remainingNumberOfSimulations = totalNumberOfSimulations;
     }
     
     @Override
-    public int getNumberOfCompletedSimulations()
+    public int getNumberOfCompletedSimulationRuns()
     {
         return totalNumberOfSimulations - remainingNumberOfSimulations;
     }
     
     @Override
-    public int getTotalNumberOfSimulations()
+    public int getTotalNumberOfSimulationRuns()
     {
         return totalNumberOfSimulations;
     }
     
-    void decrementRemainingNumberOfSimulations()
+    void decrementRemainingNumberOfSimulationRuns()
     {
         remainingNumberOfSimulations--;
     }
     
-    boolean isCurrentSimulationStepLastStep()
+    @Override
+    public boolean areAllSimulationRunsCompleted()
     {
         return remainingNumberOfSimulations <= 0;
     }

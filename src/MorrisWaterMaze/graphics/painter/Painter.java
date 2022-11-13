@@ -1,10 +1,8 @@
 package MorrisWaterMaze.graphics.painter;
 
 import MorrisWaterMaze.Main;
-import MorrisWaterMaze.control.SimulationController;
 import MorrisWaterMaze.graphics.GraphicsAdapter;
 import MorrisWaterMaze.graphics.Paintable;
-import MorrisWaterMaze.util.Point;
 
 import java.awt.geom.AffineTransform;
 

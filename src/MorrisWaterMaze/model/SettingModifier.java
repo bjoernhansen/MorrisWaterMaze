@@ -2,8 +2,8 @@ package MorrisWaterMaze.model;
 
 public interface SettingModifier
 {
-    void resetRemainingNumberOfSimulations();
+    void resetRemainingNumberOfSimulationRuns();
     void setMouseTrainingLevel(double mouseTrainingLevel);
-    void setRemainingAndTotalNumberOfSimulations(int numberOfSimulations);
+    void setRemainingAndTotalNumberOfSimulationRuns(int numberOfSimulations);
     void clearSearchTime();
 }

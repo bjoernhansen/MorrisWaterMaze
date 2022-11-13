@@ -49,7 +49,7 @@ public final class Main
 		
 		Simulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
 		simulation.registerSimulationStepObservers(imageFileCreator);
-		simulation.registerSimulationCompletionObservers(reportWriter);
+		simulation.registerSimulationSeriesCompletionObservers(reportWriter);
 		
 		SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor, imagePainter);
 		simulationController.start();

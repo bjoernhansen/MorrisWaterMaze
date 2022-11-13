@@ -1,11 +1,11 @@
 package MorrisWaterMaze.control.report;
 
 import MorrisWaterMaze.control.FileNameProvider;
-import MorrisWaterMaze.control.observer.SimulationCompletionObserver;
+import MorrisWaterMaze.control.observer.SimulationSeriesCompletionObserver;
 import MorrisWaterMaze.model.simulation.Simulation;
 
 
-public final class ReportWriter implements SimulationCompletionObserver
+public final class ReportWriter implements SimulationSeriesCompletionObserver
 {
     private Simulation
         simulation;
@@ -20,7 +20,7 @@ public final class ReportWriter implements SimulationCompletionObserver
     }
     
     @Override
-    public void beNotifiedAboutEndOfSimulation()
+    public void beNotifiedAboutEndOfAllSimulations()
     {
         printAverageSearchTimeOnScreen();
         writeFinalSimulationReport();
@@ -36,7 +36,8 @@ public final class ReportWriter implements SimulationCompletionObserver
         System.out.println("Schreibe Datei: " + fileNameProvider.getFinalReportPath());
         String finalReportPath = fileNameProvider.getFinalReportPath();
         BufferedWriterWrapper bufferedWriterWrapper = new BufferedWriterWrapper(finalReportPath);
-        simulation.forEachSearchTime(bufferedWriterWrapper::write);
+        simulation.getSearchTimeProvider()
+                  .forEachSearchTime(bufferedWriterWrapper::write);
         bufferedWriterWrapper.close();
     }
     

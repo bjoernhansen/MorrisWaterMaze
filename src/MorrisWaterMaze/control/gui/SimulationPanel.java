@@ -81,7 +81,7 @@ final class SimulationPanel extends JPanel
     
     private void prepareGui()
     {
-        // setLayout(null); // TODO Das Layout schöner gestalten
+        setLayout(null); // TODO Das Layout schöner gestalten
         createComponents();
         addListeners();
         addInitializedMainPanel();
@@ -175,7 +175,7 @@ final class SimulationPanel extends JPanel
         {
             simulationController.reset();
             simulationController.stopLooping();
-            settingModifier.resetRemainingNumberOfSimulations();
+            settingModifier.resetRemainingNumberOfSimulationRuns();
             settingModifier.clearSearchTime();
             mouseTrainingLevelSpinner.setEnabled(true);
             numberOfSimulationsSpinner.setEnabled(true);
@@ -198,7 +198,7 @@ final class SimulationPanel extends JPanel
         public void stateChanged(ChangeEvent e)
         {
             int numberOfSimulations = getIntValueFrom(numberOfSimulationsSpinner);
-            settingModifier.setRemainingAndTotalNumberOfSimulations(numberOfSimulations);
+            settingModifier.setRemainingAndTotalNumberOfSimulationRuns(numberOfSimulations);
         }
     };
     

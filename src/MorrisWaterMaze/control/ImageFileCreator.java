@@ -1,6 +1,6 @@
 package MorrisWaterMaze.control;
 
-import MorrisWaterMaze.control.observer.SimulationStepObserver;
+import MorrisWaterMaze.control.observer.SimulationRunCompletionObserver;
 import MorrisWaterMaze.graphics.painter.ImagePainter;
 import MorrisWaterMaze.model.simulation.Simulation;
 import MorrisWaterMaze.parameter.ParameterAccessor;
@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Arrays;
 
 
-public final class ImageFileCreator implements SimulationStepObserver
+public final class ImageFileCreator implements SimulationRunCompletionObserver
 {
     private final int
         maxNrOfPicInSeries;
@@ -48,9 +48,9 @@ public final class ImageFileCreator implements SimulationStepObserver
     }
     
     @Override
-    public void beNotifiedAboutEndOfLastSimulationStep()
+    public void beNotifiedAboutCompletionOfCurrentSimulationRun()
     {
-        System.out.println(getSimulationStepCompletionMessage());
+        System.out.println(getSimulationRunCompletionMessage());
         if (isAnotherPictureToBePainted() && isSearchTimesWithinSpecifiedTimeFrame())
         {
             saveImage();
@@ -58,13 +58,19 @@ public final class ImageFileCreator implements SimulationStepObserver
         simulation.reset();
     }
     
-    private String getSimulationStepCompletionMessage()
+    private String getSimulationRunCompletionMessage()
     {
-        return  "Simulation " + simulation.getNumberOfCompletedSimulations()
-            + " of " + simulation.getTotalNumberOfSimulations()
-            + ", simulation time: " + simulation.getLastSearchTime();
+        return  "Simulation " + simulation.getNumberOfCompletedSimulationRuns()
+            + " of " + simulation.getTotalNumberOfSimulationRuns()
+            + ", simulation time: " + getLastSearchTime();
     }
     
+    private double getLastSearchTime()
+    {
+        return simulation.getSearchTimeProvider()
+                         .getLastSearchTime();
+    }
+
     private boolean isAnotherPictureToBePainted()
     {
         return missingPicturesCount > 0;
@@ -72,8 +78,8 @@ public final class ImageFileCreator implements SimulationStepObserver
     
     private boolean isSearchTimesWithinSpecifiedTimeFrame()
     {
-        return simulation.getLastSearchTime() >= lowerBoundOfPictureTimeFrame
-            && simulation.getLastSearchTime() <= upperBoundOfPictureTimeFrame;
+        return getLastSearchTime() >= lowerBoundOfPictureTimeFrame
+            && getLastSearchTime() <= upperBoundOfPictureTimeFrame;
     }
     
     private void saveImage()

@@ -1,13 +1,12 @@
 package MorrisWaterMaze.model.simulation;
 
-import MorrisWaterMaze.control.observer.SimulationCompletionObserver;
-import MorrisWaterMaze.control.observer.SimulationStepObserver;
+import MorrisWaterMaze.control.observer.SimulationSeriesCompletionObserver;
+import MorrisWaterMaze.control.observer.SimulationRunCompletionObserver;
 import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.model.MouseMovement;
 import MorrisWaterMaze.model.Platform;
 import MorrisWaterMaze.model.Pool;
 import MorrisWaterMaze.parameter.SimulationParameterAccessor;
-import MorrisWaterMaze.util.Stack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +23,15 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     
     private final MouseMovement
         mouseMovement;
+        
+    private final SearchTimeContainer
+        searchTimeContainer = new SearchTimeContainer();
     
-    private final Stack<Double>
-        searchTimes = new Stack<>();
+    private final List<SimulationSeriesCompletionObserver>
+        simulationSeriesCompletionObservers = new ArrayList<>();
     
-    private final List<SimulationCompletionObserver>
-        simulationCompletionObservers = new ArrayList<>();
-    
-    private final List<SimulationStepObserver>
-        simulationStepObservers = new ArrayList<>();
+    private final List<SimulationRunCompletionObserver>
+        simulationRunCompletionObservers = new ArrayList<>();
     
     
     public WaterMorrisMazeSimulation(SimulationParameterAccessor parameterAccessor)
@@ -47,20 +46,26 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     @Override
     public void nextStep()
     {
-        if (isSimulationInProgress())
+        if (isSimulationRunInProgress())
         {
             mouseMovement.move(pool, platform);
-        } else if (isNotFinished())
+        }
+        else if (!areAllSimulationRunsCompleted())
         {
-            decrementRemainingNumberOfSimulations();
-            double lastSearchTime = mouseMovement.getTotalDurationOfCurrentSimulation();
-            searchTimes.push(lastSearchTime);
-            notifyAboutEndOfSimulationStep();
-            if (isCurrentSimulationStepLastStep())
+            completeCurrentSimulationsRun();
+            if (areAllSimulationRunsCompleted())
             {
-                notifyAboutEndOfSimulation();
+                notifyAboutEndOfAllSimulationRuns();
             }
         }
+    }
+    
+    private void completeCurrentSimulationsRun()
+    {
+        double lastSearchTime = mouseMovement.getTotalDurationOfCurrentSimulationRun();
+        searchTimeContainer.add(lastSearchTime);
+        decrementRemainingNumberOfSimulationRuns();
+        notifyAboutEndOfCurrentSimulationRun();
     }
     
     @Override
@@ -69,58 +74,31 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         mouseMovement.setTrainingLevel(mouseTrainingLevel);
     }
     
-
-    @Override
-    public boolean isNotFinished()
-    {
-        return !isCurrentSimulationStepLastStep();
-    }
-
-    
-    /** searchTimes start **/
-    // TODO evtl. eigene Klasse einführen, könnten die zugreifenden Klassen vielleicht eine Instanz dieser Klasse (immutable!) bekommen?
-    
-    @Override
-    public double getLastSearchTime()
-    {
-        return searchTimes.peek();
-    }
-    
     @Override
     public double getAverageSearchTime()
     {
-        return calculateSumOfSearchTimes()/getTotalNumberOfSimulations();
-    }
-    
-    @Override
-    public void forEachSearchTime(Consumer<String> action)
-    {
-        searchTimes.stream()
-                   .map(String::valueOf)
-                   .forEach(action);
-    }
-    
-    private double calculateSumOfSearchTimes()
-    {
-        return searchTimes.stream()
-                          .mapToDouble(Double::doubleValue)
-                          .sum();
+        return searchTimeContainer.calculateSumOfSearchTimes() / getTotalNumberOfSimulationRuns();
     }
     
     @Override
     public void clearSearchTime()
     {
-        searchTimes.clear();
+        searchTimeContainer.clear();
     }
     
-    /** searchTimes end **/
-    
+    @Override
+    public SearchTimeProvider getSearchTimeProvider()
+    {
+        return searchTimeContainer;
+    }
     
     @Override
     public void reset()
     {
         mouseMovement.resetForNextEscapeRun();
     }
+    
+
     
     public Paintable getPool()
     {
@@ -138,32 +116,31 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     }
     
     @Override
-    public void registerSimulationStepObservers(SimulationStepObserver simulationStepObserver)
+    public void registerSimulationStepObservers(SimulationRunCompletionObserver simulationRunCompletionObserver)
     {
-        simulationStepObservers.add(simulationStepObserver);
-        simulationStepObserver.setSimulation(this);
+        simulationRunCompletionObservers.add(simulationRunCompletionObserver);
+        simulationRunCompletionObserver.setSimulation(this);
     }
     
     @Override
-    public void registerSimulationCompletionObservers(SimulationCompletionObserver simulationCompletionObserver)
+    public void registerSimulationSeriesCompletionObservers(SimulationSeriesCompletionObserver simulationSeriesCompletionObserver)
     {
-        simulationCompletionObservers.add(simulationCompletionObserver);
-        simulationCompletionObserver.setSimulation(this);
+        simulationSeriesCompletionObservers.add(simulationSeriesCompletionObserver);
+        simulationSeriesCompletionObserver.setSimulation(this);
     }
     
-    private boolean isSimulationInProgress()
+    private boolean isSimulationRunInProgress()
     {
         return mouseMovement.isSwimming();
     }
     
-    
-    private void notifyAboutEndOfSimulationStep()
+    private void notifyAboutEndOfCurrentSimulationRun()
     {
-        simulationStepObservers.forEach(SimulationStepObserver::beNotifiedAboutEndOfLastSimulationStep);
+        simulationRunCompletionObservers.forEach(SimulationRunCompletionObserver::beNotifiedAboutCompletionOfCurrentSimulationRun);
     }
     
-    private void notifyAboutEndOfSimulation()
+    private void notifyAboutEndOfAllSimulationRuns()
     {
-        simulationCompletionObservers.forEach(SimulationCompletionObserver::beNotifiedAboutEndOfSimulation);
+        simulationSeriesCompletionObservers.forEach(SimulationSeriesCompletionObserver::beNotifiedAboutEndOfAllSimulations);
     }
 }

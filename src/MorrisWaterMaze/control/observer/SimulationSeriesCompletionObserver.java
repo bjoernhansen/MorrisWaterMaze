@@ -3,9 +3,9 @@ package MorrisWaterMaze.control.observer;
 import MorrisWaterMaze.model.simulation.Simulation;
 
 
-public interface SimulationCompletionObserver
+public interface SimulationSeriesCompletionObserver
 {
-    void beNotifiedAboutEndOfSimulation();
+    void beNotifiedAboutEndOfAllSimulations();
     
     void setSimulation(Simulation simulation);
 }

@@ -14,7 +14,7 @@ final class BackgroundSimulationController extends SimulationController
     public void start()
     {
         Simulation simulation = getSimulation();
-        while(simulation.isNotFinished())
+        while(!simulation.areAllSimulationRunsCompleted())
         {
             simulation.nextStep();
         }
