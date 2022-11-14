@@ -2,9 +2,8 @@
 - Bilder als SVG ausgeben können
 https://xmlgraphics.apache.org/batik/using/svg-generator.html
 
-Verändern der Anzahl der Simulationen während der Simulation geht nicht mehr
 
-Einige Klassen nochmal verbessern: Main, SimulationPanel, MouseMovement, Simulation
+Einige Klassen nochmal verbessern: MouseMovement, Simulation
 
 JavaFX verwenden
 
@@ -15,6 +14,6 @@ JavaDocs an alle öffentlichen Elemente setzen
 
 Andrew Zeiten schicken für Auswertung (verschiedene Simulationsläufe)
 
-
+Zenodo verwenden für die Veröffentlichung des Codes in GitHub
 
 die mathematischen Funktionen rausschreiben und erklären

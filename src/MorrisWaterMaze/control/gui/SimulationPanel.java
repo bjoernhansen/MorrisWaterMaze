@@ -21,14 +21,13 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static MorrisWaterMaze.control.gui.SimulationFrame.IMAGE_BORDER_DISTANCE;
+
 
 final class SimulationPanel extends JPanel
 {
     private static final double
         NUMBER_OF_PICTURES_PER_SECOND = 75;
-    
-    private static final int
-        IMAGE_BORDER_DISTANCE = 25;
     
     private static final int
         MAXIMUM_NUMBER_OF_SIMULATIONS = Integer.MAX_VALUE;
@@ -81,7 +80,7 @@ final class SimulationPanel extends JPanel
     
     private void prepareGui()
     {
-        setLayout(null); // TODO Das Layout schöner gestalten
+        setLayout(null);
         createComponents();
         addListeners();
         addInitializedMainPanel();
@@ -110,7 +109,7 @@ final class SimulationPanel extends JPanel
         JLabel numberOfSimulationLabel = new JLabel("number of simulations");
         
         JPanel panel = new JPanel(new GridLayout(3, 2));
-        panel.setBounds(675, 25, 300, 120);
+        panel.setBounds(SimulationFrame.getControlPanelDimension());
         panel.setBorder(BorderFactory.createEtchedBorder());
      
         panel.add(startAndPauseButton);

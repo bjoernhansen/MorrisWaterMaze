@@ -19,17 +19,14 @@ import MorrisWaterMaze.util.DirectoryCreator;
 
 public final class Main
 {
-	private static final ParameterSource
-		PARAMETER_SOURCE = ParameterSource.PROPERTIES_FILE;
-	
 	public static final double
 		ZOOM_FACTOR = 4.0;
 		
-	private static final int
+	public static final int
 		IMAGE_SIZE = (int) (2.0 * ZOOM_FACTOR * Pool.CENTER_TO_BORDER_DISTANCE);
 	
-	private static final int
-		BACKGROUND_SIDE_LENGTH = (int) ZOOM_FACTOR * IMAGE_SIZE;
+	private static final ParameterSource
+		PARAMETER_SOURCE = ParameterSource.PROPERTIES_FILE;
 	
 	
 	private Main()
@@ -63,7 +60,7 @@ public final class Main
 	
 	private static ImagePainter makeImagePainter()
 	{
-		Paintable background = new Background(BACKGROUND_SIDE_LENGTH);
+		Paintable background = new Background(IMAGE_SIZE);
 		return ImagePainterImplementation.newInstanceWithBackground(IMAGE_SIZE, background);
 	}
 }

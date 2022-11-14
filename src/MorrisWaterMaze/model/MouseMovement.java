@@ -28,9 +28,6 @@ public final class MouseMovement implements Paintable
 	private double trainingLevel;                    // Trainingslevel der Maus; [0, 1]; default: 0.5
 	public double stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
 	private boolean isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
-
-	private final boolean
-		isBodyToBeDrawn;
 	
 	private final ArrayList<Double>
 		timeSteps = new ArrayList<>();
@@ -58,7 +55,6 @@ public final class MouseMovement implements Paintable
 		trainingLevel = parameterAccessor.getMouseTrainingLevel();
 		stepLengthBias = parameterAccessor.getStepLengthBias();
 		speed = parameterAccessor.mouseSpeed();
-		isBodyToBeDrawn = parameterAccessor.isStartingWithGui();
 		poolCenter = pool.center;
 	}
 	
@@ -180,19 +176,9 @@ public final class MouseMovement implements Paintable
 		return timeSteps.get(timeSteps.size()-1);
 	}
 	
-	public boolean isBodyToBeDrawn()
-	{
-		return isBodyToBeDrawn;
-	}
-	
 	public void forEachEscapeRouteSection(Consumer<? super EscapeRouteSection> action)
 	{
 		escapeRoute.forEachSection(action);
-	}
-	
-	public Point getCurrentPosition()
-	{
-		return escapeRoute.getLastPosition();
 	}
 	
 	private double calculateRandomSimulationStepDuration()
