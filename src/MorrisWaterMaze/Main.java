@@ -42,8 +42,8 @@ public final class Main
 		ParameterAccessor parameterAccessor = PARAMETER_SOURCE.makeParameterAccessorInstance(args);
 		FileNameProvider fileNameProvider = new FileNameProvider(parameterAccessor);
 		createDirectories(fileNameProvider);
-		ImagePainter imagePainter = makeImagePainter();
 		
+		ImagePainter imagePainter = makeImagePainter();
 		ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainter, parameterAccessor, fileNameProvider);
 		ReportWriter reportWriter = new ReportWriter(fileNameProvider);
 		
