@@ -8,6 +8,9 @@ import java.util.Random;
 
 public final class Calculations
 {
+	public static final double
+		EPSILON = 0.000001;
+	
 	public static final Point
 		ORIGIN = Point.newInstance(0, 0);
 	
@@ -174,8 +177,8 @@ public final class Calculations
 		return 1.0 - Math.random();
 	}
 	
-	public static boolean fuzzyEqualsForDouble(double d1, double d2, double epsilon)
+	public static boolean fuzzyEqualsForDouble(double d1, double d2)
 	{
-		return Math.abs(d1 - d2) < epsilon;
+		return Math.abs(d1 - d2) < EPSILON;
 	}
 }

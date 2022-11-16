@@ -3,10 +3,7 @@ package MorrisWaterMaze.model;
 import MorrisWaterMaze.util.Calculations;
 import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.parameter.MouseParameterAccessor;
-import MorrisWaterMaze.util.Point;
 
-import java.awt.geom.Ellipse2D;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
@@ -42,33 +39,33 @@ public final class MouseMovement implements Paintable
 		mouse.moveFor(durationOfCurrentSimulationStep);
 		escapeRoute.addNextSectionToward(mouse.getCoordinates());
 		
-		double simulationRunTimeSoFar = durationOfCurrentSimulationStep + getSumOfAllPreviousSimulationsSteps();
-		
-		/*
-		if(Double.compare(durationOfCurrentSimulationStep, getSimulationRunTimeLeft())==0) //isSimulationRunOverAfter(simulationRunTimeSoFar)
-		{
-			System.out.println("Differenz: " + (Math.abs(maximumSwimmingDuration - simulationRunTimeSoFar)));
-			mouse.stopSwimming();
-		}*/
-		
+		double simulationRunTimeSoFar = getSimulationRunTimeSoFarIncluding(durationOfCurrentSimulationStep);
 		timeSteps.add(simulationRunTimeSoFar);
+		if(isSimulationRunOverAfter(simulationRunTimeSoFar))
+		{
+			mouse.stopSwimming();
+		}
+	}
+	
+	private double getSimulationRunTimeSoFarIncluding(double durationOfCurrentSimulationStep)
+	{
+		return durationOfCurrentSimulationStep + getSumOfAllPreviousSimulationsSteps();
 	}
 	
 	private boolean isSimulationRunOverAfter(double simulationRunTimeSoFar)
 	{
-		
-		return true; // Calculations.fuzzyEqualsForDouble(maximumSwimmingDuration, simulationRunTimeSoFar, 0.001);
+		return simulationRunTimeSoFar >= maximumSwimmingDuration;
 	}
 	
 	private double getDurationOfNextSimulationStep()
 	{
-		double maximumDurationOfNextSimulationStep = calculateRandomSimulationStepDuration();
-		if(hasReachedSwimmingTimeLimitAfter(maximumDurationOfNextSimulationStep))
+		double maximumDurationOfNextStep = calculateRandomSimulationStepDuration();
+		double simulationRunTimeSoFarIncludingNextStep = getSimulationRunTimeSoFarIncluding(maximumDurationOfNextStep);
+		if(isSimulationRunOverAfter(simulationRunTimeSoFarIncludingNextStep))
 		{
-			mouse.stopSwimming();
 			return getSimulationRunTimeLeft();
 		}
-		return maximumDurationOfNextSimulationStep;
+		return maximumDurationOfNextStep;
 	}
 	
 	private double calculateRandomSimulationStepDuration()
@@ -79,12 +76,6 @@ public final class MouseMovement implements Paintable
 	private double getSimulationRunTimeLeft()
 	{
 		return maximumSwimmingDuration - getSumOfAllPreviousSimulationsSteps();
-	}
-	
-	private boolean hasReachedSwimmingTimeLimitAfter(double maximumDurationOfNextSimulationStep)
-	{
-		return hasMaximumSwimmingTimeBeenSet()
-			&& maximumDurationOfNextSimulationStep + getSumOfAllPreviousSimulationsSteps() > maximumSwimmingDuration;
 	}
 	
 	public double getSumOfAllPreviousSimulationsSteps()
@@ -118,10 +109,5 @@ public final class MouseMovement implements Paintable
 	public void forEachEscapeRouteSection(Consumer<? super EscapeRouteSection> action)
 	{
 		escapeRoute.forEachSection(action);
-	}
-	
-	private boolean hasMaximumSwimmingTimeBeenSet()
-	{
-		return maximumSwimmingDuration != 0;
 	}
 }

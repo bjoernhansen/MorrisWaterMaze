@@ -55,7 +55,7 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
     {
         Properties parameter = getParameter();
         numberOfSimulations = Integer.parseInt(parameter.getProperty("numberOfSimulations", "10"));
-        maximumMouseSwimmingTime = Integer.parseInt(parameter.getProperty("maximumMouseSwimmingTime", "0"));
+        maximumMouseSwimmingTime = determineMaximumSwimmingTime(parameter.getProperty("maximumMouseSwimmingTime", "0"));
         mouseTrainingLevel = Double.parseDouble(parameter.getProperty("mouseTrainingLevel", "0.5"));
         stepLengthBias = Double.parseDouble(parameter.getProperty("stepLengthBias", "5"));
         startingSide = Boolean.parseBoolean(parameter.getProperty("isMouseStartPositionLeft", "true"))

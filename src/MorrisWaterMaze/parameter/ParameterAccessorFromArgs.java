@@ -49,7 +49,7 @@ final class ParameterAccessorFromArgs extends AbstractParameterAccessor
     {
         checkArgumentVector(inputParameters);
         numberOfSimulations = Integer.parseInt(inputParameters.get(0));
-        maximumMouseSwimmingTime = Integer.parseInt(inputParameters.get(1));
+        maximumMouseSwimmingTime = determineMaximumSwimmingTime(inputParameters.get(1));
         mouseTrainingLevel = Double.parseDouble(inputParameters.get(2));
         stepLengthBias = Double.parseDouble(inputParameters.get(3));
         startingSide = Boolean.parseBoolean(inputParameters.get(4)) ? StartingSide.LEFT : StartingSide.RIGHT;

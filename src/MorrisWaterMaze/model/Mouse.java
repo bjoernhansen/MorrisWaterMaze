@@ -10,91 +10,73 @@ import java.util.Objects;
 
 public class Mouse
 {
-    public static final double
+    private static final double
         RADIUS = 3;					// Radius des die Maus repräsentierenden Kreises
     
     private static final double
-        MOUSE_FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180°
-    
-    private Point
-        mouseCoordinates;		// aktueller Aufenthaltsort der Maus
-    
-    private final Point
-        mouseStartingPosition;  // Startposition von der Maus
-    
-    private boolean
-        isSwimming;				// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
-    
+        FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180°
+        
     private double
         trainingLevel;				// Trainingslevel der Maus; [0, 1]; default: 0.5
     
-    private final Platform
-        platform;
-    
-    private double
-        polarAngle;					// bestimmt in welche Richtung die Maus schwimmt
-    
     private final double
-        mouseSpeed;     					// Geschwindigkeit der Maus; default: 5
+        speed;     					// Geschwindigkeit der Maus; default: 5
     
     private final Pool
         pool;
     
+    private final Platform
+        platform;
+    
     private final Ellipse2D
-        mouseCenterContainingCircle;	// Der Mittelpunkt der Maus muss sich innerhalb dieses Kreises befinden.
+        movementBoundaries;	// Der Mittelpunkt der Maus muss sich innerhalb dieses Kreises befinden.
+        
+    private final Point
+        startingCoordinates;  // Startposition von der Maus
+        
+    private Point
+        coordinates;		// aktueller Aufenthaltsort der Maus
+    
+    private double
+        polarAngle;					// bestimmt in welche Richtung die Maus schwimmt
+    
+    private boolean
+        isSwimming;				// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
     
     
+
     public Mouse(MouseParameterAccessor parameterAccessor, Pool pool, Platform platform)
     {
-        mouseStartingPosition = getStartPosition(parameterAccessor.getStartingSide(), pool.getBorder());
-        mouseCoordinates = mouseStartingPosition;
+        coordinates = startingCoordinates = getStartPosition(parameterAccessor.getStartingSide(), pool.getBorder());
+        movementBoundaries = calculateMovementBoundariesThrough(pool);
+        
         trainingLevel = parameterAccessor.getMouseTrainingLevel();
-        mouseSpeed = parameterAccessor.mouseSpeed();
+        speed = parameterAccessor.mouseSpeed();
         
         this.platform = platform;
         this.pool = pool;
-        this.mouseCenterContainingCircle = calculateMouseCenterContainingCircle(pool);
-    }
-    
-    private Point getStartPosition(StartingSide startingSide, Ellipse2D poolBorder)
-    {
-        if(startingSide == StartingSide.LEFT)
-        {
-            return Point.newInstance(poolBorder.getCenterX()- Pool.RADIUS + Mouse.RADIUS, poolBorder.getCenterY());
-        }
-        return Point.newInstance(poolBorder.getCenterX() + Pool.RADIUS - Mouse.RADIUS, poolBorder.getCenterY());
-    }
-    
-    private Ellipse2D.Double calculateMouseCenterContainingCircle(Pool pool)
-    {
-        double radius = Pool.RADIUS - Mouse.RADIUS;
-        return new Ellipse2D.Double(
-            pool.getCenter().getX() - radius,
-            pool.getCenter().getY() - radius,
-            2 * radius,
-            2 * radius);
     }
     
     public void moveFor(double durationOfCurrentSimulationStep)
     {
-        mouseCoordinates = calculateCoordinatesAfter(durationOfCurrentSimulationStep);
+        coordinates = calculateNewCoordinates(durationOfCurrentSimulationStep);
     }
     
     // TODO Methode verbessern
-    private Point calculateCoordinatesAfter(double durationOfNextSimulationStep)
+    private Point calculateNewCoordinates(double durationOfNextSimulationStep)
     {
-        double stepLength = mouseSpeed * durationOfNextSimulationStep;
+        double stepLength = speed * durationOfNextSimulationStep;
         Point newCoordinates = Point.newInstance(
-            mouseCoordinates.getX() + stepLength * Math.cos(polarAngle),
-            mouseCoordinates.getY() + stepLength * Math.sin(polarAngle));
+            coordinates.getX() + stepLength * Math.cos(polarAngle),
+            coordinates.getY() + stepLength * Math.sin(polarAngle));
         
-        if(mouseCenterContainingCircle.contains(mouseCoordinates.asPoint2D()))
+        if(movementBoundaries.contains(newCoordinates.asPoint2D()))
         {
             double meanAngle;
-            Point movementVector = Calculations.calculateVector(mouseCoordinates, newCoordinates);
+            Point movementVector = Calculations.calculateVector(coordinates, newCoordinates);
             Point newPosMousePlatformVector = Calculations.calculateVector(newCoordinates, platform.getCenter());
             
-            if(trainingLevel > Math.random() && MOUSE_FIELD_OF_VIEW /2 >= Calculations.angle(movementVector, newPosMousePlatformVector))
+            if(trainingLevel > Math.random() && Mouse.FIELD_OF_VIEW /2 >= Calculations.angle(movementVector, newPosMousePlatformVector))
             {
                 meanAngle = Calculations.calculatePolarAngle(newPosMousePlatformVector);
             }
@@ -106,13 +88,19 @@ public class Mouse
         }
         else // Schnittstelle von Pool und Mausschritt
         {
-            newCoordinates = Calculations.circleLineIntersection(pool.getCenter(), Pool.RADIUS - RADIUS, mouseCoordinates, newCoordinates);
+            newCoordinates = Calculations.circleLineIntersection(pool.getCenter(), Pool.RADIUS - Mouse.RADIUS, coordinates, newCoordinates);
             Point newPosCenterVector = Calculations.calculateVector(newCoordinates, pool.getCenter());
-            double direction = Line2D.relativeCCW(pool.getCenter().getX(), pool.getCenter().getY(), newCoordinates.getX(), newCoordinates.getY(), mouseCoordinates.getX(), mouseCoordinates.getY());
+            double direction = Line2D.relativeCCW(
+                pool.getCenter().getX(),
+                pool.getCenter().getY(),
+                newCoordinates.getX(),
+                newCoordinates.getY(),
+                coordinates.getX(),
+                coordinates.getY());
             polarAngle = Calculations.calculatePolarAngle(newPosCenterVector) - direction * (Math.PI/3 + Calculations.gaussian(0, Math.PI/12, Math.PI/6));
             startSwimming();
         }
-        Line2D lastMove = new Line2D.Double(mouseCoordinates.asPoint2D(), newCoordinates.asPoint2D());
+        Line2D lastMove = new Line2D.Double(coordinates.asPoint2D(), newCoordinates.asPoint2D());
         if(lastMove.intersects(platform.getBounds())) // Schnittstelle von Maus und Plattform
         {
             newCoordinates = Point.of(Objects.requireNonNull(Calculations.clipLine(lastMove, platform.getBounds())).getP1());
@@ -121,16 +109,39 @@ public class Mouse
         return newCoordinates;
     }
     
+    private Point getStartPosition(StartingSide startingSide, Ellipse2D poolBorder)
+    {
+        if(startingSide == StartingSide.LEFT)
+        {
+            return Point.newInstance(poolBorder.getCenterX()- Pool.RADIUS + Mouse.RADIUS, poolBorder.getCenterY());
+        }
+        return Point.newInstance(poolBorder.getCenterX() + Pool.RADIUS - Mouse.RADIUS, poolBorder.getCenterY());
+    }
+    
+    private Ellipse2D.Double calculateMovementBoundariesThrough(Pool pool)
+    {
+        double radius = Pool.RADIUS - Mouse.RADIUS;
+        return new Ellipse2D.Double(
+            pool.getCenter().getX() - radius,
+            pool.getCenter().getY() - radius,
+            2 * radius,
+            2 * radius);
+    }
+    
     public Point getCoordinates()
     {
-        return mouseCoordinates;
+        return coordinates;
     }
     
     public void reset()
     {
-        mouseCoordinates = mouseStartingPosition;
-        polarAngle = Math.PI*(Math.random()-0.5) + Calculations.calculatePolarAngle(Calculations.calculateVector(mouseStartingPosition, pool.getCenter()));
+        coordinates = startingCoordinates;
+        resetPolarAngleRandomly();
+    }
     
+    private void resetPolarAngleRandomly()
+    {
+        polarAngle = Math.PI*(Math.random()-0.5) + Calculations.calculatePolarAngle(Calculations.calculateVector(startingCoordinates, pool.getCenter()));
     }
     
     public boolean isSwimming()
