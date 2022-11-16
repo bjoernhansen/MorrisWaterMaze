@@ -16,25 +16,17 @@ public final class Pool implements Paintable
 
 	public static final double
 		CENTER_TO_BORDER_DISTANCE = RADIUS + BORDER_DISTANCE;
-
 	
-	Point
+	private final Point
 		center;			// Mittelpunkt des Pools
 	
-	Ellipse2D
-		border,			// Jeder Punkt des Kreises, welcher die Maus repräsentiert, muss sich innerhalb dieses Kreises befinden
-		collisionSize;	// Der Mittelpunkt der Maus muss sich innerhalb dieses Kreises befinden.
+	private final Ellipse2D
+		border;			// Jeder Punkt des Kreises, welcher die Maus repräsentiert, muss sich innerhalb dieses Kreises befinden
 	
-	
-	
+
 	public Pool()
 	{
 		this.center = Point.newInstance(CENTER_TO_BORDER_DISTANCE, CENTER_TO_BORDER_DISTANCE);
-		this.collisionSize = new Ellipse2D.Double(	center.getX() - RADIUS + MouseMovement.RADIUS,
-													center.getY() - RADIUS + MouseMovement.RADIUS,
-													2 * (RADIUS - MouseMovement.RADIUS),
-													2 * (RADIUS - MouseMovement.RADIUS));
-		
 		this.border = 		 new Ellipse2D.Double(	center.getX() - RADIUS,
 													center.getY() - RADIUS,
 													2 * RADIUS, 
@@ -44,5 +36,10 @@ public final class Pool implements Paintable
 	public Ellipse2D getBorder()
 	{
 		return border;
+	}
+	
+	public Point getCenter()
+	{
+		return center;
 	}
 }

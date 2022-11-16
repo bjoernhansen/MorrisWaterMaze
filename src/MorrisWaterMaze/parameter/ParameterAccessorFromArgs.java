@@ -99,7 +99,7 @@ final class ParameterAccessorFromArgs extends AbstractParameterAccessor
     }
     
     @Override
-    public int getMaximumMouseSwimmingTime()
+    public int getMaximumMouseSwimmingDuration()
     {
         return maximumMouseSwimmingTime;
     }

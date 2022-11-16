@@ -4,7 +4,7 @@ import MorrisWaterMaze.model.StartingSide;
 
 public interface MouseParameterAccessor extends GeneralParameterAccessor
 {
-    int getMaximumMouseSwimmingTime();
+    int getMaximumMouseSwimmingDuration();
     double getMouseTrainingLevel();
     double getStepLengthBias();
     StartingSide getStartingSide();

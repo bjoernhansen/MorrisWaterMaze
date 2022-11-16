@@ -3,6 +3,7 @@ package MorrisWaterMaze.model.simulation;
 import MorrisWaterMaze.control.observer.SimulationSeriesCompletionObserver;
 import MorrisWaterMaze.control.observer.SimulationRunCompletionObserver;
 import MorrisWaterMaze.graphics.Paintable;
+import MorrisWaterMaze.model.Mouse;
 import MorrisWaterMaze.model.MouseMovement;
 import MorrisWaterMaze.model.Platform;
 import MorrisWaterMaze.model.Pool;
@@ -39,7 +40,8 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         
         pool = new Pool();
         platform = new Platform();
-        mouseMovement = new MouseMovement(parameterAccessor, pool, platform);
+        Mouse mouse = new Mouse(parameterAccessor, pool, platform);
+        mouseMovement = new MouseMovement(parameterAccessor, mouse);
     }
     
     @Override
@@ -47,11 +49,11 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     {
         if (isSimulationRunInProgress())
         {
-            mouseMovement.move();
+            mouseMovement.performNextStep();
         }
         else if (!areAllSimulationRunsCompleted())
         {
-            completeCurrentSimulationsRun();
+            completeCurrentSimulationRun();
             if (areAllSimulationRunsCompleted())
             {
                 notifyAboutEndOfAllSimulationRuns();
@@ -59,7 +61,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         }
     }
     
-    private void completeCurrentSimulationsRun()
+    private void completeCurrentSimulationRun()
     {
         double lastSearchTime = mouseMovement.getSumOfAllPreviousSimulationsSteps();
         searchTimeContainer.add(lastSearchTime);
@@ -70,7 +72,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     @Override
     public void setMouseTrainingLevel(double mouseTrainingLevel)
     {
-        mouseMovement.setTrainingLevel(mouseTrainingLevel);
+        mouseMovement.setMouseTrainingLevel(mouseTrainingLevel);
     }
     
     @Override
@@ -128,7 +130,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     
     private boolean isSimulationRunInProgress()
     {
-        return mouseMovement.isSwimming();
+        return mouseMovement.isMouseSwimming();
     }
     
     private void notifyAboutEndOfCurrentSimulationRun()

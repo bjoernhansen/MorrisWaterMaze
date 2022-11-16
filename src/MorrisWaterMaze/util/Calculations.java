@@ -173,4 +173,9 @@ public final class Calculations
 	{
 		return 1.0 - Math.random();
 	}
+	
+	public static boolean fuzzyEqualsForDouble(double d1, double d2, double epsilon)
+	{
+		return Math.abs(d1 - d2) < epsilon;
+	}
 }

@@ -21,7 +21,7 @@ final class EscapeRoute
         this.startPosition = startPosition;
     }
     
-    public void addNextSectionTo(Point nextPosition)
+    public void addNextSectionToward(Point nextPosition)
     {
         Point previousPosition = getLastPosition();
         EscapeRouteSection nextSection = new EscapeRouteSection(previousPosition, nextPosition);

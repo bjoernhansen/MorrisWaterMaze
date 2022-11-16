@@ -17,7 +17,7 @@ abstract class AbstractParameterAccessor implements ParameterAccessor
     {
         StringJoiner joiner = new StringJoiner("_");
         joiner.add(String.valueOf(getNumberOfSimulations()))
-              .add(String.valueOf(getMaximumMouseSwimmingTime()))
+              .add(String.valueOf(getMaximumMouseSwimmingDuration()))
               .add(String.valueOf(getMouseTrainingLevel()))
               .add(String.valueOf(getStepLengthBias()))
               .add(String.valueOf(getStartingSide()))
