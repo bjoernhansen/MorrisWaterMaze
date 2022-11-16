@@ -5,109 +5,135 @@ import MorrisWaterMaze.graphics.Paintable;
 import MorrisWaterMaze.parameter.MouseParameterAccessor;
 import MorrisWaterMaze.util.Point;
 
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-// TODO Implementierung verbessern
 public final class MouseMovement implements Paintable
 {
+	public static final double
+		RADIUS = 3;					// Radius des die Maus repräsentierenden Kreises
+	
 	private static final double
 		FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180°
 	
-	public static final double
-		RADIUS = 3;							// Radius des die Maus repräsentierenden Kreises
+	private final double
+		maximumSwimmingDuration;	// maximale Schwimmzeit; default: 0 (no restriction)
 	
+	private final double
+		speed;     					// Geschwindigkeit der Maus; default: 5
 	
-	private Point coordinates;				// aktueller Aufenthaltsort der Maus
-	private final double speed;                    // Geschwindigkeit der Maus; default: 5
-	private double polarAngle;                    // bestimmt in welche Richtung die Maus schwimmt
-	private final double maximumSwimmingDuration;		// maximale Schwimmzeit; default: 0 (no restriction)
+	private final Point
+		startPosition;				// Startposition von der Maus
 	
-	private double trainingLevel;                    // Trainingslevel der Maus; [0, 1]; default: 0.5
-	public double stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
-	private boolean isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
+	private Point
+		coordinates;				// aktueller Aufenthaltsort der Maus
+
+	private double
+		polarAngle;					// bestimmt in welche Richtung die Maus schwimmt
+	
+	private double
+		trainingLevel;				// Trainingslevel der Maus; [0, 1]; default: 0.5
+	
+	public double
+		stepLengthBias;				// bestimmt wie oft die Maus die Richtung wechselt; jeder Schritt der Maus verlängert sich um ln(step_length_bias); default: 5
+	
+	private boolean
+		isSwimming;					// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
 	
 	private final ArrayList<Double>
 		timeSteps = new ArrayList<>();
-		
-	private double
-		maximumDurationOfNextSimulationStep;
-	private double
-		durationOfNextSimulationStep;
 	
-	private final Point
-		startPosition;
-		
 	private final EscapeRoute
 		escapeRoute;
 	
-	private final Point
-		poolCenter;
+	private final Pool
+		pool;
 	
-	public MouseMovement(MouseParameterAccessor parameterAccessor, Pool pool)
+	private final Platform
+		platform;
+	
+	
+	public MouseMovement(MouseParameterAccessor parameterAccessor, Pool pool, Platform platform)
 	{
-		startPosition = getStartPosition(parameterAccessor, pool);
+		startPosition = getStartPosition(parameterAccessor, pool.getBorder());
 		escapeRoute = new EscapeRoute(startPosition);
 		coordinates = startPosition;
 		maximumSwimmingDuration = parameterAccessor.getMaximumMouseSwimmingTime();
 		trainingLevel = parameterAccessor.getMouseTrainingLevel();
 		stepLengthBias = parameterAccessor.getStepLengthBias();
 		speed = parameterAccessor.mouseSpeed();
-		poolCenter = pool.center;
+		this.pool = pool;
+		this.platform = platform;
 	}
 	
-	private Point getStartPosition(MouseParameterAccessor parameterAccessor, Pool pool)
+	public void move()
 	{
-		if(parameterAccessor.getStartingSide() == StartingSide.LEFT)
-		{
-			return Point.newInstance(pool.border.getCenterX()- Pool.RADIUS + RADIUS, pool.border.getCenterY());
-		}
-		return Point.newInstance(pool.border.getCenterX() + Pool.RADIUS - RADIUS, pool.border.getCenterY());
-	}
-	
-	public void resetForNextEscapeRun()// Startposition von der Maus
-	{
-		escapeRoute.reset();
-		resetTimeSteps();
-		polarAngle = Math.PI*(Math.random()-0.5) + Calculations.calculatePolarAngle(Calculations.calculateVector(startPosition, poolCenter));
-		coordinates = startPosition;
-		isSwimming = true;
-	}
-	
-	private void resetTimeSteps()
-	{
-		timeSteps.clear();
-		timeSteps.add(0.0);
-	}
-	
-	public void move(Pool pool, Platform platform)
-	{
-		maximumDurationOfNextSimulationStep = calculateRandomSimulationStepDuration();
-		durationOfNextSimulationStep = getDurationOfNextSimulationStep();
-		
-		if(hasReachedSwimmingTimeLimit())
-		{
-			isSwimming = false;
-		}
-		
-		Point newCoordinates = calculateNewCoordinates(pool, platform);
-		
-		double timeOfLastMove = coordinates.distance(newCoordinates)/speed;
-		double totalSimulationTime = timeOfLastMove + getTotalDurationOfCurrentSimulationRun();
-				
-		timeSteps.add(totalSimulationTime);
+		double durationOfCurrentSimulationStep = getDurationOfNextSimulationStep();
+		Point newCoordinates = calculateCoordinatesAfter(durationOfCurrentSimulationStep);
 		escapeRoute.addNextSectionTo(newCoordinates);
 		coordinates = newCoordinates;
+		
+		// TODO zeitliche Kopplng los werden
+		if(isSimulationRunOverAfter(durationOfCurrentSimulationStep))
+		{
+			stopMouseMovement();
+		}
+		
+		double simulationRunTimeSoFar = durationOfCurrentSimulationStep + getSumOfAllPreviousSimulationsSteps();
+		timeSteps.add(simulationRunTimeSoFar);
 	}
 	
-	private Point calculateNewCoordinates(Pool pool, Platform platform)
+	private boolean isSimulationRunOverAfter(double durationOfNextSimulationStep)
+	{
+		return Double.compare(getSimulationRunTimeLeft(), durationOfNextSimulationStep)==0;
+	}
+	
+	private void stopMouseMovement()
+	{
+		isSwimming = false;
+	}
+	
+	private double getDurationOfNextSimulationStep()
+	{
+		double maximumDurationOfNextSimulationStep = calculateRandomSimulationStepDuration();
+		if(hasReachedSwimmingTimeLimitAfter(maximumDurationOfNextSimulationStep))
+		{
+			return getSimulationRunTimeLeft();
+		}
+		return maximumDurationOfNextSimulationStep;
+	}
+	
+	private double calculateRandomSimulationStepDuration()
+	{
+		return Calculations.calculateRandomDuration(stepLengthBias);
+	}
+	
+	private double getSimulationRunTimeLeft()
+	{
+		return maximumSwimmingDuration - getSumOfAllPreviousSimulationsSteps();
+	}
+	
+	private boolean hasReachedSwimmingTimeLimitAfter(double maximumDurationOfNextSimulationStep)
+	{
+		return hasMaximumSwimmingTimeBeenSet()
+			&& maximumDurationOfNextSimulationStep + getSumOfAllPreviousSimulationsSteps() > maximumSwimmingDuration;
+	}
+	
+	public double getSumOfAllPreviousSimulationsSteps()
+	{
+		return timeSteps.get(timeSteps.size()-1);
+	}
+	
+	// TODO Methode verbessern
+	private Point calculateCoordinatesAfter(double durationOfNextSimulationStep)
 	{
 		double stepLength = speed * durationOfNextSimulationStep;
 		Point newCoordinates = Point.newInstance(
-									coordinates.getX() + stepLength * Math.cos(polarAngle),
-									coordinates.getY() + stepLength * Math.sin(polarAngle));
+			coordinates.getX() + stepLength * Math.cos(polarAngle),
+			coordinates.getY() + stepLength * Math.sin(polarAngle));
 		
 		if(pool.collisionSize.contains(newCoordinates.asPoint2D()))
 		{
@@ -137,43 +163,41 @@ public final class MouseMovement implements Paintable
 		if(lastMove.intersects(platform.getBounds())) // Schnittstelle von Maus und Plattform
 		{
 			newCoordinates = Point.of(Objects.requireNonNull(Calculations.clipLine(lastMove, platform.getBounds())).getP1());
-			isSwimming = false;
+			stopMouseMovement();
 		}
 		return newCoordinates;
 	}
 	
-	private double getDurationOfNextSimulationStep()
+	private Point getStartPosition(MouseParameterAccessor parameterAccessor, Ellipse2D poolBorder)
 	{
-		if(hasReachedSwimmingTimeLimit())
+		if(parameterAccessor.getStartingSide() == StartingSide.LEFT)
 		{
-			return maximumSwimmingDuration - getTotalDurationOfCurrentSimulationRun();
+			return Point.newInstance(poolBorder.getCenterX()- Pool.RADIUS + RADIUS, poolBorder.getCenterY());
 		}
-		return maximumDurationOfNextSimulationStep;
+		return Point.newInstance(poolBorder.getCenterX() + Pool.RADIUS - RADIUS, poolBorder.getCenterY());
 	}
 	
-	private boolean hasReachedSwimmingTimeLimit()
+	public void resetForNextEscapeRun()
 	{
-		return hasMaximumSwimmingTimeBeenSet()
-			&& maximumDurationOfNextSimulationStep + getTotalDurationOfCurrentSimulationRun() > maximumSwimmingDuration;
+		escapeRoute.reset();
+		resetTimeSteps();
+		polarAngle = Math.PI*(Math.random()-0.5) + Calculations.calculatePolarAngle(Calculations.calculateVector(startPosition, pool.center));
+		coordinates = startPosition;
+		isSwimming = true;
 	}
 	
-	private boolean hasMaximumSwimmingTimeBeenSet()
+	private void resetTimeSteps()
 	{
-		return maximumSwimmingDuration != 0;
+		timeSteps.clear();
+		timeSteps.add(0.0);
 	}
 	
-
 	public void setTrainingLevel(double trainingLevel) {
 		this.trainingLevel = trainingLevel;
 	}
-
+	
 	public boolean isSwimming() {
 		return isSwimming;
-	}
-	
-	public double getTotalDurationOfCurrentSimulationRun()
-	{
-		return timeSteps.get(timeSteps.size()-1);
 	}
 	
 	public void forEachEscapeRouteSection(Consumer<? super EscapeRouteSection> action)
@@ -181,8 +205,8 @@ public final class MouseMovement implements Paintable
 		escapeRoute.forEachSection(action);
 	}
 	
-	private double calculateRandomSimulationStepDuration()
+	private boolean hasMaximumSwimmingTimeBeenSet()
 	{
-		return Calculations.calculateRandomDuration(stepLengthBias);
+		return maximumSwimmingDuration != 0;
 	}
 }

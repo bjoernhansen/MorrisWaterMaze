@@ -10,7 +10,6 @@ import MorrisWaterMaze.parameter.SimulationParameterAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 
 public final class WaterMorrisMazeSimulation extends AbstractSimulation
@@ -40,7 +39,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         
         pool = new Pool();
         platform = new Platform();
-        mouseMovement = new MouseMovement(parameterAccessor, pool);
+        mouseMovement = new MouseMovement(parameterAccessor, pool, platform);
     }
     
     @Override
@@ -48,7 +47,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     {
         if (isSimulationRunInProgress())
         {
-            mouseMovement.move(pool, platform);
+            mouseMovement.move();
         }
         else if (!areAllSimulationRunsCompleted())
         {
@@ -62,7 +61,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     
     private void completeCurrentSimulationsRun()
     {
-        double lastSearchTime = mouseMovement.getTotalDurationOfCurrentSimulationRun();
+        double lastSearchTime = mouseMovement.getSumOfAllPreviousSimulationsSteps();
         searchTimeContainer.add(lastSearchTime);
         decrementRemainingNumberOfSimulationRuns();
         notifyAboutEndOfCurrentSimulationRun();
@@ -97,8 +96,6 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     {
         mouseMovement.resetForNextEscapeRun();
     }
-    
-
     
     public Paintable getPool()
     {
