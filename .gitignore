@@ -3,3 +3,6 @@
 out/
 MorrisWaterMaze.iml
 /logs/
+/gradle/wrapper/
+/.gradle/
+/build/
