@@ -3,12 +3,11 @@
 https://xmlgraphics.apache.org/batik/using/svg-generator.html
 
 
-Einige Klassen nochmal verbessern: MouseMovement
-
-JavaFX verwenden
+Einige Klassen nochmal verbessern: Mouse
 
 UnitTest und Gradle verwenden
 
+JavaFX verwenden
 
 JavaDocs an alle öffentlichen Elemente setzen
 
@@ -17,3 +16,5 @@ Andrew Zeiten schicken für Auswertung (verschiedene Simulationsläufe)
 Zenodo verwenden für die Veröffentlichung des Codes in GitHub
 
 die mathematischen Funktionen rausschreiben und erklären
+
+Mathematische Hintergründe herausschreiben

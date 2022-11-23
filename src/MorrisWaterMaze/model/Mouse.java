@@ -66,47 +66,53 @@ public class Mouse
     private Point calculateNewCoordinates(double durationOfNextSimulationStep)
     {
         double stepLength = speed * durationOfNextSimulationStep;
-        Point newCoordinates = Point.newInstance(
+        Point proposedCoordinates = Point.newInstance(
             coordinates.getX() + stepLength * Math.cos(polarAngle),
             coordinates.getY() + stepLength * Math.sin(polarAngle));
         
-        if(movementBoundaries.contains(newCoordinates.asPoint2D()))
+        if(movementBoundaries.contains(proposedCoordinates.asPoint2D()))
         {
             double meanAngle;
-            Point movementVector = Calculations.calculateVector(coordinates, newCoordinates);
-            Point newPosMousePlatformVector = Calculations.calculateVector(newCoordinates, platform.getCenter());
+            Point movementVector = Calculations.calculateVector(coordinates, proposedCoordinates);
+            Point mouseToPlatformVector = Calculations.calculateVector(proposedCoordinates, platform.getCenter());
             
-            if(trainingLevel > Math.random() && Mouse.FIELD_OF_VIEW /2 >= Calculations.angle(movementVector, newPosMousePlatformVector))
+            if(trainingLevel > Math.random() && Mouse.FIELD_OF_VIEW /2 >= Calculations.angle(movementVector, mouseToPlatformVector))
             {
-                meanAngle = Calculations.calculatePolarAngle(newPosMousePlatformVector);
+                meanAngle = Calculations.calculatePolarAngle(mouseToPlatformVector);
             }
             else
             {
                 meanAngle = Calculations.calculatePolarAngle(movementVector);
             }
-            polarAngle = Calculations.gaussian(meanAngle, (1-trainingLevel)*22.5*Math.PI/180);  // for a more trained mouse the standard deviation is smaller
+            polarAngle = Calculations.gaussian(meanAngle, calculateSigma());  // for a more trained mouse the standard deviation is smaller
         }
         else // Schnittstelle von Pool und Mausschritt
         {
-            newCoordinates = Calculations.circleLineIntersection(pool.getCenter(), Pool.RADIUS - Mouse.RADIUS, coordinates, newCoordinates);
-            Point newPosCenterVector = Calculations.calculateVector(newCoordinates, pool.getCenter());
+            proposedCoordinates = Calculations.circleLineIntersection(pool.getCenter(), Pool.RADIUS - Mouse.RADIUS, coordinates, proposedCoordinates);
+            Point newPosCenterVector = Calculations.calculateVector(proposedCoordinates, pool.getCenter());
             double direction = Line2D.relativeCCW(
-                pool.getCenter().getX(),
-                pool.getCenter().getY(),
-                newCoordinates.getX(),
-                newCoordinates.getY(),
-                coordinates.getX(),
-                coordinates.getY());
+                                        pool.getCenter().getX(),
+                                        pool.getCenter().getY(),
+                                        proposedCoordinates.getX(),
+                                        proposedCoordinates.getY(),
+                                        coordinates.getX(),
+                                        coordinates.getY());
             polarAngle = Calculations.calculatePolarAngle(newPosCenterVector) - direction * (Math.PI/3 + Calculations.gaussian(0, Math.PI/12, Math.PI/6));
             startSwimming();
         }
-        Line2D lastMove = new Line2D.Double(coordinates.asPoint2D(), newCoordinates.asPoint2D());
+     
+        Line2D lastMove = new Line2D.Double(coordinates.asPoint2D(), proposedCoordinates.asPoint2D());
         if(lastMove.intersects(platform.getBounds())) // Schnittstelle von Maus und Plattform
         {
-            newCoordinates = Point.of(Objects.requireNonNull(Calculations.clipLine(lastMove, platform.getBounds())).getP1());
+            proposedCoordinates = Point.of(Objects.requireNonNull(Calculations.clipLine(lastMove, platform.getBounds())).getP1());
             stopSwimming();
         }
-        return newCoordinates;
+        return proposedCoordinates;
+    }
+    
+    private double calculateSigma()
+    {
+        return (1 - trainingLevel) * 22.5 * Math.PI / 180;
     }
     
     private Point getStartPosition(StartingSide startingSide, Ellipse2D poolBorder)

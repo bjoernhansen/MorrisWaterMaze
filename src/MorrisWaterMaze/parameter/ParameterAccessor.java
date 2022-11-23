@@ -8,9 +8,9 @@ public interface ParameterAccessor extends SimulationParameterAccessor
     int getMaximumTrajectoriesPerPicture();
     String getSimulationId();
     
-    default int determineMaximumSwimmingTime(String value)
+    default int determineMaximumSwimmingTime(String swimmingTimeAsString)
     {
-        int swimmingTime = Integer.parseInt(value);
+        int swimmingTime = Integer.parseInt(swimmingTimeAsString);
         return swimmingTime > 0
             ? swimmingTime
             : Integer.MAX_VALUE;
