@@ -16,10 +16,6 @@ public interface GraphicsAdapter
     
     void fillOval(int x, int y, int width, int height);
     
-    void drawPoint(int x, int y);
-    
-    void setPaint(Paint paint);
-    
     void fillRect(int x, int y, int width, int height);
     
     void drawImage(Image img, int x, int y, ImageObserver observer);
@@ -27,6 +23,4 @@ public interface GraphicsAdapter
     void fill(Shape s);
    
     void turnAntialiasingOn();
-    
-    void paintCircleOnTopOfAPoint(Point2D point, double radius, double zoomFactor);
 }

@@ -6,6 +6,7 @@ import morris_water_maze.util.Calculations;
 
 import java.awt.Color;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 
 
 final class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
@@ -20,7 +21,7 @@ final class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
         Line2D.Double escapeRouteSectionLine = getEscapeRouteSectionLine(escapeRouteSection);
         graphicsAdapter.setColor(Color.BLACK);
         graphicsAdapter.draw(escapeRouteSectionLine);
-        graphicsAdapter.paintCircleOnTopOfAPoint(escapeRouteSection.getEnd().asPoint2D(), DELIMITER_CIRCLE_RADIUS, ZOOM_FACTOR);
+        paintCircleOnTopOfAPoint(graphicsAdapter, escapeRouteSection.getEnd().asPoint2D());
     }
     
     private Line2D.Double getEscapeRouteSectionLine(EscapeRouteSection escapeRouteSection)
@@ -30,5 +31,14 @@ final class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
                         .asPoint2D(),
             Calculations.scalePoint(escapeRouteSection.getEnd(), ZOOM_FACTOR)
                         .asPoint2D());
+    }
+    
+    private void paintCircleOnTopOfAPoint(GraphicsAdapter graphicsAdapter, Point2D point)
+    {
+        graphicsAdapter.fillOval(
+            (int)(ZOOM_FACTOR * (point.getX() - DELIMITER_CIRCLE_RADIUS)),
+            (int)(ZOOM_FACTOR * (point.getY() - DELIMITER_CIRCLE_RADIUS)),
+            (int)(ZOOM_FACTOR * DELIMITER_CIRCLE_RADIUS * 2),
+            (int)(ZOOM_FACTOR * DELIMITER_CIRCLE_RADIUS * 2));
     }
 }

@@ -19,10 +19,10 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
     private final ImagePainter
         imagePainter;
     
-    public final double
+    private final double
         upperBoundOfPictureTimeFrame;
     
-    public final double
+    private final double
         lowerBoundOfPictureTimeFrame;
     
     private int
@@ -34,13 +34,14 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
     private Simulation
         simulation;
     
-    private final FileNameProvider fileNameProvider;
+    private final FileNameProvider
+        fileNameProvider;
     
     
-    public ImageFileCreator(ImagePainter imagePainterInstance, ParameterAccessor parameterAccessor, FileNameProvider fileNameProviderInstance)
+    public ImageFileCreator(ImagePainter imagePainter, ParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
     {
-        imagePainter = imagePainterInstance;
-        fileNameProvider = fileNameProviderInstance;
+        this.imagePainter = imagePainter;
+        this.fileNameProvider = fileNameProvider;
         missingPicturesCount = parameterAccessor.getNumberOfPics();
         lowerBoundOfPictureTimeFrame = parameterAccessor.getLowerBoundOfPictureTimeFrame();
         upperBoundOfPictureTimeFrame = parameterAccessor.getUpperBoundOfPictureTimeFrame();

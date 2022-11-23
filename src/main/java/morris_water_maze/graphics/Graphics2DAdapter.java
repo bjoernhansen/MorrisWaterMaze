@@ -47,18 +47,6 @@ public final class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void drawPoint(int x, int y)
-    {
-        graphics.drawLine(x, y, x, y);
-    }
-    
-    @Override
-    public void setPaint(Paint paint)
-    {
-        graphics.setPaint(paint);
-    }
-    
-    @Override
     public void fillRect(int x, int y, int width, int height)
     {
         graphics.fillRect(x, y, width, height);
@@ -82,15 +70,5 @@ public final class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
         graphics.setRenderingHint(
             RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_ON);
-    }
-    
-    @Override
-    public void paintCircleOnTopOfAPoint(Point2D point, double radius, double zoomFactor)
-    {
-        graphics.fillOval(
-            (int)(zoomFactor * (point.getX() - radius)),
-            (int)(zoomFactor * (point.getY() - radius)),
-            (int)(zoomFactor * radius * 2),
-            (int)(zoomFactor * radius * 2));
     }
 }
