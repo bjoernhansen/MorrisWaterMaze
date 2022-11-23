@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+mainClassName = 'morris_water_maze.Main'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+}
+
+jar {
+    manifest {
+        attributes('Main-Class': 'morris_water_maze.Main')
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
