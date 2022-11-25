@@ -1,6 +1,5 @@
 package morris_water_maze.model;
 
-import morris_water_maze.util.Calculations;
 import morris_water_maze.graphics.Paintable;
 import morris_water_maze.parameter.MouseParameterAccessor;
 
@@ -70,7 +69,17 @@ public final class MouseMovement implements Paintable
 	
 	private double calculateRandomSimulationStepDuration()
 	{
-		return Calculations.calculateRandomDuration(stepLengthBias);
+		return calculateRandomDuration(stepLengthBias);
+	}
+	
+	private double calculateRandomDuration(double durationBias)
+	{
+		return Math.log(durationBias / nonZeroRandom());
+	}
+	
+	private double nonZeroRandom()
+	{
+		return 1.0 - Math.random();
 	}
 	
 	private double getSimulationRunTimeLeft()

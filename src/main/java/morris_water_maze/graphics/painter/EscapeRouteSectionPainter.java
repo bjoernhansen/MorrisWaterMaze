@@ -2,7 +2,7 @@ package morris_water_maze.graphics.painter;
 
 import morris_water_maze.graphics.GraphicsAdapter;
 import morris_water_maze.model.EscapeRouteSection;
-import morris_water_maze.util.Calculations;
+import morris_water_maze.util.Point;
 
 import java.awt.Color;
 import java.awt.geom.Line2D;
@@ -27,10 +27,13 @@ final class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
     private Line2D.Double getEscapeRouteSectionLine(EscapeRouteSection escapeRouteSection)
     {
         return new Line2D.Double(
-            Calculations.scalePoint(escapeRouteSection.getStart(), ZOOM_FACTOR)
-                        .asPoint2D(),
-            Calculations.scalePoint(escapeRouteSection.getEnd(), ZOOM_FACTOR)
-                        .asPoint2D());
+            scalePointByZoomFactor(escapeRouteSection.getStart()).asPoint2D(),
+            scalePointByZoomFactor(escapeRouteSection.getEnd()).asPoint2D());
+    }
+    
+    private Point scalePointByZoomFactor(Point point)
+    {
+        return Point.newInstance(ZOOM_FACTOR * point.getX(), ZOOM_FACTOR * point.getY());
     }
     
     private void paintCircleOnTopOfAPoint(GraphicsAdapter graphicsAdapter, Point2D point)

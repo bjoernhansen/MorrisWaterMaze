@@ -2,18 +2,16 @@
 - Bilder als SVG ausgeben können
 https://xmlgraphics.apache.org/batik/using/svg-generator.html
 
+Arbeit an der Klasse Maus:
+- Unit-Tests für die mathematischen Operationen
+- Methoden verbessern
+- eventuell Klassen herauslösen (dann ggf. Maus mit diesen Klasse in eigenes Paket)
+- Mathematische Operationen herausschreiben und erläutern
 
-Einige Klassen nochmal verbessern: Mouse
+Andrew Zeiten schicken für Auswertung (verschiedene Simulationsläufe)
 
 JavaFX verwenden
 
 JavaDocs an alle öffentlichen Elemente setzen
 
-Andrew Zeiten schicken für Auswertung (verschiedene Simulationsläufe)
-
 Zenodo verwenden für die Veröffentlichung des Codes in GitHub
-
-die mathematischen Funktionen rausschreiben und erklären
-
-
-Test-Klassen für die Mathematischen Funktionen einbauen
