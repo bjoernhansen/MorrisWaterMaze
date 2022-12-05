@@ -1,5 +1,6 @@
 package morris_water_maze.parameter;
 
+import morris_water_maze.graphics.painter.ImagePainterType;
 import morris_water_maze.model.StartingSide;
 
 import java.io.IOException;
@@ -47,6 +48,9 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
     private final int
         maximumTrajectoriesPerPicture;
     
+    private final ImagePainterType
+        imagePainterTypeForPictureExport;
+    
     private final String
         simulationId;
     
@@ -67,6 +71,9 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
         lowerBoundOfPictureTimeFrame = Double.parseDouble(parameter.getProperty("lowerBoundOfPictureTimeFrame", "10.74"));
         upperBoundOfPictureTimeFrame = Double.parseDouble(parameter.getProperty("upperBoundOfPictureTimeFrame", "25.76"));
         maximumTrajectoriesPerPicture = Integer.parseInt(parameter.getProperty("maximumTrajectoriesPerPicture", "25"));
+        imagePainterTypeForPictureExport = Boolean.parseBoolean(parameter.getProperty("isUsingSvgAsImageFileFormat", "false"))
+                                            ? ImagePainterType.SVG
+                                            : ImagePainterType.DEFAULT;
         simulationId = generateSimulationId();
     }
     
@@ -149,6 +156,12 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
     public int getMaximumTrajectoriesPerPicture()
     {
         return maximumTrajectoriesPerPicture;
+    }
+    
+    @Override
+    public ImagePainterType imagePainterTypeForPictureExport()
+    {
+        return imagePainterTypeForPictureExport;
     }
     
     @Override

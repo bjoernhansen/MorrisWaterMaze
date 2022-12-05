@@ -8,7 +8,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 
-public final class ImagePainterImplementation implements ImagePainter
+public final class DefaultImagePainter implements ImagePainter
 {
     private final int
         imageSize;
@@ -28,13 +28,13 @@ public final class ImagePainterImplementation implements ImagePainter
     
     public static ImagePainter newInstanceWithBackground(int imageSize, Paintable background)
     {
-        ImagePainter imagePainter = new ImagePainterImplementation(imageSize);
+        ImagePainter imagePainter = new DefaultImagePainter(imageSize);
         imagePainter.setBackground(background);
         imagePainter.initializeImage();
         return imagePainter;
     }
     
-    private ImagePainterImplementation(int imageSize)
+    private DefaultImagePainter(int imageSize)
     {
         this.imageSize = imageSize;
         image = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_RGB);
@@ -64,11 +64,5 @@ public final class ImagePainterImplementation implements ImagePainter
     public void initializeImage()
     {
         paintManager.paint(graphicsAdapter, background);
-    }
-    
-    @Override
-    public ImagePainter makeCopy()
-    {
-        return newInstanceWithBackground(imageSize, background);
     }
 }

@@ -14,6 +14,4 @@ public interface ImagePainter
     void setBackground(Paintable paintable);
     
     void initializeImage();
-    
-    ImagePainter makeCopy();
 }

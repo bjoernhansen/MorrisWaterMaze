@@ -5,10 +5,9 @@ import morris_water_maze.control.report.ReportWriter;
 import morris_water_maze.control.ImageFileCreator;
 import morris_water_maze.control.SimulationController;
 import morris_water_maze.control.SimulationControllerFactory;
-import morris_water_maze.graphics.Paintable;
 import morris_water_maze.graphics.painter.ImagePainter;
-import morris_water_maze.graphics.painter.ImagePainterImplementation;
-import morris_water_maze.model.Background;
+import morris_water_maze.graphics.painter.ImagePainterFactory;
+import morris_water_maze.graphics.painter.ImagePainterType;
 import morris_water_maze.model.Pool;
 import morris_water_maze.model.simulation.Simulation;
 import morris_water_maze.model.simulation.WaterMorrisMazeSimulation;
@@ -40,15 +39,22 @@ public final class Main
 		FileNameProvider fileNameProvider = new FileNameProvider(parameterAccessor);
 		createDirectories(fileNameProvider);
 		
-		ImagePainter imagePainter = makeImagePainter();
-		ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainter, parameterAccessor, fileNameProvider);
+		// TODO es müssen zwei Klassen erstellt werden: SVGImagePainter und SVGImageFileCreator
+		// TODO wenn die Bild-Erstellung nicht gewünscht ist müssen manche Klassen gar nicht erst erstellt werden
+		
+		ImagePainterFactory imagePainterFactory = new ImagePainterFactory(IMAGE_SIZE);
+		ImagePainter imagePainterForFileCreator = imagePainterFactory.makeImagePainter(parameterAccessor.imagePainterTypeForPictureExport());
+		ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainterForFileCreator, parameterAccessor, fileNameProvider);
+		
 		ReportWriter reportWriter = new ReportWriter(fileNameProvider);
 		
 		Simulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
 		simulation.registerSimulationStepObservers(imageFileCreator);
 		simulation.registerSimulationSeriesCompletionObservers(reportWriter);
-		
-		SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor, imagePainter);
+	
+		// TODO falls ohne GUI gestartet wird, müssen auch manche Instanzen nicht erstellt werden
+		ImagePainter imagePainterForAnimation = imagePainterFactory.makeImagePainter(ImagePainterType.DEFAULT);
+		SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor, imagePainterForAnimation);
 		simulationController.start();
     }
 	
@@ -56,11 +62,5 @@ public final class Main
 	{
 		DirectoryCreator directoryCreator = new DirectoryCreator(fileNameProvider);
 		directoryCreator.makeDirectories();
-	}
-	
-	private static ImagePainter makeImagePainter()
-	{
-		Paintable background = new Background(IMAGE_SIZE);
-		return ImagePainterImplementation.newInstanceWithBackground(IMAGE_SIZE, background);
 	}
 }

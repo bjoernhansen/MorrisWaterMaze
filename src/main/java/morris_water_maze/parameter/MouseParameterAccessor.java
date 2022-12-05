@@ -2,7 +2,7 @@ package morris_water_maze.parameter;
 
 import morris_water_maze.model.StartingSide;
 
-public interface MouseParameterAccessor extends GeneralParameterAccessor
+public interface MouseParameterAccessor
 {
     int getMaximumMouseSwimmingDuration();
     double getMouseTrainingLevel();

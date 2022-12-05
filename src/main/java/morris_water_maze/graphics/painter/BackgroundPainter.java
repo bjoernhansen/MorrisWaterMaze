@@ -12,6 +12,6 @@ public final class BackgroundPainter extends Painter<Background>
     public void paint(GraphicsAdapter graphicsAdapter, Background background)
     {
         graphicsAdapter.setColor(Color.white);
-        graphicsAdapter.fillRect(0, 0, 720, background.getHeight());
+        graphicsAdapter.fillRect(0, 0, 720, background.getSideLength());
     }
 }

@@ -1,6 +1,7 @@
 package morris_water_maze.parameter;
 
 import morris_water_maze.Main;
+import morris_water_maze.graphics.painter.ImagePainterType;
 import morris_water_maze.model.StartingSide;
 
 import java.util.List;
@@ -41,6 +42,9 @@ final class ParameterAccessorFromArgs extends AbstractParameterAccessor
     private final int
         maximumTrajectoriesPerPicture;
     
+    private final ImagePainterType
+        imagePainterTypeForPictureExport;
+    
     private final String
         simulationId;
     
@@ -63,6 +67,9 @@ final class ParameterAccessorFromArgs extends AbstractParameterAccessor
             lowerBoundOfPictureTimeFrame = Double.parseDouble(inputParameters.get(8));
             upperBoundOfPictureTimeFrame = Double.parseDouble(inputParameters.get(9));
             maximumTrajectoriesPerPicture = Integer.parseInt(inputParameters.get(10));
+            imagePainterTypeForPictureExport = Boolean.parseBoolean(inputParameters.get(11))
+                                                ? ImagePainterType.DEFAULT
+                                                : ImagePainterType.SVG;
         }
         else
         {
@@ -70,24 +77,25 @@ final class ParameterAccessorFromArgs extends AbstractParameterAccessor
             lowerBoundOfPictureTimeFrame = 0;
             upperBoundOfPictureTimeFrame = 0;
             maximumTrajectoriesPerPicture = 0;
+            imagePainterTypeForPictureExport = ImagePainterType.DEFAULT;
         }
         simulationId = generateSimulationId();
     }
     
     private void checkArgumentVector(List<String> inputParameters)
     {
-        if(inputParameters.size() != 7 && inputParameters.size() != 11 || inputParameters.get(0).equals("help"))
+        if(inputParameters.size() != 7 && inputParameters.size() != 12 || inputParameters.get(0).equals("help"))
         {
             if(!(inputParameters.size() > 0 && inputParameters.get(0).equals("help"))){System.out.println("Wrong parameter input!");}
             System.out.println("Expected Input: " + Main.class.getName() + " nr_of_sims max_sim_time training_level step_length_bias mouse_start_pos mouse_speed is_app");
             System.out.println("Alternative Input: " + Main.class.getName() + " nr_of_sims max_sim_time training_level step_length_bias mouse_start_pos mouse_speed is_app nr_of_pics pic_time_frame_lower_bound pic_time_frame_upper_bound");
-            System.out.println("\nExample input 1: " + Main.class.getName() + " 500 120 0.0 2 1 5 0");
+            System.out.println("\nExample input 1: " + Main.class.getName() + " 500 120 0.0 2 false 5 true");
             System.out.println(	"500 MWM simulations (maximal length of 120s each; small starting distance between mouse and platform) for a completely untrained mouth " +
                 "of speed 5cm/s. Prolong each unidirectional step of the mouth by ln(2)s and start the simulation as application (with GUI).");
-            System.out.println("\nExample input 2: " + Main.class.getName() + " 100000 0 0.7 5 0 3 1 20 17.5 18.0");
+            System.out.println("\nExample input 2: " + Main.class.getName() + " 100000 0 0.7 5 true 3 false 20 17.5 18.0 false");
             System.out.println(	"100000 MWM simulations (big starting distance between mouse and platform) without time restriction for a training level 0.7 mouse " +
                 "of speed 3cm/s. Prolong each unidirectional step of the mouth by ln(5)s and do not start the simulation with GUI. Save up to 20 pictures of " +
-                "mice trajectories when the total search time is between 17.5s and 18.0s.");
+                "mice trajectories when the total search time is between 17.5s and 18.0s. Save pictures in PNG file format.");
             System.exit(1);
         }
     }
@@ -156,6 +164,12 @@ final class ParameterAccessorFromArgs extends AbstractParameterAccessor
     public int getMaximumTrajectoriesPerPicture()
     {
         return maximumTrajectoriesPerPicture;
+    }
+    
+    @Override
+    public ImagePainterType imagePainterTypeForPictureExport()
+    {
+        return imagePainterTypeForPictureExport;
     }
     
     @Override

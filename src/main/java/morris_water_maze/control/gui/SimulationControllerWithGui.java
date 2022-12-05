@@ -31,7 +31,7 @@ public final class SimulationControllerWithGui extends SimulationController impl
     {
         super(simulationInstance);
     
-        simulationPanel = new SimulationPanel(getSimulation(), parameterAccessor, this, imagePainter.makeCopy(), getSimulation());
+        simulationPanel = new SimulationPanel(getSimulation(), parameterAccessor, this, imagePainter, getSimulation());
         simulationFrame = new SimulationFrame(simulationPanel);
         simulationFrame.setVisible(true);
     

@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
 mainClassName = 'morris_water_maze.Main'
@@ -10,6 +11,8 @@ repositories {
 }
 
 dependencies {
+    // implementation group: 'batik', name: 'batik-svggen', version: '1.6-1'
+    implementation 'org.jfree:jfreesvg:3.4.3'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
 }
 
@@ -17,6 +20,11 @@ jar {
     manifest {
         attributes('Main-Class': 'morris_water_maze.Main')
     }
+}
+
+javafx {
+    version = "16"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.media', 'javafx.graphics', 'javafx.web' ]
 }
 
 test {

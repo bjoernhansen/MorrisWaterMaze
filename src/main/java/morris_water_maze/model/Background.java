@@ -6,25 +6,17 @@ import morris_water_maze.graphics.Paintable;
 public final class Background implements Paintable
 {
     private final int
-        height;
-    
-    private final int
-        width;
+        sideLength;
     
     
     public Background(int sideLength)
     {
-        width = sideLength;
-        height = sideLength;
+        this.sideLength = sideLength;
     }
     
-    public int getHeight()
+    public int getSideLength()
     {
-        return height;
-    }
-    
-    public int getWidth()
-    {
-        return width;
+        return sideLength;
     }
 }
+
