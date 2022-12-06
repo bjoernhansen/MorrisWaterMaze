@@ -67,6 +67,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         searchTimeContainer.add(lastSearchTime);
         decrementRemainingNumberOfSimulationRuns();
         notifyAboutEndOfCurrentSimulationRun();
+        reset();
     }
     
     @Override

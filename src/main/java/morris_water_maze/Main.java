@@ -3,7 +3,6 @@ package morris_water_maze;
 import morris_water_maze.control.SimulationController;
 import morris_water_maze.control.SimulationControllerFactory;
 import morris_water_maze.graphics.painter.image.ImagePainter;
-import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.model.Pool;
 import morris_water_maze.model.simulation.Simulation;
 import morris_water_maze.model.simulation.WaterMorrisMazeSimulation;
@@ -25,7 +24,7 @@ public final class Main
     
     private static final ParameterSource
         PARAMETER_SOURCE = ParameterSource.PROPERTIES_FILE;
-    
+        
     
     private Main()
     {
@@ -38,18 +37,18 @@ public final class Main
         FileNameProvider fileNameProvider = new FileNameProvider(parameterAccessor);
         createDirectories(fileNameProvider);
         
-        // TODO wenn die Bild-Erstellung nicht gewünscht ist müssen manche Klassen gar nicht erst erstellt werden
-        
-        
-        ImagePainterType imagePainterType = parameterAccessor.getImagePainterTypeForPictureExport();
-        ImagePainter imagePainterForFileCreator = imagePainterType.makeInstance();
-        ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainterForFileCreator, parameterAccessor, fileNameProvider);
-        
-        ReportWriter reportWriter = new ReportWriter(fileNameProvider);
-        
         Simulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
-        simulation.registerSimulationStepObservers(imageFileCreator);
+    
+        ReportWriter reportWriter = new ReportWriter(fileNameProvider);
         simulation.registerSimulationSeriesCompletionObservers(reportWriter);
+    
+        if(parameterAccessor.getNumberOfPics() > 0)
+        {
+            ImagePainter imagePainterForImageFileCreator = parameterAccessor.getImagePainterTypeForPictureExport()
+                                                                            .makeInstance();
+            ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainterForImageFileCreator, parameterAccessor, fileNameProvider);
+            simulation.registerSimulationStepObservers(imageFileCreator);
+        }
         
         SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor);
         simulationController.start();

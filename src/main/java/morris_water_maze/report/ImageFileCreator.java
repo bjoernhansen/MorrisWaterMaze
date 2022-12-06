@@ -62,7 +62,6 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
         {
             saveImage();
         }
-        simulation.reset();
     }
     
     private String getSimulationRunCompletionMessage()
