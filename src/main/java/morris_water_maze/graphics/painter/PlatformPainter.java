@@ -12,6 +12,7 @@ final class PlatformPainter extends Painter<Platform>
     private static final Color
         DARK_GREY = new Color(75, 75, 75);
     
+    
     @Override
     public void paint(GraphicsAdapter graphicsAdapter, Platform platform)
     {

@@ -1,6 +1,5 @@
-package morris_water_maze.control.report;
+package morris_water_maze.report;
 
-import morris_water_maze.control.FileNameProvider;
 import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
 import morris_water_maze.model.simulation.Simulation;
 

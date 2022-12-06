@@ -1,7 +1,7 @@
 package morris_water_maze.control.gui;
 
 import morris_water_maze.control.SimulationController;
-import morris_water_maze.graphics.painter.ImagePainter;
+import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.model.simulation.Simulation;
 import morris_water_maze.parameter.ParameterAccessor;
 
@@ -27,11 +27,11 @@ public final class SimulationControllerWithGui extends SimulationController impl
         simulationPanel;
     
 
-    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor, ImagePainter imagePainter)
+    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor)
     {
         super(simulationInstance);
     
-        simulationPanel = new SimulationPanel(getSimulation(), parameterAccessor, this, imagePainter, getSimulation());
+        simulationPanel = new SimulationPanel(getSimulation(), parameterAccessor, this, ImagePainterType.DEFAULT.makeInstance(), getSimulation());
         simulationFrame = new SimulationFrame(simulationPanel);
         simulationFrame.setVisible(true);
     

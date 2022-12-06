@@ -1,6 +1,4 @@
 
-- Bilder als SVG ausgeben können
-https://xmlgraphics.apache.org/batik/using/svg-generator.html
 
 Arbeit an der Klasse Maus:
 - Unit-Tests für die mathematischen Operationen

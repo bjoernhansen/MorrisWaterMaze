@@ -1,6 +1,6 @@
 package morris_water_maze.parameter;
 
-import morris_water_maze.graphics.painter.ImagePainterType;
+import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.model.StartingSide;
 
 import java.io.IOException;
@@ -159,7 +159,7 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
     }
     
     @Override
-    public ImagePainterType imagePainterTypeForPictureExport()
+    public ImagePainterType getImagePainterTypeForPictureExport()
     {
         return imagePainterTypeForPictureExport;
     }

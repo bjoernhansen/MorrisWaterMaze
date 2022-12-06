@@ -26,7 +26,8 @@ abstract class AbstractParameterAccessor implements ParameterAccessor
               .add(String.valueOf(getNumberOfPics()))
               .add(String.valueOf(getLowerBoundOfPictureTimeFrame()))
               .add(String.valueOf(getUpperBoundOfPictureTimeFrame()))
-              .add(String.valueOf(getMaximumTrajectoriesPerPicture()));
+              .add(String.valueOf(getMaximumTrajectoriesPerPicture()))
+              .add(String.valueOf(getImagePainterTypeForPictureExport()));
         return joiner.toString();
     }
 }

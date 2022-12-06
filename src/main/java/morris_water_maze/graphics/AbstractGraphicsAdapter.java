@@ -11,4 +11,10 @@ abstract class AbstractGraphicsAdapter<E> implements GraphicsAdapter
     {
         this.graphics = Objects.requireNonNull(graphics);
     }
+    
+    @Override
+    public String getSvgString()
+    {
+        throw new UnsupportedOperationException();
+    }
 }

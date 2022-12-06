@@ -21,4 +21,6 @@ public interface GraphicsAdapter
     void fill(Shape s);
    
     void turnAntialiasingOn();
+    
+    String getSvgString();
 }

@@ -1,4 +1,4 @@
-package morris_water_maze.control.report;
+package morris_water_maze.report;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

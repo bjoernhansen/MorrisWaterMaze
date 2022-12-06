@@ -1,4 +1,4 @@
-package morris_water_maze.control;
+package morris_water_maze.report;
 
 import morris_water_maze.util.NecessaryDirectoriesReporter;
 import morris_water_maze.parameter.ParameterAccessor;

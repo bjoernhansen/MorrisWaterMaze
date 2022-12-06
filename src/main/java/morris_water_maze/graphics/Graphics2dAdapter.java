@@ -1,5 +1,7 @@
 package morris_water_maze.graphics;
 
+import org.jfree.graphics2d.svg.SVGGraphics2D;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -9,17 +11,19 @@ import java.awt.Shape;
 import java.awt.image.ImageObserver;
 
 
-public final class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
+public final class Graphics2dAdapter extends AbstractGraphicsAdapter<Graphics2D>
 {
-    public static GraphicsAdapter of(Graphics graphics){
-        return new Graphics2DAdapter((Graphics2D)graphics);
+    public static GraphicsAdapter of(Graphics graphics)
+    {
+        return new Graphics2dAdapter((Graphics2D) graphics);
     }
     
-    public static GraphicsAdapter of(Image image){
-        return Graphics2DAdapter.of(image.getGraphics());
+    public static GraphicsAdapter of(Image image)
+    {
+        return Graphics2dAdapter.of(image.getGraphics());
     }
     
-    private Graphics2DAdapter(Graphics2D graphics2D)
+    private Graphics2dAdapter(Graphics2D graphics2D)
     {
         super(graphics2D);
     }
@@ -66,5 +70,18 @@ public final class Graphics2DAdapter extends AbstractGraphicsAdapter<Graphics2D>
         graphics.setRenderingHint(
             RenderingHints.KEY_ANTIALIASING,
             RenderingHints.VALUE_ANTIALIAS_ON);
+    }
+    
+    @Override
+    public String getSvgString()
+    {
+        if(graphics instanceof SVGGraphics2D)
+        {
+            return ((SVGGraphics2D)graphics).getSVGElement();
+        }
+        else
+        {
+            throw new UnsupportedOperationException();
+        }
     }
 }

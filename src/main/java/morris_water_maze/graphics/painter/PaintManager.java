@@ -9,7 +9,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 
 
-final class PaintManager
+public final class PaintManager
 {
     private static PaintManager
         instance;

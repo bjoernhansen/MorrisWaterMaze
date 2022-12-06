@@ -1,6 +1,6 @@
 package morris_water_maze.graphics.painter;
 
-import morris_water_maze.model.Background;
+import morris_water_maze.model.SquareBackground;
 import morris_water_maze.model.simulation.WaterMorrisMazeSimulation;
 import morris_water_maze.graphics.Paintable;
 import morris_water_maze.model.EscapeRouteSection;
@@ -19,7 +19,7 @@ enum PaintableEntityType
     PLATFORM(Platform.class, PlatformPainter::new),
     POOL(Pool.class, PoolPainter::new),
     ESCAPE_ROUTE_SECTION(EscapeRouteSection.class, EscapeRouteSectionPainter::new),
-    BACKGROUND(Background.class, BackgroundPainter::new );
+    BACKGROUND(SquareBackground.class, BackgroundPainter::new );
     
     
     private static final List<PaintableEntityType>

@@ -1,4 +1,4 @@
-package morris_water_maze.graphics.painter;
+package morris_water_maze.graphics.painter.image;
 
 import morris_water_maze.graphics.Paintable;
 
@@ -14,4 +14,6 @@ public interface ImagePainter
     void setBackground(Paintable paintable);
     
     void initializeImage();
+    
+    String getSvgString();
 }

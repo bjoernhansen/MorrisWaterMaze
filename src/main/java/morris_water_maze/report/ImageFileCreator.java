@@ -1,9 +1,10 @@
-package morris_water_maze.control;
+package morris_water_maze.report;
 
 import morris_water_maze.control.observer.SimulationRunCompletionObserver;
-import morris_water_maze.graphics.painter.ImagePainter;
+import morris_water_maze.graphics.painter.image.ImagePainter;
 import morris_water_maze.model.simulation.Simulation;
 import morris_water_maze.parameter.ParameterAccessor;
+import org.jfree.graphics2d.svg.SVGUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
@@ -37,6 +38,9 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
     private final FileNameProvider
         fileNameProvider;
     
+    private final ImageFileFormat
+        imageFileFormat;
+    
     
     public ImageFileCreator(ImagePainter imagePainter, ParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
     {
@@ -46,6 +50,8 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
         lowerBoundOfPictureTimeFrame = parameterAccessor.getLowerBoundOfPictureTimeFrame();
         upperBoundOfPictureTimeFrame = parameterAccessor.getUpperBoundOfPictureTimeFrame();
         maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
+        imageFileFormat = parameterAccessor.getImagePainterTypeForPictureExport()
+                                           .getImageFileFormat();
     }
     
     @Override
@@ -92,12 +98,25 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
         {
             try
             {
-                String fileNameTemp = fileNameProvider.getSubDirectory() + "/" + System.currentTimeMillis() + ".png";
+                String fileNameTemp = fileNameProvider.getSubDirectory() + "/" + System.currentTimeMillis() + "." + imageFileFormat.getName();
                 System.out.println("\nSchreibe Datei: " + fileNameTemp);
-                ImageIO.write((RenderedImage) imagePainter.getImage(), "png", new File(fileNameTemp));
+    
+                File file = new File(fileNameTemp);
+                
+                if(imageFileFormat == ImageFileFormat.SVG)
+                {
+                    String svgString = imagePainter.getSvgString();
+                    SVGUtils.writeToSVG(file, svgString, false);
+                }
+                else
+                {
+                    ImageIO.write((RenderedImage) imagePainter.getImage(), ImageFileFormat.PNG.getName(), file);
+                }
+                
                 missingPicturesCount--;
                 System.out.println("Missing Pictures: " + missingPicturesCount + "\n");
-            } catch (Exception exception)
+            }
+            catch (Exception exception)
             {
                 System.out.println(Arrays.toString(exception.getStackTrace()));
             }

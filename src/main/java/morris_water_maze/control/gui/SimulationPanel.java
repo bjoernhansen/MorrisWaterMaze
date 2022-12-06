@@ -1,9 +1,9 @@
 package morris_water_maze.control.gui;
 
-import morris_water_maze.graphics.Graphics2DAdapter;
+import morris_water_maze.graphics.Graphics2dAdapter;
 import morris_water_maze.graphics.GraphicsAdapter;
 import morris_water_maze.graphics.Paintable;
-import morris_water_maze.graphics.painter.ImagePainter;
+import morris_water_maze.graphics.painter.image.ImagePainter;
 import morris_water_maze.model.SettingModifier;
 import morris_water_maze.parameter.ParameterAccessor;
 
@@ -128,7 +128,7 @@ final class SimulationPanel extends JPanel
         if(hasEnoughTimePassedBeforeRepaint())
         {
             super.paintComponent(graphics);
-            GraphicsAdapter graphicsAdapter = Graphics2DAdapter.of(graphics);
+            GraphicsAdapter graphicsAdapter = Graphics2dAdapter.of(graphics);
             graphicsAdapter.turnAntialiasingOn();
             imagePainter.initializeImage();
             imagePainter.paint(simulation);
