@@ -11,6 +11,8 @@ public final class Color
     public static final Color
         BLACK = Color.of(java.awt.Color.BLACK);
     
+    public static final Color
+        RED = Color.of(java.awt.Color.RED);
     
     private final java.awt.Color
         awtColor;

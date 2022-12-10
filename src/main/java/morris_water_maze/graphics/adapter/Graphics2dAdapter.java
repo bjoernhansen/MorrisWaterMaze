@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 
 
@@ -55,7 +56,7 @@ public final class Graphics2dAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void drawOval(Ellipse2D ellipse)
+    public void drawEllipse(Ellipse2D ellipse)
     {
         graphics.drawOval(
             (int)(ZOOM_FACTOR * ellipse.getX()),
@@ -65,19 +66,23 @@ public final class Graphics2dAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void fillOval(int x, int y, int width, int height)
+    public void fillCircleOnTopOfAPoint(Point center, double radius)
     {
         graphics.fillOval(
-            (int)(ZOOM_FACTOR * x),
-            (int)(ZOOM_FACTOR * y),
-            (int)(ZOOM_FACTOR * width),
-            (int)(ZOOM_FACTOR * height));
+            (int)(ZOOM_FACTOR * (center.getX() - radius)),
+            (int)(ZOOM_FACTOR * (center.getY() - radius)),
+            (int)(ZOOM_FACTOR * 2.0 * radius),
+            (int)(ZOOM_FACTOR * 2.0 * radius));
     }
     
     @Override
-    public void fillRect(int x, int y, int width, int height)
+    public void fillRect(Rectangle2D rectangle)
     {
-        graphics.fillRect(x, y, width, height);
+        graphics.fillRect(
+            (int)(ZOOM_FACTOR * rectangle.getX()),
+            (int)(ZOOM_FACTOR * rectangle.getY()),
+            (int)(ZOOM_FACTOR * rectangle.getWidth()),
+            (int)(ZOOM_FACTOR * rectangle.getHeight()));
     }
     
     @Override
@@ -97,16 +102,5 @@ public final class Graphics2dAdapter extends AbstractGraphicsAdapter<Graphics2D>
         {
             throw new UnsupportedOperationException();
         }
-    }
-  
-    @Override
-    public void drawPoint(Point point)
-    {
-        graphics.drawLine(
-            (int)(ZOOM_FACTOR * point.getX()),
-            (int)(ZOOM_FACTOR * point.getY()),
-            (int)(ZOOM_FACTOR * point.getX()),
-            (int)(ZOOM_FACTOR * point.getY()))
-        ;
     }
 }

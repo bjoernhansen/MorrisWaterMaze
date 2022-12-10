@@ -3,30 +3,36 @@ package morris_water_maze.graphics.painter;
 import morris_water_maze.graphics.Color;
 import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.model.Pool;
+import morris_water_maze.util.Point;
 
-import static morris_water_maze.Main.ZOOM_FACTOR;
+import java.awt.geom.Ellipse2D;
 
 
 final class PoolPainter extends Painter<Pool>
 {
-    private final int
-        POOL_CENTER_SIZE = 2;
+    private static final double
+        POOL_CENTER_CIRCLE_RADIUS = 1.0;
     
+    private static final Point
+        POOL_CENTER_LOCATION = Point.newInstance(Pool.CENTER_TO_BORDER_DISTANCE, Pool.CENTER_TO_BORDER_DISTANCE);
+
     
     @Override
     public void paint(GraphicsAdapter graphics, Pool pool)
     {
-        graphics.setColor(Color.BLACK);
-        graphics.drawOval(pool.getBorder());
+        drawPoolBorder(graphics, pool.getBorder());
         drawPoolCenter(graphics);
     }
     
-    private void drawPoolCenter(GraphicsAdapter graphics)
-    {        
-        int y;
-        int x = y = (int)(Pool.CENTER_TO_BORDER_DISTANCE - POOL_CENTER_SIZE/2.0);
-    
+    private void drawPoolBorder(GraphicsAdapter graphics, Ellipse2D ellipse)
+    {
         graphics.setColor(Color.BLACK);
-        graphics.fillOval(x, y, POOL_CENTER_SIZE, POOL_CENTER_SIZE);
+        graphics.drawEllipse(ellipse);
+    }
+    
+    private void drawPoolCenter(GraphicsAdapter graphics)
+    {
+        graphics.setColor(Color.BLACK);
+        graphics.fillCircleOnTopOfAPoint(POOL_CENTER_LOCATION, POOL_CENTER_CIRCLE_RADIUS);
     }
 }

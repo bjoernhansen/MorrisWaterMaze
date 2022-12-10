@@ -1,5 +1,3 @@
-
-
 Arbeit an der Klasse Maus:
 - Unit-Tests für die mathematischen Operationen
 - Methoden verbessern
@@ -8,7 +6,7 @@ Arbeit an der Klasse Maus:
 
 Andrew Zeiten schicken für Auswertung (verschiedene Simulationsläufe)
 
-JavaFX verwenden
+JavaFX verbessern --> fxml verwenden, GUI Elemente ergänzen (wie bei der Swing-Simulation)
 
 JavaDocs an alle öffentlichen Elemente setzen
 
