@@ -1,12 +1,19 @@
-package morris_water_maze.graphics;
+package morris_water_maze.graphics.adapter;
+
+import morris_water_maze.Main;
 
 import java.util.Objects;
 
 
 abstract class AbstractGraphicsAdapter<E> implements GraphicsAdapter
 {
-    protected final E graphics;
+    static final double
+        ZOOM_FACTOR = Main.ZOOM_FACTOR;
     
+    protected final E
+        graphics;
+    
+        
     protected AbstractGraphicsAdapter(E graphics)
     {
         this.graphics = Objects.requireNonNull(graphics);

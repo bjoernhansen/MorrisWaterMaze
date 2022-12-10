@@ -1,7 +1,7 @@
-package morris_water_maze.control.gui;
+package morris_water_maze.control.gui.swing;
 
-import morris_water_maze.graphics.Graphics2dAdapter;
-import morris_water_maze.graphics.GraphicsAdapter;
+import morris_water_maze.graphics.adapter.Graphics2dAdapter;
+import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.graphics.Paintable;
 import morris_water_maze.graphics.painter.image.ImagePainter;
 import morris_water_maze.model.SettingModifier;
@@ -20,8 +20,6 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
-import static morris_water_maze.control.gui.SimulationFrame.IMAGE_BORDER_DISTANCE;
 
 
 final class SimulationPanel extends JPanel
@@ -44,7 +42,7 @@ final class SimulationPanel extends JPanel
     private final SettingModifier
         settingModifier;
     
-    private final SimulationControllerWithGui
+    private final SwingSimulationController
         simulationController;
     
     private final ImagePainter
@@ -66,7 +64,7 @@ final class SimulationPanel extends JPanel
         numberOfSimulationsSpinner;
     
     
-    public SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SimulationControllerWithGui simulationController, ImagePainter imagePainter, Paintable simulation)
+    public SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SwingSimulationController simulationController, ImagePainter imagePainter, Paintable simulation)
     {
         this.simulationController = simulationController;
         this.settingModifier = settingModifier;
@@ -91,8 +89,7 @@ final class SimulationPanel extends JPanel
         startAndPauseButton = new JButton("Starten");
         restartButton = new JButton("Neustart");
         mouseTrainingLevelSpinner = new JSpinner(new SpinnerNumberModel(initialMouseTrainingLevel, 0.0, 1.0, 0.01));
-        int cappedNumberOfSimulations = Math.min(initialNumberOfSimulations, MAXIMUM_NUMBER_OF_SIMULATIONS);
-        numberOfSimulationsSpinner = new JSpinner(new SpinnerNumberModel(cappedNumberOfSimulations, 1.0, MAXIMUM_NUMBER_OF_SIMULATIONS, 1.00));
+        numberOfSimulationsSpinner = new JSpinner(new SpinnerNumberModel(initialNumberOfSimulations, 1.0, MAXIMUM_NUMBER_OF_SIMULATIONS, 1.00));
     }
     
     private void addListeners()
@@ -129,11 +126,10 @@ final class SimulationPanel extends JPanel
         {
             super.paintComponent(graphics);
             GraphicsAdapter graphicsAdapter = Graphics2dAdapter.of(graphics);
-            graphicsAdapter.turnAntialiasingOn();
             imagePainter.initializeImage();
             imagePainter.paint(simulation);
             Image image = imagePainter.getImage();
-            graphicsAdapter.drawImage(image, IMAGE_BORDER_DISTANCE, IMAGE_BORDER_DISTANCE, null);
+            graphicsAdapter.drawImage(image, SimulationFrame.IMAGE_BORDER_DISTANCE, SimulationFrame.IMAGE_BORDER_DISTANCE, null);
             lastPainted = System.currentTimeMillis();
         }
     }
@@ -153,7 +149,7 @@ final class SimulationPanel extends JPanel
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            if(simulationController.getLoopState())
+            if(simulationController.isSimulationInProgress())
             {
                 resetStartAndPauseButton();
             }
@@ -161,7 +157,7 @@ final class SimulationPanel extends JPanel
             {
                 startAndPauseButton.setText("Stop");
             }
-            simulationController.switchLoopState();
+            simulationController.switchSimulationActivityState();
             mouseTrainingLevelSpinner.setEnabled(false);
             numberOfSimulationsSpinner.setEnabled(false);
         }

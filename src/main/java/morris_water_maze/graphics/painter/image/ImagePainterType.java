@@ -1,5 +1,6 @@
 package morris_water_maze.graphics.painter.image;
 
+import morris_water_maze.model.Pool;
 import morris_water_maze.model.SquareBackground;
 import morris_water_maze.report.ImageFileFormat;
 
@@ -15,7 +16,7 @@ public enum ImagePainterType implements ImagePainterFactory
     
     
     private static final SquareBackground
-        squareBackground = new SquareBackground(IMAGE_SIZE);
+        squareBackground = new SquareBackground(2.0 * Pool.CENTER_TO_BORDER_DISTANCE);
     
     private final Function<Integer, ImagePainter>
         instantiationFunction;

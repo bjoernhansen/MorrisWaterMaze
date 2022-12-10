@@ -1,6 +1,6 @@
-package morris_water_maze.control.gui;
+package morris_water_maze.control.gui.swing;
 
-import morris_water_maze.control.SimulationController;
+import morris_water_maze.control.gui.GuiSimulationController;
 import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.model.simulation.Simulation;
 import morris_water_maze.parameter.ParameterAccessor;
@@ -9,13 +9,10 @@ import javax.swing.JFrame;
 import java.util.Optional;
 
 
-public final class SimulationControllerWithGui extends SimulationController implements Runnable
+public final class SwingSimulationController extends GuiSimulationController implements Runnable
 {
-    private static final int
-        PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS = 100;
-        
-    private boolean
-        loop = false;
+    private static final long
+        SIMULATION_STEP_TIME_INTERVAL = 100;
     
     private final Thread
         animator;
@@ -27,7 +24,8 @@ public final class SimulationControllerWithGui extends SimulationController impl
         simulationPanel;
     
 
-    public SimulationControllerWithGui(Simulation simulationInstance, ParameterAccessor parameterAccessor)
+
+    public SwingSimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor)
     {
         super(simulationInstance);
     
@@ -47,22 +45,18 @@ public final class SimulationControllerWithGui extends SimulationController impl
     @Override
     public void run()
     {
-        while (Thread.currentThread() == this.animator)
+        ConsecutiveInvocationTimer timer = new ConsecutiveInvocationTimer(SIMULATION_STEP_TIME_INTERVAL);
+        
+        while(Thread.currentThread() == this.animator)
         {
-            try
+            if(timer.isNextSimulationStepToBeStartedNow())
             {
-                Thread.sleep(PAUSE_BETWEEN_SIMULATION_STEPS_IN_MS);
+                if(isSimulationInProgress())
+                {
+                    getSimulation().nextStep();
+                }
+                simulationFrame.repaint();
             }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-                break;
-            }
-            if(getLoopState())
-            {
-                getSimulation().nextStep();
-            }
-            simulationFrame.repaint();
         }
     }
     
@@ -71,20 +65,5 @@ public final class SimulationControllerWithGui extends SimulationController impl
         Optional.ofNullable(simulationPanel).ifPresent(
             SimulationPanel::resetStartAndPauseButton);
         getSimulation().reset();
-    }
-    
-    public void switchLoopState()
-    {
-        loop = !loop;
-    }
-    
-    public boolean getLoopState()
-    {
-        return loop;
-    }
-    
-    public void stopLooping()
-    {
-        loop = false;
     }
 }

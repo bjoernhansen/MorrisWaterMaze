@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 class PointTest
 {
@@ -25,7 +27,7 @@ class PointTest
     @Test
     void shouldReturnCorrectCoordinates()
     {
-        Assertions.assertEquals(point.getX(), X);
-        Assertions.assertEquals(point.getY(), Y);
+        assertThat(point.getX()).isEqualTo(X);
+        assertThat(point.getY()).isEqualTo(Y);
     }
 }

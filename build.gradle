@@ -11,9 +11,12 @@ repositories {
 }
 
 dependencies {
-    // implementation group: 'batik', name: 'batik-svggen', version: '1.6-1'
     implementation 'org.jfree:jfreesvg:3.4.3'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.0'
+    testImplementation 'org.mockito:mockito-core:4.9.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:4.9.0'
+    testImplementation 'org.assertj:assertj-core:3.23.1'
 }
 
 jar {

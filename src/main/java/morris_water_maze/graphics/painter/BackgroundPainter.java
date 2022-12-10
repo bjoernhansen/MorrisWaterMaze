@@ -1,17 +1,22 @@
 package morris_water_maze.graphics.painter;
 
-import morris_water_maze.graphics.GraphicsAdapter;
+import morris_water_maze.graphics.Color;
+import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.model.SquareBackground;
 
-import java.awt.Color;
+import static morris_water_maze.Main.ZOOM_FACTOR;
 
 
 public final class BackgroundPainter extends Painter<SquareBackground>
 {
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, SquareBackground squareBackground)
+    public void paint(GraphicsAdapter graphics, SquareBackground squareBackground)
     {
-        graphicsAdapter.setColor(Color.white);
-        graphicsAdapter.fillRect(0, 0, 720, squareBackground.getSideLength());
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(
+            (int)(ZOOM_FACTOR * 0.0),
+            (int)(ZOOM_FACTOR * 0.0),
+            (int)(ZOOM_FACTOR*squareBackground.getSideLength()),
+            (int)(ZOOM_FACTOR*squareBackground.getSideLength()));
     }
 }

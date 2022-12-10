@@ -1,7 +1,7 @@
 package morris_water_maze.graphics.painter.image;
 
-import morris_water_maze.graphics.Graphics2dAdapter;
-import morris_water_maze.graphics.GraphicsAdapter;
+import morris_water_maze.graphics.adapter.Graphics2dAdapter;
+import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 
 import java.awt.Graphics;
@@ -12,10 +12,10 @@ final class SvgImagePainter extends AbstractImagePainter
 {
     SvgImagePainter(int imageSize)
     {
-        Graphics graphics = new SVGGraphics2D(imageSize, imageSize);
-        GraphicsAdapter graphicsAdapter = Graphics2dAdapter.of(graphics);
+        Graphics svgGraphics2D = new SVGGraphics2D(imageSize, imageSize);
+        GraphicsAdapter graphics = Graphics2dAdapter.of(svgGraphics2D);
         
-        setGraphicsAdapter(graphicsAdapter);
+        setGraphics(graphics);
     }
     
     @Override

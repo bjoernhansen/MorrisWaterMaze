@@ -1,14 +1,10 @@
 package morris_water_maze.graphics.painter.image;
 
-import morris_water_maze.graphics.Graphics2dAdapter;
-import morris_water_maze.graphics.GraphicsAdapter;
+import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.graphics.Paintable;
 import morris_water_maze.graphics.painter.PaintManager;
-import org.jfree.graphics2d.svg.SVGGraphics2D;
 
-import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 
 
 abstract class AbstractImagePainter implements ImagePainter
@@ -17,7 +13,7 @@ abstract class AbstractImagePainter implements ImagePainter
         image;
     
     private GraphicsAdapter
-        graphicsAdapter;
+        graphics;
     
     private final PaintManager
         paintManager = PaintManager.getInstance();
@@ -29,7 +25,7 @@ abstract class AbstractImagePainter implements ImagePainter
     @Override
     public void paint(Paintable paintableEntity)
     {
-        paintManager.paint(graphicsAdapter, paintableEntity);
+        paintManager.paint(graphics, paintableEntity);
     }
     
     @Override
@@ -47,7 +43,7 @@ abstract class AbstractImagePainter implements ImagePainter
     @Override
     public void initializeImage()
     {
-        paintManager.paint(graphicsAdapter, background);
+        paintManager.paint(graphics, background);
     }
     
     void setImage(Image image)
@@ -55,14 +51,14 @@ abstract class AbstractImagePainter implements ImagePainter
         this.image = image;
     }
     
-    void setGraphicsAdapter(GraphicsAdapter graphicsAdapter)
+    void setGraphics(GraphicsAdapter graphics)
     {
-        this.graphicsAdapter = graphicsAdapter;
+        this.graphics = graphics;
     }
     
     @Override
     public String getSvgString()
     {
-        return graphicsAdapter.getSvgString();
+        return graphics.getSvgString();
     }
 }

@@ -8,6 +8,9 @@ import java.awt.geom.Rectangle2D;
 
 public final class Platform implements Paintable
 {
+    private static final double
+        PLATFORM_SIDE_LENGTH = 10;
+    
     private final Rectangle2D
             bounds;
 
@@ -23,13 +26,13 @@ public final class Platform implements Paintable
 
     private static Rectangle2D createBounds()
     {
-        double alpha = 0.25*Math.PI;
-        double platformSiteLength = 10;
-        double outerCornerRadius = 0.5*(Pool.RADIUS + platformSiteLength *Math.sqrt(2));
+        double alpha = 0.25 * Math.PI;
+        double outerCornerRadius = 0.5 * (Pool.RADIUS + PLATFORM_SIDE_LENGTH * Math.sqrt(2));
         return new Rectangle2D.Double(
-                Pool.CENTER_TO_BORDER_DISTANCE + outerCornerRadius*Math.cos(alpha) - platformSiteLength,
-                Pool.CENTER_TO_BORDER_DISTANCE + outerCornerRadius*Math.sin(alpha) - platformSiteLength,
-                platformSiteLength, platformSiteLength);
+                Pool.CENTER_TO_BORDER_DISTANCE + outerCornerRadius * Math.cos(alpha) - PLATFORM_SIDE_LENGTH,
+                Pool.CENTER_TO_BORDER_DISTANCE + outerCornerRadius * Math.sin(alpha) - PLATFORM_SIDE_LENGTH,
+                PLATFORM_SIDE_LENGTH,
+                PLATFORM_SIDE_LENGTH);
     }
 
     public Rectangle2D getBounds() {

@@ -1,6 +1,6 @@
 package morris_water_maze.graphics.painter;
 
-import morris_water_maze.graphics.GraphicsAdapter;
+import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.graphics.Paintable;
 
 import java.util.Map;
@@ -29,9 +29,9 @@ public final class PaintManager
         return instance;
     }
     
-    public void paint(GraphicsAdapter graphicsAdapter, Paintable paintableEntity)    {
+    public void paint(GraphicsAdapter graphics, Paintable paintableEntity)    {
         Optional.ofNullable(getPainter(paintableEntity)).ifPresent(
-            painter -> painter.paint(graphicsAdapter, paintableEntity));
+            painter -> painter.paint(graphics, paintableEntity));
     }
     
     @SuppressWarnings("unchecked")

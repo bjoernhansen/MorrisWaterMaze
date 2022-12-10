@@ -1,47 +1,41 @@
 package morris_water_maze.graphics.painter;
 
-import morris_water_maze.graphics.GraphicsAdapter;
+import morris_water_maze.graphics.Color;
+import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.model.EscapeRouteSection;
 import morris_water_maze.util.Point;
 
-import java.awt.Color;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
+import static morris_water_maze.Main.ZOOM_FACTOR;
 
 
 final class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>
 {
     private final double
         DELIMITER_CIRCLE_RADIUS = 0.5;
-    
+        
     
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, EscapeRouteSection escapeRouteSection)
+    public void paint(GraphicsAdapter graphics, EscapeRouteSection escapeRouteSection)
     {
-        Line2D.Double escapeRouteSectionLine = getEscapeRouteSectionLine(escapeRouteSection);
-        graphicsAdapter.setColor(Color.BLACK);
-        graphicsAdapter.draw(escapeRouteSectionLine);
-        paintCircleOnTopOfAPoint(graphicsAdapter, escapeRouteSection.getEnd().asPoint2D());
+        paintEscapeRouteSectionLine(graphics, escapeRouteSection);        
+        paintCircleOnTopOfAPoint(graphics, escapeRouteSection.getEnd());
     }
     
-    private Line2D.Double getEscapeRouteSectionLine(EscapeRouteSection escapeRouteSection)
+    private void paintEscapeRouteSectionLine(GraphicsAdapter graphics, EscapeRouteSection escapeRouteSection)
     {
-        return new Line2D.Double(
-            scalePointByZoomFactor(escapeRouteSection.getStart()).asPoint2D(),
-            scalePointByZoomFactor(escapeRouteSection.getEnd()).asPoint2D());
+        graphics.setColor(Color.BLACK);
+        graphics.drawLine(escapeRouteSection.getLine());
     }
     
-    private Point scalePointByZoomFactor(Point point)
+    private void paintCircleOnTopOfAPoint(GraphicsAdapter graphics, Point point)
     {
-        return Point.newInstance(ZOOM_FACTOR * point.getX(), ZOOM_FACTOR * point.getY());
-    }
-    
-    private void paintCircleOnTopOfAPoint(GraphicsAdapter graphicsAdapter, Point2D point)
-    {
-        graphicsAdapter.fillOval(
-            (int)(ZOOM_FACTOR * (point.getX() - DELIMITER_CIRCLE_RADIUS)),
-            (int)(ZOOM_FACTOR * (point.getY() - DELIMITER_CIRCLE_RADIUS)),
-            (int)(ZOOM_FACTOR * DELIMITER_CIRCLE_RADIUS * 2),
-            (int)(ZOOM_FACTOR * DELIMITER_CIRCLE_RADIUS * 2));
+        graphics.fillOval(
+            (int)((point.getX() - DELIMITER_CIRCLE_RADIUS)),
+            (int)((point.getY() - DELIMITER_CIRCLE_RADIUS)),
+            (int)(DELIMITER_CIRCLE_RADIUS * 2.0),
+            (int)(DELIMITER_CIRCLE_RADIUS * 2.0));
+        
+        graphics.setColor(Color.of(java.awt.Color.RED));
+        graphics.drawPoint(point);
     }
 }

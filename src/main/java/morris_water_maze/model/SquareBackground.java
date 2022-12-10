@@ -5,16 +5,16 @@ import morris_water_maze.graphics.Paintable;
 
 public final class SquareBackground implements Paintable
 {
-    private final int
+    private final double
         sideLength;
     
     
-    public SquareBackground(int sideLength)
+    public SquareBackground(double sideLength)
     {
         this.sideLength = sideLength;
     }
     
-    public int getSideLength()
+    public double getSideLength()
     {
         return sideLength;
     }

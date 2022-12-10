@@ -1,4 +1,4 @@
-package morris_water_maze.control.gui;
+package morris_water_maze.control.gui.swing;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -45,7 +45,6 @@ final class SimulationFrame extends JFrame
     public static Rectangle getControlPanelDimension()
     {
         return CONTROL_PANEL_DIMENSION;
-  
     }
     
     static class ShutdownWindowAdapter extends WindowAdapter

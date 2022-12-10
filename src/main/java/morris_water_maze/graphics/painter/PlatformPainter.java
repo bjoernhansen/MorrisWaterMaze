@@ -1,29 +1,26 @@
 package morris_water_maze.graphics.painter;
 
-import morris_water_maze.graphics.GraphicsAdapter;
+import morris_water_maze.graphics.Color;
+import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.model.Platform;
-import morris_water_maze.model.Pool;
 
-import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+
+import static morris_water_maze.Main.ZOOM_FACTOR;
 
 
 final class PlatformPainter extends Painter<Platform>
 {
-    private static final Color
-        DARK_GREY = new Color(75, 75, 75);
-    
-    
     @Override
-    public void paint(GraphicsAdapter graphicsAdapter, Platform platform)
+    public void paint(GraphicsAdapter graphics, Platform platform)
     {
-        graphicsAdapter.setColor(DARK_GREY);
-        graphicsAdapter.fill(affineTransformation.createTransformedShape(platform.getBounds()));
-        graphicsAdapter.setColor(Color.black);
+        Rectangle2D platformBounds = platform.getBounds();
     
-        int y;
-        int x = y = (int)(ZOOM_FACTOR * (Pool.CENTER_TO_BORDER_DISTANCE - 1));
-        int size = (int) (2.0 * ZOOM_FACTOR);
-    
-        graphicsAdapter.fillOval(x, y, size, size);
+        graphics.setColor(Color.DARK_GREY);
+        graphics.fillRect(
+            (int)(ZOOM_FACTOR * platformBounds.getX()),
+            (int)(ZOOM_FACTOR * platformBounds.getY()),
+            (int)(ZOOM_FACTOR * platformBounds.getWidth()),
+            (int)(ZOOM_FACTOR * platformBounds.getHeight()));
     }
 }
