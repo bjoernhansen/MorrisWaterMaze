@@ -1,5 +1,6 @@
 package morris_water_maze.graphics;
 
+import morris_water_maze.util.DoubleComparison;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,9 +9,6 @@ import static org.assertj.core.api.Assertions.within;
 
 class ColorTest
 {
-    private static final double
-        EPSILON = 0.000001;
-    
     private static final java.awt.Color
         AWT_RED = java.awt.Color.RED;
     
@@ -40,8 +38,8 @@ class ColorTest
         Color transparentGrey = Color.of(awtTransparentGrey);
         
         assertThat(red.asJavaFxColor().getOpacity()).isEqualTo(1.0);
-        assertThat(red.asJavaFxColor().getRed()).isCloseTo(AWT_RED.getRed()/255.0, within(EPSILON));
-        assertThat(transparentGrey.asJavaFxColor().getOpacity()).isCloseTo(awtTransparentGrey.getAlpha()/255.0, within(EPSILON));
+        assertThat(red.asJavaFxColor().getRed()).isCloseTo(AWT_RED.getRed()/255.0, within(DoubleComparison.EPSILON));
+        assertThat(transparentGrey.asJavaFxColor().getOpacity()).isCloseTo(awtTransparentGrey.getAlpha()/255.0, within(DoubleComparison.EPSILON));
     }
     
     @Test

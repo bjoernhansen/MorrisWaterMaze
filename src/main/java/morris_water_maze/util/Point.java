@@ -1,6 +1,9 @@
 package morris_water_maze.util;
 
 import java.awt.geom.Point2D;
+import java.util.Objects;
+
+import static morris_water_maze.util.DoubleComparison.doubleEquals;
 
 
 public final class Point
@@ -48,5 +51,29 @@ public final class Point
     public double getY()
     {
         return y;
+    }
+    
+    
+    @Override
+    public String toString()
+    {
+        return "Point{ x=" + x + ", y=" + y + '}';
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof Point)) return false;
+        
+        Point other = (Point) o;
+        return     doubleEquals(this.x, other.x)
+                && doubleEquals(this.y, other.y);
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(x, y);
     }
 }

@@ -12,11 +12,11 @@ import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 import java.util.Random;
 
+import static morris_water_maze.model.mouse.Calculations.angle;
+
+
 public class Mouse
 {
-    private static final Point
-        ORIGIN = Point.newInstance(0, 0);
-    
     private static final double
         RADIUS = 3;					// Radius des die Maus repräsentierenden Kreises
     
@@ -50,9 +50,9 @@ public class Mouse
     private boolean
         isSwimming;				// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
     
-    private static final Random
+    private final Random
         random = new Random();
-    
+        
     
     public Mouse(MouseParameterAccessor parameterAccessor, Pool pool, Platform platform)
     {
@@ -79,11 +79,13 @@ public class Mouse
             coordinates.getX() + stepLength * Math.cos(polarAngle),
             coordinates.getY() + stepLength * Math.sin(polarAngle));
         
+        
+        
         if(movementBoundaries.contains(proposedCoordinates.asPoint2D()))
         {
             double meanAngle;
-            Point movementVector = calculateVector(coordinates, proposedCoordinates);
-            Point mouseToPlatformVector = calculateVector(proposedCoordinates, platform.getCenter());
+            Point movementVector = VectorBuilder.from(coordinates).to(proposedCoordinates);
+            Point mouseToPlatformVector = VectorBuilder.from(proposedCoordinates).to(platform.getCenter());
             
             if(trainingLevel > Math.random() && Mouse.FIELD_OF_VIEW /2 >= angle(movementVector, mouseToPlatformVector))
             {
@@ -98,7 +100,7 @@ public class Mouse
         else // Schnittstelle von Pool und Mausschritt
         {
             proposedCoordinates = circleLineIntersection(pool.getCenter(), Pool.RADIUS - Mouse.RADIUS, coordinates, proposedCoordinates);
-            Point newPosCenterVector = calculateVector(proposedCoordinates, pool.getCenter());
+            Point newPosCenterVector = VectorBuilder.from(proposedCoordinates).to(pool.getCenter());
             double direction = Line2D.relativeCCW(
                                         pool.getCenter().getX(),
                                         pool.getCenter().getY(),
@@ -132,16 +134,7 @@ public class Mouse
         return gaussian(mu, sigma, max);
     }
     
-    private double angle(Point point1, Point point2)
-    {
-        double scalar = point1.getX() * point2.getX() + point1.getY() * point2.getY();
-        return Math.acos(scalar/(point1.distance(ORIGIN) * point2.distance(ORIGIN)));
-    }
-    
-    private Point calculateVector(Point startPointX, Point endPoint)
-    {
-        return Point.newInstance(endPoint.getX()-startPointX.getX(), endPoint.getY()- startPointX.getY());
-    }
+
     
     private double calculatePolarAngle(Point vector)
     {
@@ -296,7 +289,7 @@ public class Mouse
     
     private void resetPolarAngleRandomly()
     {
-        polarAngle = Math.PI*(Math.random()-0.5) + calculatePolarAngle(calculateVector(startingCoordinates, pool.getCenter()));
+        polarAngle = Math.PI*(Math.random()-0.5) + calculatePolarAngle(VectorBuilder.from(startingCoordinates).to(pool.getCenter()));
     }
     
     public boolean isSwimming()
