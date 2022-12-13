@@ -1,8 +1,8 @@
 package morris_water_maze.graphics.painter;
 
 import morris_water_maze.graphics.adapter.GraphicsAdapter;
-import morris_water_maze.model.EscapeRouteSection;
-import morris_water_maze.model.MouseMovement;
+import morris_water_maze.model.mouse.EscapeRouteSection;
+import morris_water_maze.model.mouse.MouseMovement;
 
 
 class MouseMovementPainter extends Painter<MouseMovement>

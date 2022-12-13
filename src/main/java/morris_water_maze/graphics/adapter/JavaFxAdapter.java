@@ -90,25 +90,4 @@ public final class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext
             throw new RuntimeException(e);
         }
     }
-    
-    /*
-    
-      public static javafx.scene.image.Image createImage(java.awt.Image image) throws IOException {
-    if (!(image instanceof RenderedImage)) {
-      BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
-              image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-      Graphics g = bufferedImage.createGraphics();
-      g.drawImage(image, 0, 0, null);
-      g.dispose();
-
-      image = bufferedImage;
-    }
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    ImageIO.write((RenderedImage) image, "png", out);
-    out.flush();
-    ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-    return new javafx.scene.image.Image(in);
-  }
-    
-     */
 }

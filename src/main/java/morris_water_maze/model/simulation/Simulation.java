@@ -3,7 +3,6 @@ package morris_water_maze.model.simulation;
 import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
 import morris_water_maze.control.observer.SimulationRunCompletionObserver;
 import morris_water_maze.graphics.Paintable;
-import morris_water_maze.model.SettingModifier;
 
 
 public interface Simulation extends SettingModifier, Paintable

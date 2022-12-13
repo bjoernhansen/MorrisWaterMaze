@@ -3,8 +3,8 @@ package morris_water_maze.graphics.painter;
 import morris_water_maze.model.SquareBackground;
 import morris_water_maze.model.simulation.WaterMorrisMazeSimulation;
 import morris_water_maze.graphics.Paintable;
-import morris_water_maze.model.EscapeRouteSection;
-import morris_water_maze.model.MouseMovement;
+import morris_water_maze.model.mouse.EscapeRouteSection;
+import morris_water_maze.model.mouse.MouseMovement;
 import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
 

@@ -1,4 +1,4 @@
-package morris_water_maze.model;
+package morris_water_maze.model.simulation;
 
 public interface SettingModifier
 {

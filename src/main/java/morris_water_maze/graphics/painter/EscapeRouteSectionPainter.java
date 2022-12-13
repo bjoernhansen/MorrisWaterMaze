@@ -2,7 +2,7 @@ package morris_water_maze.graphics.painter;
 
 import morris_water_maze.graphics.Color;
 import morris_water_maze.graphics.adapter.GraphicsAdapter;
-import morris_water_maze.model.EscapeRouteSection;
+import morris_water_maze.model.mouse.EscapeRouteSection;
 
 
 final class EscapeRouteSectionPainter extends Painter<EscapeRouteSection>

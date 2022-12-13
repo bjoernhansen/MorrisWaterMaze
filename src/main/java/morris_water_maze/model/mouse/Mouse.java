@@ -1,5 +1,8 @@
-package morris_water_maze.model;
+package morris_water_maze.model.mouse;
 
+import morris_water_maze.model.Platform;
+import morris_water_maze.model.Pool;
+import morris_water_maze.model.StartingSide;
 import morris_water_maze.parameter.MouseParameterAccessor;
 import morris_water_maze.util.Point;
 

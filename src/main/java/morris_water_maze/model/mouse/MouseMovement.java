@@ -1,4 +1,4 @@
-package morris_water_maze.model;
+package morris_water_maze.model.mouse;
 
 import morris_water_maze.graphics.Paintable;
 import morris_water_maze.parameter.MouseParameterAccessor;

@@ -1,4 +1,4 @@
-package morris_water_maze.model;
+package morris_water_maze.model.mouse;
 
 import morris_water_maze.util.Point;
 import morris_water_maze.util.Stack;

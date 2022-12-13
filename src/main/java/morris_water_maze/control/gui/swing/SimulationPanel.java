@@ -4,7 +4,7 @@ import morris_water_maze.graphics.adapter.Graphics2dAdapter;
 import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.graphics.Paintable;
 import morris_water_maze.graphics.painter.image.ImagePainter;
-import morris_water_maze.model.SettingModifier;
+import morris_water_maze.model.simulation.SettingModifier;
 import morris_water_maze.parameter.ParameterAccessor;
 
 import javax.swing.BorderFactory;
