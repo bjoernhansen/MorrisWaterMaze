@@ -10,6 +10,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 import static morris_water_maze.model.mouse.Calculations.angle;
@@ -74,51 +75,68 @@ public class Mouse
     // TODO Methode verbessern
     private Point calculateNewCoordinates(double durationOfNextSimulationStep)
     {
-        double stepLength = speed * durationOfNextSimulationStep;
-        Point proposedCoordinates = Point.newInstance(
-            coordinates.getX() + stepLength * Math.cos(polarAngle),
-            coordinates.getY() + stepLength * Math.sin(polarAngle));
+        Point unconstrainedCoordinates = calculateUnconstrainedCoordinatesAfter(durationOfNextSimulationStep);
+    
+        Line2D currentMove = LineSegmentBuilder.from(coordinates)
+                                               .to(unconstrainedCoordinates);
         
-        
-        
-        if(movementBoundaries.contains(proposedCoordinates.asPoint2D()))
+        if(isReachingPlatformWithin(currentMove)) // Schnittstelle von Maus und Plattform
         {
-            double meanAngle;
-            Point movementVector = VectorBuilder.from(coordinates).to(proposedCoordinates);
-            Point mouseToPlatformVector = VectorBuilder.from(proposedCoordinates).to(platform.getCenter());
-            
-            if(trainingLevel > Math.random() && Mouse.FIELD_OF_VIEW /2 >= angle(movementVector, mouseToPlatformVector))
-            {
-                meanAngle = calculatePolarAngle(mouseToPlatformVector);
-            }
-            else
-            {
-                meanAngle = calculatePolarAngle(movementVector);
-            }
-            polarAngle = gaussian(meanAngle, calculateSigma());  // for a more trained mouse the standard deviation is smaller
-        }
-        else // Schnittstelle von Pool und Mausschritt
-        {
-            proposedCoordinates = circleLineIntersection(pool.getCenter(), Pool.RADIUS - Mouse.RADIUS, coordinates, proposedCoordinates);
-            Point newPosCenterVector = VectorBuilder.from(proposedCoordinates).to(pool.getCenter());
-            double direction = Line2D.relativeCCW(
-                                        pool.getCenter().getX(),
-                                        pool.getCenter().getY(),
-                                        proposedCoordinates.getX(),
-                                        proposedCoordinates.getY(),
-                                        coordinates.getX(),
-                                        coordinates.getY());
-            polarAngle = calculatePolarAngle(newPosCenterVector) - direction * (Math.PI/3 + gaussian(0, Math.PI/12, Math.PI/6));
-            startSwimming();
-        }
-     
-        Line2D lastMove = new Line2D.Double(coordinates.asPoint2D(), proposedCoordinates.asPoint2D());
-        if(lastMove.intersects(platform.getBounds())) // Schnittstelle von Maus und Plattform
-        {
-            proposedCoordinates = Point.of(Objects.requireNonNull(clipLine(lastMove, platform.getBounds())).getP1());
             stopSwimming();
+            return getLandingPlaceOnPlatformFor(currentMove);
         }
-        return proposedCoordinates;
+        
+        if(!movementBoundaries.contains(unconstrainedCoordinates.asPoint2D())) // Schnittstelle von Pool und Mausschritt
+        {
+            Point constrainedCoordinates = circleLineIntersection(pool.getCenter(), Pool.RADIUS - Mouse.RADIUS, coordinates, unconstrainedCoordinates);
+            Point newPosCenterVector = VectorBuilder.from(constrainedCoordinates).to(pool.getCenter());
+            double direction = Line2D.relativeCCW(
+                pool.getCenter().getX(),
+                pool.getCenter().getY(),
+                constrainedCoordinates.getX(),
+                constrainedCoordinates.getY(),
+                coordinates.getX(),
+                coordinates.getY());
+            polarAngle = calculatePolarAngle(newPosCenterVector) - direction * (Math.PI/3 + gaussian(0, Math.PI/12, Math.PI/6));
+            return constrainedCoordinates;
+        }
+        else
+        {
+            polarAngle = gaussian(calculateMeanAngleFor(unconstrainedCoordinates), calculateSigma());  // for a more trained mouse the standard deviation is smaller
+            return unconstrainedCoordinates;
+        }
+    }
+    
+    private Point getLandingPlaceOnPlatformFor(Line2D currentMove)
+    {
+        return clipLine(currentMove, platform.getBounds()).map(Line2D::getP1)
+                                                          .map(Point::of)
+                                                          .orElse(null);
+    }
+    
+    private boolean isReachingPlatformWithin(Line2D currentMove)
+    {
+        return currentMove.intersects(platform.getBounds());
+    }
+    
+    private double calculateMeanAngleFor(Point proposedCoordinates)
+    {
+        Point movementVector = VectorBuilder.from(coordinates)
+                                            .to(proposedCoordinates);
+        Point mouseToPlatformVector = VectorBuilder.from(proposedCoordinates).to(platform.getCenter());
+        if(trainingLevel > Math.random() && Mouse.FIELD_OF_VIEW /2 >= angle(movementVector, mouseToPlatformVector))
+        {
+            return calculatePolarAngle(mouseToPlatformVector);
+        }
+        return calculatePolarAngle(movementVector);
+    }
+    
+    private Point calculateUnconstrainedCoordinatesAfter(double durationOfNextSimulationStep)
+    {
+        double stepLength = speed * durationOfNextSimulationStep;
+        return Point.newInstance(
+                coordinates.getX() + stepLength * Math.cos(polarAngle),
+                coordinates.getY() + stepLength * Math.sin(polarAngle));
     }
     
     private double gaussian(double mu, double sigma)
@@ -133,8 +151,6 @@ public class Mouse
         if(Math.abs(gaussian) < max)return gaussian+mu;
         return gaussian(mu, sigma, max);
     }
-    
-
     
     private double calculatePolarAngle(Point vector)
     {
@@ -169,8 +185,13 @@ public class Mouse
         return Objects.requireNonNull(intersect);
     }
     
-    private Line2D clipLine(Line2D line, Rectangle2D rect)
+    private Optional<Line2D> clipLine(Line2D line, Rectangle2D rect)
     {
+        if(line == null || rect == null)
+        {
+            return Optional.empty();
+        }
+        
         // Source: http://www.java2s.com/Tutorial/Java/0261__2D-Graphics/Clipsthespecifiedlinetothegivenrectangle.htm
         double x1 = line.getX1();
         double y1 = line.getY1();
@@ -189,7 +210,7 @@ public class Mouse
         {
             if ((f1 & f2) != 0)
             {
-                return null; // Linie liegt komplett außerhalb des Rechtecks
+                return Optional.empty(); // Linie liegt komplett außerhalb des Rechtecks
             }
             double dx = (x2 - x1);
             double dy = (y2 - y1);
@@ -221,7 +242,8 @@ public class Mouse
                     y1 = minY;
                 }
                 f1 = rect.outcode(x1, y1);
-            } else if (f2 != 0)
+            }
+            else if (f2 != 0)
             {
                 // second point is outside, so we update it against one of the
                 // four sides then continue
@@ -249,7 +271,7 @@ public class Mouse
                 f2 = rect.outcode(x2, y2);
             }
         }
-        return new Line2D.Double(x1, y1, x2, y2);
+        return Optional.of(new Line2D.Double(x1, y1, x2, y2));
     }
     
     private double calculateSigma()
