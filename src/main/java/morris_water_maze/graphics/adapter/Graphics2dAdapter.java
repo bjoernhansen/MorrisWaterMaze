@@ -1,7 +1,9 @@
 package morris_water_maze.graphics.adapter;
 
 import morris_water_maze.graphics.Color;
+import morris_water_maze.util.geometry.Line;
 import morris_water_maze.util.geometry.Point;
+import morris_water_maze.util.geometry.Square;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 
 import java.awt.Graphics;
@@ -9,8 +11,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 
 
@@ -46,13 +46,13 @@ public final class Graphics2dAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void drawLine(Line2D line)
+    public void drawLine(Line line)
     {
         graphics.drawLine(
-            (int)(ZOOM_FACTOR * line.getX1()),
-            (int)(ZOOM_FACTOR * line.getY1()),
-            (int)(ZOOM_FACTOR * line.getX2()),
-            (int)(ZOOM_FACTOR * line.getY2()));
+            (int)(ZOOM_FACTOR * line.getStartX()),
+            (int)(ZOOM_FACTOR * line.getStartY()),
+            (int)(ZOOM_FACTOR * line.getEndX()),
+            (int)(ZOOM_FACTOR * line.getEndY()));
     }
     
     @Override
@@ -76,13 +76,13 @@ public final class Graphics2dAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void fillRect(Rectangle2D rectangle)
+    public void fillSquare(Square square)
     {
         graphics.fillRect(
-            (int)(ZOOM_FACTOR * rectangle.getX()),
-            (int)(ZOOM_FACTOR * rectangle.getY()),
-            (int)(ZOOM_FACTOR * rectangle.getWidth()),
-            (int)(ZOOM_FACTOR * rectangle.getHeight()));
+            (int)(ZOOM_FACTOR * square.getX()),
+            (int)(ZOOM_FACTOR * square.getY()),
+            (int)(ZOOM_FACTOR * square.getSideLength()),
+            (int)(ZOOM_FACTOR * square.getSideLength()));
     }
     
     @Override

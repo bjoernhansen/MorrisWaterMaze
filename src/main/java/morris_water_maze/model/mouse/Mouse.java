@@ -4,10 +4,10 @@ import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
 import morris_water_maze.model.StartingSide;
 import morris_water_maze.parameter.MouseParameterAccessor;
+import morris_water_maze.util.geometry.Line;
 import morris_water_maze.util.geometry.Point;
 
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.util.Random;
 
 import static morris_water_maze.model.mouse.Calculations.angle;
@@ -73,8 +73,8 @@ public final class Mouse
     private Point calculateNewCoordinates(double durationOfNextSimulationStep)
     {
         Point unconstrainedCoordinates = calculateUnconstrainedCoordinatesAfter(durationOfNextSimulationStep);
-        Line2D currentMove = LineSegmentBuilder.from(coordinates)
-                                               .to(unconstrainedCoordinates);
+        Line currentMove = LineSegmentBuilder.from(coordinates)
+                                             .to(unconstrainedCoordinates);
         
         if(isReachingPlatformWithin(currentMove))
         {
@@ -92,7 +92,7 @@ public final class Mouse
             
             Point newPosCenterVector = VectorBuilder.from(constrainedCoordinates).to(pool.getCenter());
     
-            double direction = Line2D.relativeCCW(
+            double direction = Line.relativeCCW(
                 pool.getCenterX(),
                 pool.getCenterY(),
                 constrainedCoordinates.getX(),
@@ -109,20 +109,19 @@ public final class Mouse
         return unconstrainedCoordinates;
     }
     
-    private boolean isCurrentMoveTakingMouseOutsidePoolBoundary(Line2D currentMove)
+    private boolean isCurrentMoveTakingMouseOutsidePoolBoundary(Line currentMove)
     {
-        return !movementBoundaries.contains(currentMove.getP2());
+        return !movementBoundaries.contains(currentMove.getEnd().asPoint2D());
     }
     
-    private Point getLandingPlaceOnPlatformFor(Line2D currentMove)
+    private Point getLandingPlaceOnPlatformFor(Line currentMove)
     {
         return Geometry.clipLine(currentMove, platform.getBounds())
-                       .map(Line2D::getP1)
-                       .map(Point::of)
+                       .map(Line::getStart)
                        .orElse(null);
     }
     
-    private boolean isReachingPlatformWithin(Line2D currentMove)
+    private boolean isReachingPlatformWithin(Line currentMove)
     {
         return currentMove.intersects(platform.getBounds());
     }

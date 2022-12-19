@@ -1,31 +1,27 @@
 package morris_water_maze.model.mouse;
 
 import morris_water_maze.graphics.Paintable;
+import morris_water_maze.util.geometry.Line;
 import morris_water_maze.util.geometry.Point;
-
-import java.awt.geom.Line2D;
 
 
 public final class EscapeRouteSection implements Paintable
 {
-    private final Point
-        end;
-    
-    private final Line2D
+    private final Line
         line;
+    
     
     public EscapeRouteSection(Point start, Point end)
     {
-        this.end = end;
-        this.line = new Line2D.Double(start.asPoint2D(), end.asPoint2D());
+        this.line = LineSegmentBuilder.from(start).to(end);
     }
  
     public Point getEnd()
     {
-        return end;
+        return line.getEnd();
     }
     
-    public Line2D getLine()
+    public Line getLine()
     {
         return line;
     }

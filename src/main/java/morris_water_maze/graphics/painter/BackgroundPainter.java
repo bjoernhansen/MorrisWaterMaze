@@ -11,6 +11,6 @@ public final class BackgroundPainter extends Painter<SquareBackground>
     public void paint(GraphicsAdapter graphics, SquareBackground squareBackground)
     {
         graphics.setColor(Color.WHITE);
-        graphics.fillRect(squareBackground.getBounds());
+        graphics.fillSquare(squareBackground.getBounds());
     }
 }

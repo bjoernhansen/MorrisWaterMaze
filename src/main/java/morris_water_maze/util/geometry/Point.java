@@ -8,6 +8,9 @@ import static morris_water_maze.util.DoubleComparison.doubleEquals;
 
 public final class Point
 {
+    public static final Point
+        ORIGIN = Point.newInstance(0.0, 0.0);
+    
     private final double
         x;
     
@@ -53,13 +56,6 @@ public final class Point
         return y;
     }
     
-    
-    @Override
-    public String toString()
-    {
-        return "Point{ x=" + x + ", y=" + y + '}';
-    }
-    
     @Override
     public boolean equals(Object o)
     {
@@ -75,5 +71,11 @@ public final class Point
     public int hashCode()
     {
         return Objects.hash(x, y);
+    }
+    
+    @Override
+    public String toString()
+    {
+        return "Point{ x=" + x + ", y=" + y + '}';
     }
 }

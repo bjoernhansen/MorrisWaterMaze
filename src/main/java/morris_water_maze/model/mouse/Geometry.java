@@ -1,9 +1,10 @@
 package morris_water_maze.model.mouse;
 
+import morris_water_maze.util.geometry.Line;
 import morris_water_maze.util.geometry.Point;
+import morris_water_maze.util.geometry.Square;
 
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,26 +21,26 @@ final class Geometry
             2 * radius);
     }
     
-    static Optional<Line2D> clipLine(Line2D line, Rectangle2D rect)
+    static Optional<Line> clipLine(Line line, Square square)
     {
-        if(line == null || rect == null)
+        if(line == null || square == null)
         {
             return Optional.empty();
         }
         
         // Source: http://www.java2s.com/Tutorial/Java/0261__2D-Graphics/Clipsthespecifiedlinetothegivenrectangle.htm
-        double x1 = line.getX1();
-        double y1 = line.getY1();
-        double x2 = line.getX2();
-        double y2 = line.getY2();
+        double x1 = line.getStartX();
+        double y1 = line.getStartY();
+        double x2 = line.getEndX();
+        double y2 = line.getEndY();
         
-        double minX = rect.getMinX();
-        double maxX = rect.getMaxX();
-        double minY = rect.getMinY();
-        double maxY = rect.getMaxY();
+        double minX = square.getMinX();
+        double maxX = square.getMaxX();
+        double minY = square.getMinY();
+        double maxY = square.getMaxY();
         
-        int f1 = rect.outcode(x1, y1);
-        int f2 = rect.outcode(x2, y2);
+        int f1 = square.outcode(x1, y1);
+        int f2 = square.outcode(x2, y2);
         
         while ((f1 | f2) != 0)
         {
@@ -76,7 +77,7 @@ final class Geometry
                     x1 = x1 + (minY - y1) * dx / dy;
                     y1 = minY;
                 }
-                f1 = rect.outcode(x1, y1);
+                f1 = square.outcode(x1, y1);
             }
             else if (f2 != 0)
             {
@@ -103,10 +104,14 @@ final class Geometry
                     x2 = x2 + (minY - y2) * dx / dy;
                     y2 = minY;
                 }
-                f2 = rect.outcode(x2, y2);
+                f2 = square.outcode(x2, y2);
             }
         }
-        return Optional.of(new Line2D.Double(x1, y1, x2, y2));
+        
+        Point start = Point.newInstance(x1, y1);
+        Point end = Point.newInstance(x2, y2);
+        
+        return Optional.of(LineSegmentBuilder.from(start).to(end));
     }
     
     static Point circleLineIntersection(Ellipse2D circle, Point lineStart, Point lineEnd)

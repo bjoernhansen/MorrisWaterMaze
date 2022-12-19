@@ -1,24 +1,23 @@
 package morris_water_maze.model;
 
 import morris_water_maze.graphics.Paintable;
-
-import java.awt.geom.Rectangle2D;
+import morris_water_maze.util.geometry.Point;
+import morris_water_maze.util.geometry.Square;
 
 
 public final class SquareBackground implements Paintable
 {
-    private final Rectangle2D
+    private final Square
         bounds;
      
     
     public SquareBackground(double sideLength)
     {
-        this.bounds = new Rectangle2D.Double(0, 0, sideLength, sideLength);
+        this.bounds = Square.newInstance(0.0, 0.0, sideLength);
     }
     
-    public Rectangle2D getBounds()
+    public Square getBounds()
     {
         return bounds;
     }
 }
-

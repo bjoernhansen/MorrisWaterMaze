@@ -11,6 +11,6 @@ final class PlatformPainter extends Painter<Platform>
     public void paint(GraphicsAdapter graphics, Platform platform)
     {
         graphics.setColor(Color.DARK_GREY);
-        graphics.fillRect(platform.getBounds());
+        graphics.fillSquare(platform.getBounds());
     }
 }

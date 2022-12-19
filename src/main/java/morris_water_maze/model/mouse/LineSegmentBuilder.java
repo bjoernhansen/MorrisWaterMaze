@@ -1,8 +1,7 @@
 package morris_water_maze.model.mouse;
 
+import morris_water_maze.util.geometry.Line;
 import morris_water_maze.util.geometry.Point;
-
-import java.awt.geom.Line2D;
 
 
 final class LineSegmentBuilder
@@ -21,8 +20,8 @@ final class LineSegmentBuilder
         this.start = start;
     }
     
-    public Line2D to(Point end)
+    public Line to(Point end)
     {
-        return new Line2D.Double(start.asPoint2D(), end.asPoint2D());
+        return Line.newInstance(start, end);
     }
 }

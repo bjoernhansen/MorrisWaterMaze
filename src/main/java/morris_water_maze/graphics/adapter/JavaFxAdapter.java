@@ -2,13 +2,13 @@ package morris_water_maze.graphics.adapter;
 
 import javafx.scene.canvas.GraphicsContext;
 import morris_water_maze.graphics.Color;
+import morris_water_maze.util.geometry.Line;
 import morris_water_maze.util.geometry.Point;
+import morris_water_maze.util.geometry.Square;
 
 import javax.imageio.ImageIO;
 import java.awt.Image;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
@@ -35,13 +35,13 @@ public final class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext
     }
     
     @Override
-    public void drawLine(Line2D line)
+    public void drawLine(Line line)
     {
         graphics.strokeLine(
-            ZOOM_FACTOR * line.getX1(),
-            ZOOM_FACTOR * line.getY1(),
-            ZOOM_FACTOR * line.getX2(),
-            ZOOM_FACTOR * line.getY2());
+            ZOOM_FACTOR * line.getStartX(),
+            ZOOM_FACTOR * line.getStartY(),
+            ZOOM_FACTOR * line.getEndX(),
+            ZOOM_FACTOR * line.getEndY());
     }
     
     @Override
@@ -65,13 +65,13 @@ public final class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext
     }
     
     @Override
-    public void fillRect(Rectangle2D rectangle)
+    public void fillSquare(Square rectangle)
     {
         graphics.fillRect(
             (int)(ZOOM_FACTOR * rectangle.getX()),
             (int)(ZOOM_FACTOR * rectangle.getY()),
-            (int)(ZOOM_FACTOR * rectangle.getWidth()),
-            (int)(ZOOM_FACTOR * rectangle.getHeight()));
+            (int)(ZOOM_FACTOR * rectangle.getSideLength()),
+            (int)(ZOOM_FACTOR * rectangle.getSideLength()));
     }
     
     @Override
