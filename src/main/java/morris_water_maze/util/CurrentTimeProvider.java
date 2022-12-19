@@ -1,7 +1,7 @@
 package morris_water_maze.util;
 
 
-public class CurrentTimeProvider
+public final class CurrentTimeProvider
 {
     public long currentTimeMills()
     {

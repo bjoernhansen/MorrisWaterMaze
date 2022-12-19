@@ -1,6 +1,6 @@
 package morris_water_maze.model.mouse;
 
-import morris_water_maze.util.Point;
+import morris_water_maze.util.geometry.Point;
 
 import java.awt.geom.Line2D;
 

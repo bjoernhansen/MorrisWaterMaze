@@ -2,7 +2,7 @@ package morris_water_maze.graphics.adapter;
 
 import javafx.scene.canvas.GraphicsContext;
 import morris_water_maze.graphics.Color;
-import morris_water_maze.util.Point;
+import morris_water_maze.util.geometry.Point;
 
 import javax.imageio.ImageIO;
 import java.awt.Image;

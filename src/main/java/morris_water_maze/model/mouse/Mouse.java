@@ -4,19 +4,16 @@ import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
 import morris_water_maze.model.StartingSide;
 import morris_water_maze.parameter.MouseParameterAccessor;
-import morris_water_maze.util.Point;
+import morris_water_maze.util.geometry.Point;
 
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 
 import static morris_water_maze.model.mouse.Calculations.angle;
 
 
-public class Mouse
+public final class Mouse
 {
     private static final double
         RADIUS = 3;					// Radius des die Maus repräsentierenden Kreises
@@ -57,8 +54,8 @@ public class Mouse
     
     public Mouse(MouseParameterAccessor parameterAccessor, Pool pool, Platform platform)
     {
-        coordinates = startingCoordinates = getStartPosition(parameterAccessor.getStartingSide(), pool.getBorder());
-        movementBoundaries = calculateMovementBoundariesThrough(pool);
+        Ellipse2D movementBoundaries = this.movementBoundaries = calculateMovementBoundariesThrough(pool);
+        coordinates = startingCoordinates = getStartPosition(parameterAccessor.getStartingSide(), movementBoundaries);
         
         trainingLevel = parameterAccessor.getMouseTrainingLevel();
         speed = parameterAccessor.mouseSpeed();
@@ -76,42 +73,53 @@ public class Mouse
     private Point calculateNewCoordinates(double durationOfNextSimulationStep)
     {
         Point unconstrainedCoordinates = calculateUnconstrainedCoordinatesAfter(durationOfNextSimulationStep);
-    
         Line2D currentMove = LineSegmentBuilder.from(coordinates)
                                                .to(unconstrainedCoordinates);
         
-        if(isReachingPlatformWithin(currentMove)) // Schnittstelle von Maus und Plattform
+        if(isReachingPlatformWithin(currentMove))
         {
             stopSwimming();
             return getLandingPlaceOnPlatformFor(currentMove);
         }
         
-        if(!movementBoundaries.contains(unconstrainedCoordinates.asPoint2D())) // Schnittstelle von Pool und Mausschritt
+        if(isCurrentMoveTakingMouseOutsidePoolBoundary(currentMove)) // Schnittstelle von Pool und Mausschritt
         {
-            Point constrainedCoordinates = circleLineIntersection(pool.getCenter(), Pool.RADIUS - Mouse.RADIUS, coordinates, unconstrainedCoordinates);
+            Point constrainedCoordinates = Geometry.circleLineIntersection(
+                movementBoundaries,
+                coordinates,
+                unconstrainedCoordinates);
+            
+            
             Point newPosCenterVector = VectorBuilder.from(constrainedCoordinates).to(pool.getCenter());
+    
             double direction = Line2D.relativeCCW(
-                pool.getCenter().getX(),
-                pool.getCenter().getY(),
+                pool.getCenterX(),
+                pool.getCenterY(),
                 constrainedCoordinates.getX(),
                 constrainedCoordinates.getY(),
                 coordinates.getX(),
                 coordinates.getY());
+                
             polarAngle = calculatePolarAngle(newPosCenterVector) - direction * (Math.PI/3 + gaussian(0, Math.PI/12, Math.PI/6));
+            
             return constrainedCoordinates;
         }
-        else
-        {
-            polarAngle = gaussian(calculateMeanAngleFor(unconstrainedCoordinates), calculateSigma());  // for a more trained mouse the standard deviation is smaller
-            return unconstrainedCoordinates;
-        }
+      
+        polarAngle = gaussian(calculateMeanAngleFor(unconstrainedCoordinates), calculateSigma());  // for a more trained mouse the standard deviation is smaller
+        return unconstrainedCoordinates;
+    }
+    
+    private boolean isCurrentMoveTakingMouseOutsidePoolBoundary(Line2D currentMove)
+    {
+        return !movementBoundaries.contains(currentMove.getP2());
     }
     
     private Point getLandingPlaceOnPlatformFor(Line2D currentMove)
     {
-        return clipLine(currentMove, platform.getBounds()).map(Line2D::getP1)
-                                                          .map(Point::of)
-                                                          .orElse(null);
+        return Geometry.clipLine(currentMove, platform.getBounds())
+                       .map(Line2D::getP1)
+                       .map(Point::of)
+                       .orElse(null);
     }
     
     private boolean isReachingPlatformWithin(Line2D currentMove)
@@ -157,145 +165,24 @@ public class Mouse
         return Math.atan2(vector.getY(), vector.getX());
     }
     
-    private Point circleLineIntersection(Point circleCenter, double radius, Point lineStart, Point lineEnd)
-    {
-        // Source: http://www.seibsprogrammladen.de/frame1.html?Prgm/Algorithmen/Schnittpunkte
-        double rr = radius * radius;
-        double x21 = lineEnd.getX() - lineStart.getX(), y21 = lineEnd.getY() - lineStart.getY();
-        double x10 = lineStart.getX() - circleCenter.getX(), y10 = lineStart.getY() - circleCenter.getY();
-        double a = (x21 * x21 + y21 * y21) / rr;
-        double b = (x21 * x10 + y21 * y10) / rr;
-        double c = (x10 * x10 + y10 * y10) / rr;
-        double d = b * b - a * (c - 1);
-        
-        Point intersect = null;
-        if (d >= 0)
-        {
-            double e = Math.sqrt(d);
-            double u1 = (-b - e) / a, u2 = (-b + e) / a;
-            if (0 <= u1 && u1 <= 1)
-            {
-                intersect = Point.newInstance(lineStart.getX() + x21 * u1, lineStart.getY() + y21 * u1);
-            }
-            else
-            {
-                intersect = Point.newInstance(lineStart.getX() + x21 * u2, lineStart.getY() + y21 * u2);
-            }
-        }
-        return Objects.requireNonNull(intersect);
-    }
-    
-    private Optional<Line2D> clipLine(Line2D line, Rectangle2D rect)
-    {
-        if(line == null || rect == null)
-        {
-            return Optional.empty();
-        }
-        
-        // Source: http://www.java2s.com/Tutorial/Java/0261__2D-Graphics/Clipsthespecifiedlinetothegivenrectangle.htm
-        double x1 = line.getX1();
-        double y1 = line.getY1();
-        double x2 = line.getX2();
-        double y2 = line.getY2();
-        
-        double minX = rect.getMinX();
-        double maxX = rect.getMaxX();
-        double minY = rect.getMinY();
-        double maxY = rect.getMaxY();
-        
-        int f1 = rect.outcode(x1, y1);
-        int f2 = rect.outcode(x2, y2);
-        
-        while ((f1 | f2) != 0)
-        {
-            if ((f1 & f2) != 0)
-            {
-                return Optional.empty(); // Linie liegt komplett außerhalb des Rechtecks
-            }
-            double dx = (x2 - x1);
-            double dy = (y2 - y1);
-            // update (x1, y1), (x2, y2) and f1 and f2 using intersections
-            // then recheck
-            if (f1 != 0)
-            {
-                // first point is outside, so we update it against one of the
-                // four sides then continue
-                if ((f1 & Rectangle2D.OUT_LEFT) == Rectangle2D.OUT_LEFT
-                    && dx != 0.0)
-                {
-                    y1 = y1 + (minX - x1) * dy / dx;
-                    x1 = minX;
-                } else if ((f1 & Rectangle2D.OUT_RIGHT) == Rectangle2D.OUT_RIGHT
-                    && dx != 0.0)
-                {
-                    y1 = y1 + (maxX - x1) * dy / dx;
-                    x1 = maxX;
-                } else if ((f1 & Rectangle2D.OUT_BOTTOM) == Rectangle2D.OUT_BOTTOM
-                    && dy != 0.0)
-                {
-                    x1 = x1 + (maxY - y1) * dx / dy;
-                    y1 = maxY;
-                } else if ((f1 & Rectangle2D.OUT_TOP) == Rectangle2D.OUT_TOP
-                    && dy != 0.0)
-                {
-                    x1 = x1 + (minY - y1) * dx / dy;
-                    y1 = minY;
-                }
-                f1 = rect.outcode(x1, y1);
-            }
-            else if (f2 != 0)
-            {
-                // second point is outside, so we update it against one of the
-                // four sides then continue
-                if ((f2 & Rectangle2D.OUT_LEFT) == Rectangle2D.OUT_LEFT
-                    && dx != 0.0)
-                {
-                    y2 = y2 + (minX - x2) * dy / dx;
-                    x2 = minX;
-                } else if ((f2 & Rectangle2D.OUT_RIGHT) == Rectangle2D.OUT_RIGHT
-                    && dx != 0.0)
-                {
-                    y2 = y2 + (maxX - x2) * dy / dx;
-                    x2 = maxX;
-                } else if ((f2 & Rectangle2D.OUT_BOTTOM) == Rectangle2D.OUT_BOTTOM
-                    && dy != 0.0)
-                {
-                    x2 = x2 + (maxY - y2) * dx / dy;
-                    y2 = maxY;
-                } else if ((f2 & Rectangle2D.OUT_TOP) == Rectangle2D.OUT_TOP
-                    && dy != 0.0)
-                {
-                    x2 = x2 + (minY - y2) * dx / dy;
-                    y2 = minY;
-                }
-                f2 = rect.outcode(x2, y2);
-            }
-        }
-        return Optional.of(new Line2D.Double(x1, y1, x2, y2));
-    }
-    
     private double calculateSigma()
     {
         return (1 - trainingLevel) * 22.5 * Math.PI / 180;
     }
     
-    private Point getStartPosition(StartingSide startingSide, Ellipse2D poolBorder)
+    static Point getStartPosition(StartingSide startingSide, Ellipse2D movementBoundaries)
     {
         if(startingSide == StartingSide.LEFT)
         {
-            return Point.newInstance(poolBorder.getCenterX()- Pool.RADIUS + Mouse.RADIUS, poolBorder.getCenterY());
+            return Point.newInstance(movementBoundaries.getX(), movementBoundaries.getCenterY());
         }
-        return Point.newInstance(poolBorder.getCenterX() + Pool.RADIUS - Mouse.RADIUS, poolBorder.getCenterY());
+        return Point.newInstance(movementBoundaries.getMaxX(), movementBoundaries.getCenterY());
     }
     
-    private Ellipse2D.Double calculateMovementBoundariesThrough(Pool pool)
+    static Ellipse2D calculateMovementBoundariesThrough(Pool pool)
     {
-        double radius = Pool.RADIUS - Mouse.RADIUS;
-        return new Ellipse2D.Double(
-            pool.getCenter().getX() - radius,
-            pool.getCenter().getY() - radius,
-            2 * radius,
-            2 * radius);
+        double radius = pool.getRadius() - Mouse.RADIUS;
+        return Geometry.calculateEllipse(pool.getCenter(), radius);
     }
     
     public Point getCoordinates()

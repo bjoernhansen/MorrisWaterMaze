@@ -5,7 +5,7 @@ import morris_water_maze.model.mouse.EscapeRouteSection;
 import morris_water_maze.model.mouse.MouseMovement;
 
 
-class MouseMovementPainter extends Painter<MouseMovement>
+final class MouseMovementPainter extends Painter<MouseMovement>
 {
     private GraphicsAdapter
         graphics;

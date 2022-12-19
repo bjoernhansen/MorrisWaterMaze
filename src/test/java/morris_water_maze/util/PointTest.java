@@ -1,6 +1,6 @@
 package morris_water_maze.util;
 
-import org.junit.jupiter.api.Assertions;
+import morris_water_maze.util.geometry.Point;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

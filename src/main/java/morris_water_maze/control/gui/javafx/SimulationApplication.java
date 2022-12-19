@@ -13,7 +13,7 @@ import morris_water_maze.graphics.painter.PaintManager;
 import morris_water_maze.model.simulation.Simulation;
 
 
-public class SimulationApplication extends Application
+public final class SimulationApplication extends Application
 {
     public static Simulation simulation;
     

@@ -1,7 +1,7 @@
 package morris_water_maze.graphics.adapter;
 
 import morris_water_maze.graphics.Color;
-import morris_water_maze.util.Point;
+import morris_water_maze.util.geometry.Point;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 
 import java.awt.Graphics;

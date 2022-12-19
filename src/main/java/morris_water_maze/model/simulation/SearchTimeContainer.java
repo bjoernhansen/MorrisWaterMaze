@@ -5,7 +5,7 @@ import morris_water_maze.util.Stack;
 import java.util.function.Consumer;
 
 
-public class SearchTimeContainer implements SearchTimeProvider
+public final class SearchTimeContainer implements SearchTimeProvider
 {
     private final Stack<Double>
         searchTimes = new Stack<>();

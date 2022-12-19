@@ -1,7 +1,7 @@
 package morris_water_maze.graphics.adapter;
 
 import morris_water_maze.graphics.Color;
-import morris_water_maze.util.Point;
+import morris_water_maze.util.geometry.Point;
 
 import java.awt.Image;
 import java.awt.geom.Ellipse2D;

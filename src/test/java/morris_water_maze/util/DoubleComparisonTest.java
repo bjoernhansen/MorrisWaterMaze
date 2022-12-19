@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DoubleComparisonTest
 {
     @Test
-    void shouldCalculateVectorLengthCorrectly()
+    void shouldReturnRightComparisonResult()
     {
         double value = 1.234;
         assertThat(doubleEquals(value, value + EPSILON * 1.1)).isFalse();

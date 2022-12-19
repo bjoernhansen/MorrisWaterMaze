@@ -1,7 +1,7 @@
 package morris_water_maze.model;
 
 import morris_water_maze.graphics.Paintable;
-import morris_water_maze.util.Point;
+import morris_water_maze.util.geometry.Point;
 
 import java.awt.geom.Ellipse2D;
 
@@ -41,5 +41,20 @@ public final class Pool implements Paintable
 	public Point getCenter()
 	{
 		return center;
+	}
+	
+	public double getRadius()
+	{
+		return RADIUS;
+	}
+	
+	public double getCenterX()
+	{
+		return center.getX();
+	}
+	
+	public double getCenterY()
+	{
+		return center.getY();
 	}
 }

@@ -6,7 +6,7 @@ import morris_water_maze.model.simulation.Simulation;
 import morris_water_maze.parameter.ParameterAccessor;
 
 
-public class JavaFxSimulationController extends GuiSimulationController
+public final class JavaFxSimulationController extends GuiSimulationController
 {
     public JavaFxSimulationController(Simulation simulation, ParameterAccessor parameterAccessor)
     {

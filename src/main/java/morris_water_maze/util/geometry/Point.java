@@ -1,4 +1,4 @@
-package morris_water_maze.util;
+package morris_water_maze.util.geometry;
 
 import java.awt.geom.Point2D;
 import java.util.Objects;

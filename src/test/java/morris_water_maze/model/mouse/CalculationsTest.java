@@ -1,6 +1,6 @@
 package morris_water_maze.model.mouse;
 
-import morris_water_maze.util.Point;
+import morris_water_maze.util.geometry.Point;
 import org.junit.jupiter.api.Test;
 
 import static morris_water_maze.model.mouse.Calculations.angle;

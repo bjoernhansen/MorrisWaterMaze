@@ -3,7 +3,7 @@ package morris_water_maze.util;
 import org.apache.commons.math3.util.Precision;
 
 
-public class DoubleComparison
+public final class DoubleComparison
 {
     public static final double
         EPSILON = 0.000001;
