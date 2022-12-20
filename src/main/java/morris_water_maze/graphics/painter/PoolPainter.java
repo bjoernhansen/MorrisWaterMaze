@@ -3,9 +3,8 @@ package morris_water_maze.graphics.painter;
 import morris_water_maze.graphics.Color;
 import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.model.Pool;
+import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.Point;
-
-import java.awt.geom.Ellipse2D;
 
 
 final class PoolPainter extends Painter<Pool>
@@ -24,10 +23,10 @@ final class PoolPainter extends Painter<Pool>
         drawPoolCenter(graphics);
     }
     
-    private void drawPoolBorder(GraphicsAdapter graphics, Ellipse2D ellipse)
+    private void drawPoolBorder(GraphicsAdapter graphics, Circle circle)
     {
         graphics.setColor(Color.BLACK);
-        graphics.drawEllipse(ellipse);
+        graphics.drawEllipse(circle);
     }
     
     private void drawPoolCenter(GraphicsAdapter graphics)

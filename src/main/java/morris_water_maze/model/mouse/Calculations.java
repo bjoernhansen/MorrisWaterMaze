@@ -7,6 +7,10 @@ import static java.lang.Math.acos;
 
 public final class Calculations
 {
+    private static final Point
+        ORIGIN = Point.newInstance(0.0, 0.0);
+    
+    
     static double angle(Point point1, Point point2)
     {
         return acos( dotProduct(point1, point2) / (length(point1) * length(point2)) );
@@ -20,7 +24,7 @@ public final class Calculations
     
     static double length(Point point)
     {
-        return point.distance(Point.ORIGIN);
+        return point.distance(ORIGIN);
     }
     
     private Calculations()

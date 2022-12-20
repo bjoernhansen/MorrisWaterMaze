@@ -1,46 +1,66 @@
 package morris_water_maze.util.geometry;
 
+
+import java.awt.geom.Ellipse2D;
+
 public final class Circle
 {
-    /*
-    private final double x;
-    
-    private final double y;
-    
-    private final double width;
+    private final Point
+        center;
     
     private final double
+        radius;
+    
+    private final Ellipse2D
+        ellipse2D;
     
     
-    
-    private final Ellipse2D ellipse;
-    
-    private final double radius;
-    
-    
-    public Circle(Ellipse2D ellipse, double radius)
+    public static Circle newInstance(Point center, double radius)
     {
-        this.ellipse = ellipse;
+        return new Circle(center, radius);
+    }
+    
+    private Circle(Point center, double radius)
+    {
+        this.center = center;
         this.radius = radius;
+        double diameter = 2 * radius;
+        this.ellipse2D = new Ellipse2D.Double(
+                                        center.getX() - radius,
+                                        center.getY() - radius,
+                                        diameter,
+                                        diameter);
     }
     
-    public static void main(String[] args)
+    public double getX(){
+        return ellipse2D.getX();
+    }
+    
+    public double getMaxX(){
+        return ellipse2D.getMaxX();
+    }
+    
+    public double getY(){
+        return ellipse2D.getY();
+    }
+    
+    public Point getCenter()
     {
-        Point2D point = new Point2D(1, 2);
-    
-        javafx.scene.shape.Circle circle = new Circle()
-        
+        return center;
     }
-    
-    
     
     public double getRadius()
     {
         return radius;
     }
     
+    public double getDiameter()
+    {
+        return ellipse2D.getWidth();
+    }
     
-    */
-    
-    
+    public boolean contains(Point point)
+    {
+        return ellipse2D.contains(point.getX(), point.getY());
+    }
 }

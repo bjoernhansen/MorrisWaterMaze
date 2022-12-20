@@ -2,13 +2,13 @@ package morris_water_maze.graphics.adapter;
 
 import javafx.scene.canvas.GraphicsContext;
 import morris_water_maze.graphics.Color;
-import morris_water_maze.util.geometry.Line;
+import morris_water_maze.util.geometry.Circle;
+import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
 import morris_water_maze.util.geometry.Square;
 
 import javax.imageio.ImageIO;
 import java.awt.Image;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.ImageObserver;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
@@ -35,23 +35,23 @@ public final class JavaFxAdapter extends AbstractGraphicsAdapter<GraphicsContext
     }
     
     @Override
-    public void drawLine(Line line)
+    public void drawLine(LineSegment lineSegment)
     {
         graphics.strokeLine(
-            ZOOM_FACTOR * line.getStartX(),
-            ZOOM_FACTOR * line.getStartY(),
-            ZOOM_FACTOR * line.getEndX(),
-            ZOOM_FACTOR * line.getEndY());
+            ZOOM_FACTOR * lineSegment.getStart().getX(),
+            ZOOM_FACTOR * lineSegment.getStart().getY(),
+            ZOOM_FACTOR * lineSegment.getEnd().getX(),
+            ZOOM_FACTOR * lineSegment.getEnd().getY());
     }
     
     @Override
-    public void drawEllipse(Ellipse2D ellipse)
+    public void drawEllipse(Circle circle)
     {
         graphics.strokeOval(
-            (int)(ZOOM_FACTOR * ellipse.getX()),
-            (int)(ZOOM_FACTOR * ellipse.getY()),
-            (int)(ZOOM_FACTOR * ellipse.getWidth()),
-            (int)(ZOOM_FACTOR * ellipse.getHeight()));
+            (int)(ZOOM_FACTOR * circle.getX()),
+            (int)(ZOOM_FACTOR * circle.getY()),
+            (int)(ZOOM_FACTOR * circle.getDiameter()),
+            (int)(ZOOM_FACTOR * circle.getDiameter()));
     }
     
     @Override

@@ -1,7 +1,7 @@
 package morris_water_maze.util.geometry;
 
-
 import java.awt.geom.Rectangle2D;
+
 
 public final class Square
 {
@@ -27,7 +27,6 @@ public final class Square
     {
         return Point.newInstance(rectangle.getCenterX(), rectangle.getCenterY());
     }
-    
     
     public double getX()
     {
@@ -74,14 +73,12 @@ public final class Square
         return rectangle.outcode(x, y);
     }
     
-    // TODO diese Methode ist nur Zwischenlösung, in jeden Schritt neue Instanz zu erstellen ist ungünstig, Idee: Package Privat Zugriff innerhalb des Geometry packages
-    public Rectangle2D asRectangle2D()
-    {
-        return new Rectangle2D.Double(
-            rectangle.getX(),
-            rectangle.getY(),
-            getSideLength(),
-            getSideLength());
+    boolean intersects(LineSegment lineSegment) {
+        return rectangle.intersectsLine(
+                            lineSegment.getStart().getX(),
+                            lineSegment.getStart().getY(),
+                            lineSegment.getEnd().getX(),
+                            lineSegment.getEnd().getY());
     }
     
     @Override

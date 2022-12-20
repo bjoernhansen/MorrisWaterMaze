@@ -21,8 +21,6 @@ class CalculationsTest
     private final Point
         unitVector2 = Point.newInstance(0,1);
     
-
-    
     
     @Test
     void shouldCalculateVectorLengthCorrectly()

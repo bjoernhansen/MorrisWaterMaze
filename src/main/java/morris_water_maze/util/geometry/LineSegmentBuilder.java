@@ -1,10 +1,7 @@
-package morris_water_maze.model.mouse;
-
-import morris_water_maze.util.geometry.Line;
-import morris_water_maze.util.geometry.Point;
+package morris_water_maze.util.geometry;
 
 
-final class LineSegmentBuilder
+public final class LineSegmentBuilder
 {
     private final Point
         start;
@@ -20,8 +17,8 @@ final class LineSegmentBuilder
         this.start = start;
     }
     
-    public Line to(Point end)
+    public LineSegment to(Point end)
     {
-        return Line.newInstance(start, end);
+        return LineSegment.newInstance(start, end);
     }
 }

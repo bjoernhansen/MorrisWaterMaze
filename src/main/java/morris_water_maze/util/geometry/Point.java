@@ -1,6 +1,5 @@
 package morris_water_maze.util.geometry;
 
-import java.awt.geom.Point2D;
 import java.util.Objects;
 
 import static morris_water_maze.util.DoubleComparison.doubleEquals;
@@ -8,9 +7,6 @@ import static morris_water_maze.util.DoubleComparison.doubleEquals;
 
 public final class Point
 {
-    public static final Point
-        ORIGIN = Point.newInstance(0.0, 0.0);
-    
     private final double
         x;
     
@@ -22,21 +18,11 @@ public final class Point
     {
         return new Point(x, y);
     }
-    
-    public static Point of(Point2D startPosition)
-    {
-        return new Point(startPosition.getX(), startPosition.getY());
-    }
-
+ 
     private Point(double x, double y)
     {
         this.x = x;
         this.y = y;
-    }
-    
-    public Point2D asPoint2D()
-    {
-        return new Point2D.Double(x, y);
     }
     
     public double distance(Point point)

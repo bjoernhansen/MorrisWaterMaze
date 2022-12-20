@@ -1,10 +1,11 @@
 package morris_water_maze.model.mouse;
 
-import morris_water_maze.util.geometry.Line;
+import morris_water_maze.util.geometry.Circle;
+import morris_water_maze.util.geometry.LineSegment;
+import morris_water_maze.util.geometry.LineSegmentBuilder;
 import morris_water_maze.util.geometry.Point;
 import morris_water_maze.util.geometry.Square;
 
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,27 +13,18 @@ import java.util.Optional;
 
 final class Geometry
 {
-    static Ellipse2D calculateEllipse(Point center, double radius)
+    static Optional<LineSegment> clipLine(LineSegment lineSegment, Square square)
     {
-        return new Ellipse2D.Double(
-            center.getX() - radius,
-            center.getY() - radius,
-            2 * radius,
-            2 * radius);
-    }
-    
-    static Optional<Line> clipLine(Line line, Square square)
-    {
-        if(line == null || square == null)
+        if(lineSegment == null || square == null)
         {
             return Optional.empty();
         }
         
         // Source: http://www.java2s.com/Tutorial/Java/0261__2D-Graphics/Clipsthespecifiedlinetothegivenrectangle.htm
-        double x1 = line.getStartX();
-        double y1 = line.getStartY();
-        double x2 = line.getEndX();
-        double y2 = line.getEndY();
+        double x1 = lineSegment.getStart().getX();
+        double y1 = lineSegment.getStart().getY();
+        double x2 = lineSegment.getEnd().getX();
+        double y2 = lineSegment.getEnd().getY();
         
         double minX = square.getMinX();
         double maxX = square.getMaxX();
@@ -114,15 +106,13 @@ final class Geometry
         return Optional.of(LineSegmentBuilder.from(start).to(end));
     }
     
-    static Point circleLineIntersection(Ellipse2D circle, Point lineStart, Point lineEnd)
+    static Point circleLineIntersection(Circle circle, Point lineStart, Point lineEnd)
     {
         // Source: http://www.seibsprogrammladen.de/frame1.html?Prgm/Algorithmen/Schnittpunkte
         
-        double radius = circle.getWidth()/2.0;
-        
-        double rr = radius * radius;
+        double rr = circle.getRadius() * circle.getRadius();
         double x21 = lineEnd.getX() - lineStart.getX(), y21 = lineEnd.getY() - lineStart.getY();
-        double x10 = lineStart.getX() - circle.getCenterX(), y10 = lineStart.getY() - circle.getCenterY();
+        double x10 = lineStart.getX() - circle.getCenter().getX(), y10 = lineStart.getY() - circle.getCenter().getY();
         double a = (x21 * x21 + y21 * y21) / rr;
         double b = (x21 * x10 + y21 * y10) / rr;
         double c = (x10 * x10 + y10 * y10) / rr;

@@ -1,4 +1,4 @@
-package morris_water_maze.util;
+package morris_water_maze.util.geometry;
 
 import morris_water_maze.util.geometry.Point;
 import org.junit.jupiter.api.BeforeAll;

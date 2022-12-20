@@ -1,7 +1,8 @@
 package morris_water_maze.graphics.adapter;
 
 import morris_water_maze.graphics.Color;
-import morris_water_maze.util.geometry.Line;
+import morris_water_maze.util.geometry.Circle;
+import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
 import morris_water_maze.util.geometry.Square;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
@@ -10,7 +11,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.ImageObserver;
 
 
@@ -46,23 +46,23 @@ public final class Graphics2dAdapter extends AbstractGraphicsAdapter<Graphics2D>
     }
     
     @Override
-    public void drawLine(Line line)
+    public void drawLine(LineSegment lineSegment)
     {
         graphics.drawLine(
-            (int)(ZOOM_FACTOR * line.getStartX()),
-            (int)(ZOOM_FACTOR * line.getStartY()),
-            (int)(ZOOM_FACTOR * line.getEndX()),
-            (int)(ZOOM_FACTOR * line.getEndY()));
+            (int)(ZOOM_FACTOR * lineSegment.getStart().getX()),
+            (int)(ZOOM_FACTOR * lineSegment.getStart().getY()),
+            (int)(ZOOM_FACTOR * lineSegment.getEnd().getX()),
+            (int)(ZOOM_FACTOR * lineSegment.getEnd().getY()));
     }
     
     @Override
-    public void drawEllipse(Ellipse2D ellipse)
+    public void drawEllipse(Circle circle)
     {
         graphics.drawOval(
-            (int)(ZOOM_FACTOR * ellipse.getX()),
-            (int)(ZOOM_FACTOR * ellipse.getY()),
-            (int)(ZOOM_FACTOR * ellipse.getWidth()),
-            (int)(ZOOM_FACTOR * ellipse.getHeight()));
+            (int)(ZOOM_FACTOR * circle.getX()),
+            (int)(ZOOM_FACTOR * circle.getY()),
+            (int)(ZOOM_FACTOR * circle.getDiameter()),
+            (int)(ZOOM_FACTOR * circle.getDiameter()));
     }
     
     @Override

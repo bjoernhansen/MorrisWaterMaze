@@ -4,10 +4,12 @@ import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
 import morris_water_maze.model.StartingSide;
 import morris_water_maze.parameter.MouseParameterAccessor;
-import morris_water_maze.util.geometry.Line;
+import morris_water_maze.util.geometry.Circle;
+import morris_water_maze.util.geometry.LineSegment;
+import morris_water_maze.util.geometry.LineSegmentBuilder;
 import morris_water_maze.util.geometry.Point;
 
-import java.awt.geom.Ellipse2D;
+import java.util.Objects;
 import java.util.Random;
 
 import static morris_water_maze.model.mouse.Calculations.angle;
@@ -33,7 +35,7 @@ public final class Mouse
     private final Platform
         platform;
     
-    private final Ellipse2D
+    private final Circle
         movementBoundaries;	// Der Mittelpunkt der Maus muss sich innerhalb dieses Kreises befinden.
         
     private final Point
@@ -54,7 +56,7 @@ public final class Mouse
     
     public Mouse(MouseParameterAccessor parameterAccessor, Pool pool, Platform platform)
     {
-        Ellipse2D movementBoundaries = this.movementBoundaries = calculateMovementBoundariesThrough(pool);
+        Circle movementBoundaries = this.movementBoundaries = calculateMovementBoundariesThrough(pool);
         coordinates = startingCoordinates = getStartPosition(parameterAccessor.getStartingSide(), movementBoundaries);
         
         trainingLevel = parameterAccessor.getMouseTrainingLevel();
@@ -66,15 +68,17 @@ public final class Mouse
     
     public void moveFor(double durationOfCurrentSimulationStep)
     {
-        coordinates = calculateNewCoordinates(durationOfCurrentSimulationStep);
+        Point coordinates1 = calculateNewCoordinates(durationOfCurrentSimulationStep);
+        Objects.requireNonNull(coordinates1);
+        coordinates = coordinates1;
     }
     
     // TODO Methode verbessern
     private Point calculateNewCoordinates(double durationOfNextSimulationStep)
     {
         Point unconstrainedCoordinates = calculateUnconstrainedCoordinatesAfter(durationOfNextSimulationStep);
-        Line currentMove = LineSegmentBuilder.from(coordinates)
-                                             .to(unconstrainedCoordinates);
+        LineSegment currentMove = LineSegmentBuilder.from(coordinates)
+                                                    .to(unconstrainedCoordinates);
         
         if(isReachingPlatformWithin(currentMove))
         {
@@ -89,12 +93,11 @@ public final class Mouse
                 coordinates,
                 unconstrainedCoordinates);
             
-            
             Point newPosCenterVector = VectorBuilder.from(constrainedCoordinates).to(pool.getCenter());
     
-            double direction = Line.relativeCCW(
-                pool.getCenterX(),
-                pool.getCenterY(),
+            double direction = LineSegment.relativeCCW(
+                pool.getCenter().getX(),
+                pool.getCenter().getY(),
                 constrainedCoordinates.getX(),
                 constrainedCoordinates.getY(),
                 coordinates.getX(),
@@ -109,19 +112,19 @@ public final class Mouse
         return unconstrainedCoordinates;
     }
     
-    private boolean isCurrentMoveTakingMouseOutsidePoolBoundary(Line currentMove)
+    private boolean isCurrentMoveTakingMouseOutsidePoolBoundary(LineSegment currentMove)
     {
-        return !movementBoundaries.contains(currentMove.getEnd().asPoint2D());
+        return !movementBoundaries.contains(currentMove.getEnd());
     }
     
-    private Point getLandingPlaceOnPlatformFor(Line currentMove)
+    private Point getLandingPlaceOnPlatformFor(LineSegment currentMove)
     {
         return Geometry.clipLine(currentMove, platform.getBounds())
-                       .map(Line::getStart)
+                       .map(LineSegment::getStart)
                        .orElse(null);
     }
     
-    private boolean isReachingPlatformWithin(Line currentMove)
+    private boolean isReachingPlatformWithin(LineSegment currentMove)
     {
         return currentMove.intersects(platform.getBounds());
     }
@@ -169,19 +172,19 @@ public final class Mouse
         return (1 - trainingLevel) * 22.5 * Math.PI / 180;
     }
     
-    static Point getStartPosition(StartingSide startingSide, Ellipse2D movementBoundaries)
+    static Point getStartPosition(StartingSide startingSide, Circle movementBoundaries)
     {
         if(startingSide == StartingSide.LEFT)
         {
-            return Point.newInstance(movementBoundaries.getX(), movementBoundaries.getCenterY());
+            return Point.newInstance(movementBoundaries.getX(), movementBoundaries.getCenter().getY());
         }
-        return Point.newInstance(movementBoundaries.getMaxX(), movementBoundaries.getCenterY());
+        return Point.newInstance(movementBoundaries.getMaxX(), movementBoundaries.getCenter().getY());
     }
     
-    static Ellipse2D calculateMovementBoundariesThrough(Pool pool)
+    static Circle calculateMovementBoundariesThrough(Pool pool)
     {
         double radius = pool.getRadius() - Mouse.RADIUS;
-        return Geometry.calculateEllipse(pool.getCenter(), radius);
+        return Circle.newInstance(pool.getCenter(), radius);
     }
     
     public Point getCoordinates()

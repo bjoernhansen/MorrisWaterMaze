@@ -17,7 +17,6 @@ class VectorBuilderTest
         VECTOR_3_4 = Point.newInstance(3,4);
     
     
-    
     @Test
     void shouldCalculateVectorsCorrectly()
     {
