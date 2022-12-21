@@ -6,7 +6,6 @@ import morris_water_maze.model.StartingSide;
 import morris_water_maze.parameter.MouseParameterAccessor;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
-import morris_water_maze.util.geometry.LineSegmentBuilder;
 import morris_water_maze.util.geometry.Point;
 
 import java.util.Objects;
@@ -16,6 +15,7 @@ import static morris_water_maze.model.mouse.Calculations.angle;
 
 
 public final class Mouse
+// TODO gegebenenfalls weiter "pure functions" auslagern in Klasse Utility-Calculations
 {
     private static final double
         RADIUS = 3;					// Radius des die Maus repräsentierenden Kreises
@@ -45,7 +45,7 @@ public final class Mouse
         coordinates;		// aktueller Aufenthaltsort der Maus
     
     private double
-        polarAngle;					// bestimmt in welche Richtung die Maus schwimmt
+        movementDirectionAngle;	// Winkel im Polarkoordinatensystem, der bestimmt, in welche Richtung die Maus schwimmt
     
     private boolean
         isSwimming;				// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
@@ -73,46 +73,51 @@ public final class Mouse
         coordinates = coordinates1;
     }
     
-    // TODO Methode verbessern
     private Point calculateNewCoordinates(double durationOfNextSimulationStep)
     {
         Point unconstrainedCoordinates = calculateUnconstrainedCoordinatesAfter(durationOfNextSimulationStep);
-        LineSegment currentMove = LineSegmentBuilder.from(coordinates)
-                                                    .to(unconstrainedCoordinates);
+        LineSegment proposedMove = LineSegment.from(coordinates)
+                                              .to(unconstrainedCoordinates);
         
-        if(isReachingPlatformWithin(currentMove))
+        if(isReachingPlatformWithin(proposedMove))
         {
             stopSwimming();
-            return getLandingPlaceOnPlatformFor(currentMove);
+            return getLandingPlaceOnPlatformFor(proposedMove);
         }
         
-        if(isCurrentMoveTakingMouseOutsidePoolBoundary(currentMove)) // Schnittstelle von Pool und Mausschritt
+        if(isProposedMoveTakingMouseOutsidePoolBoundary(proposedMove))
         {
-            Point constrainedCoordinates = Geometry.circleLineIntersection(
-                movementBoundaries,
-                coordinates,
-                unconstrainedCoordinates);
-            
-            Point newPosCenterVector = VectorBuilder.from(constrainedCoordinates).to(pool.getCenter());
-    
-            double direction = LineSegment.relativeCCW(
-                pool.getCenter().getX(),
-                pool.getCenter().getY(),
-                constrainedCoordinates.getX(),
-                constrainedCoordinates.getY(),
-                coordinates.getX(),
-                coordinates.getY());
-                
-            polarAngle = calculatePolarAngle(newPosCenterVector) - direction * (Math.PI/3 + gaussian(0, Math.PI/12, Math.PI/6));
-            
+            Point constrainedCoordinates = Geometry.circleLineSegmentIntersection(movementBoundaries, proposedMove);
+            // TODO Query Command Separation herstellen
+            movementDirectionAngle = getMovementDirectionAngle(constrainedCoordinates);
             return constrainedCoordinates;
         }
-      
-        polarAngle = gaussian(calculateMeanAngleFor(unconstrainedCoordinates), calculateSigma());  // for a more trained mouse the standard deviation is smaller
+        
+        // TODO Query Command Separation herstellen
+        movementDirectionAngle = gaussian(calculateMeanAngleFor(unconstrainedCoordinates), calculateSigma());  // for a more trained mouse the standard deviation is smaller
         return unconstrainedCoordinates;
     }
     
-    private boolean isCurrentMoveTakingMouseOutsidePoolBoundary(LineSegment currentMove)
+    
+    private double getMovementDirectionAngle(Point constrainedCoordinates)
+    // TODO Methode verbessern: Was genau wird hier berechnet - API anpassen
+    {
+        Point movementDirectionVector = VectorBuilder.from(constrainedCoordinates)
+                                                     .to(pool.getCenter());
+        
+        double direction = LineSegment.relativeCCW(
+            pool.getCenter().getX(),
+            pool.getCenter().getY(),
+            constrainedCoordinates.getX(),
+            constrainedCoordinates.getY(),
+            coordinates.getX(),
+            coordinates.getY());
+        
+        return calculatePolarAngle(movementDirectionVector)
+               - direction * (Math.PI / 3 + gaussian(0, Math.PI / 12, Math.PI / 6));
+    }
+    
+    private boolean isProposedMoveTakingMouseOutsidePoolBoundary(LineSegment currentMove)
     {
         return !movementBoundaries.contains(currentMove.getEnd());
     }
@@ -130,6 +135,7 @@ public final class Mouse
     }
     
     private double calculateMeanAngleFor(Point proposedCoordinates)
+    // TODO Methode verbessern
     {
         Point movementVector = VectorBuilder.from(coordinates)
                                             .to(proposedCoordinates);
@@ -142,11 +148,12 @@ public final class Mouse
     }
     
     private Point calculateUnconstrainedCoordinatesAfter(double durationOfNextSimulationStep)
+    // TODO Methode verbessern
     {
         double stepLength = speed * durationOfNextSimulationStep;
         return Point.newInstance(
-                coordinates.getX() + stepLength * Math.cos(polarAngle),
-                coordinates.getY() + stepLength * Math.sin(polarAngle));
+                coordinates.getX() + stepLength * Math.cos(movementDirectionAngle),
+                coordinates.getY() + stepLength * Math.sin(movementDirectionAngle));
     }
     
     private double gaussian(double mu, double sigma)
@@ -200,7 +207,7 @@ public final class Mouse
     
     private void resetPolarAngleRandomly()
     {
-        polarAngle = Math.PI*(Math.random()-0.5) + calculatePolarAngle(VectorBuilder.from(startingCoordinates).to(pool.getCenter()));
+        movementDirectionAngle = Math.PI*(Math.random()-0.5) + calculatePolarAngle(VectorBuilder.from(startingCoordinates).to(pool.getCenter()));
     }
     
     public boolean isSwimming()

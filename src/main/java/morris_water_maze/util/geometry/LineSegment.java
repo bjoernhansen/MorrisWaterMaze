@@ -11,9 +11,13 @@ public final class LineSegment
     
     private final Point
         end;
-
     
-    public static LineSegment newInstance(Point start, Point end)
+    public static Builder from(Point start)
+    {
+        return Builder.from(start);
+    }
+    
+    private static LineSegment newInstance(Point start, Point end)
     {
         return new LineSegment(
                     Objects.requireNonNull(start),
@@ -52,5 +56,28 @@ public final class LineSegment
     public String toString()
     {
         return "Line{start=" + start + ", end=" + end + '}';
+    }
+    
+    
+    public static class Builder
+    {
+        private final Point
+            start;
+        
+        
+        private static Builder from(Point start)
+        {
+            return new Builder(start);
+        }
+        
+        private Builder(Point start)
+        {
+            this.start = start;
+        }
+        
+        public LineSegment to(Point end)
+        {
+            return LineSegment.newInstance(start, end);
+        }
     }
 }

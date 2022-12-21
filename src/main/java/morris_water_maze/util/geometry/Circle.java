@@ -63,4 +63,10 @@ public final class Circle
     {
         return ellipse2D.contains(point.getX(), point.getY());
     }
+    
+    @Override
+    public String toString()
+    {
+        return "Circle{center=" + center + ", radius=" + radius + '}';
+    }
 }

@@ -17,18 +17,18 @@ class LineSegmentTest
         POINT_3 = Point.newInstance(100.0, 50.0);
     
     private static final LineSegment
-        VERTICAL_LINE_SEGMENT = LineSegmentBuilder.from(POINT_1).to(POINT_2);
+        VERTICAL_LINE_SEGMENT = LineSegment.from(POINT_1).to(POINT_2);
     
     private static final LineSegment
-        HORIZONTAL_LINE_SEGMENT = LineSegmentBuilder.from(POINT_1).to(POINT_3);
+        HORIZONTAL_LINE_SEGMENT = LineSegment.from(POINT_1).to(POINT_3);
     
    
     @Test
     void shouldInstantiateLineSegmentCorrectly()
     {
-        assertThatThrownBy(() -> LineSegment.newInstance(null, POINT_2)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> LineSegment.newInstance(POINT_1, null)).isInstanceOf(NullPointerException.class);
-        assertThatCode(() -> LineSegment.newInstance(POINT_1, POINT_2)).doesNotThrowAnyException();
+        assertThatThrownBy(() -> LineSegment.from(null).to(POINT_2)).isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> LineSegment.from(POINT_1).to(null)).isInstanceOf(NullPointerException.class);
+        assertThatCode(() -> LineSegment.from(POINT_1).to(POINT_2)).doesNotThrowAnyException();
         assertThat(VERTICAL_LINE_SEGMENT.getStart()).isEqualTo(POINT_1);
         assertThat(VERTICAL_LINE_SEGMENT.getEnd()).isEqualTo(POINT_2);
     }

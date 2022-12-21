@@ -92,7 +92,6 @@ public final class MouseMovement implements Paintable
 		return timeSteps.get(timeSteps.size()-1);
 	}
 	
-	
 	public void resetForNextEscapeRun()
 	{
 		escapeRoute.reset();

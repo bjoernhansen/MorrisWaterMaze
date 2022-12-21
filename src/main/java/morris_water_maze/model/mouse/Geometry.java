@@ -2,18 +2,18 @@ package morris_water_maze.model.mouse;
 
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
-import morris_water_maze.util.geometry.LineSegmentBuilder;
 import morris_water_maze.util.geometry.Point;
 import morris_water_maze.util.geometry.Square;
 
 import java.awt.geom.Rectangle2D;
-import java.util.Objects;
+import java.security.InvalidParameterException;
 import java.util.Optional;
 
 
 final class Geometry
 {
     static Optional<LineSegment> clipLine(LineSegment lineSegment, Square square)
+    // TODO ausgiebig UnitTests erstellen und Implementierung anschließend übersichtlicher gestalten (mehr Methoden, etc.)
     {
         if(lineSegment == null || square == null)
         {
@@ -103,36 +103,42 @@ final class Geometry
         Point start = Point.newInstance(x1, y1);
         Point end = Point.newInstance(x2, y2);
         
-        return Optional.of(LineSegmentBuilder.from(start).to(end));
+        return Optional.of(LineSegment.from(start).to(end));
     }
     
-    static Point circleLineIntersection(Circle circle, Point lineStart, Point lineEnd)
+    static Point circleLineSegmentIntersection(Circle circle, LineSegment lineSegment)
+    // TODO Implementierung verbessern: null-Rückgabe und Verständlichkeit
     {
         // Source: http://www.seibsprogrammladen.de/frame1.html?Prgm/Algorithmen/Schnittpunkte
         
         double rr = circle.getRadius() * circle.getRadius();
-        double x21 = lineEnd.getX() - lineStart.getX(), y21 = lineEnd.getY() - lineStart.getY();
-        double x10 = lineStart.getX() - circle.getCenter().getX(), y10 = lineStart.getY() - circle.getCenter().getY();
+        double x21 = lineSegment.getEnd().getX() - lineSegment.getStart().getX();
+        double y21 = lineSegment.getEnd().getY() - lineSegment.getStart().getY();
+        double x10 = lineSegment.getStart().getX() - circle.getCenter().getX();
+        double y10 = lineSegment.getStart().getY() - circle.getCenter().getY();
         double a = (x21 * x21 + y21 * y21) / rr;
         double b = (x21 * x10 + y21 * y10) / rr;
         double c = (x10 * x10 + y10 * y10) / rr;
         double d = b * b - a * (c - 1);
         
-        Point intersect = null;
         if (d >= 0)
         {
             double e = Math.sqrt(d);
             double u1 = (-b - e) / a, u2 = (-b + e) / a;
             if (0 <= u1 && u1 <= 1)
             {
-                intersect = Point.newInstance(lineStart.getX() + x21 * u1, lineStart.getY() + y21 * u1);
+                return Point.newInstance(
+                            lineSegment.getStart().getX() + x21 * u1,
+                            lineSegment.getStart().getY() + y21 * u1);
             }
             else
             {
-                intersect = Point.newInstance(lineStart.getX() + x21 * u2, lineStart.getY() + y21 * u2);
+                return Point.newInstance(
+                            lineSegment.getStart().getX() + x21 * u2,
+                            lineSegment.getStart().getY() + y21 * u2);
             }
         }
-        return Objects.requireNonNull(intersect);
+        throw new InvalidParameterException("There is no intersection between " + circle + " and " + lineSegment + ".");
     }
     
     private Geometry()

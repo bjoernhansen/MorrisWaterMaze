@@ -36,24 +36,24 @@ class SquareTest
     void shouldIntersectionsCorrectly()
     {
         LineSegment verticalLineSegmentLeftOfSquare
-            = LineSegmentBuilder.from(Point.newInstance(0.5 * X, 0.5*Y))
-                                .to(Point.newInstance(0.5 * X, 2.0*Y + SIDE_LENGTH));
+            = LineSegment.from(Point.newInstance(0.5 * X, 0.5 * Y))
+                         .to(Point.newInstance(0.5 * X, 2.0 * Y + SIDE_LENGTH));
         LineSegment verticalLineSegmentIntersectingSquare
-            = LineSegmentBuilder.from(Point.newInstance(X + SIDE_LENGTH/2.0, 0.5*Y))
-                                .to(Point.newInstance(X + SIDE_LENGTH/2.0, 2.0*Y + SIDE_LENGTH));
+            = LineSegment.from(Point.newInstance(X + SIDE_LENGTH / 2.0, 0.5 * Y))
+                         .to(Point.newInstance(X + SIDE_LENGTH / 2.0, 2.0 * Y + SIDE_LENGTH));
         LineSegment verticalLineSegmentRightOfSquare
-            = LineSegmentBuilder.from(Point.newInstance(2.0*X + SIDE_LENGTH, 0.5*Y))
-                                .to(Point.newInstance(2.0*X + SIDE_LENGTH, 2.0*Y + SIDE_LENGTH));
+            = LineSegment.from(Point.newInstance(2.0 * X + SIDE_LENGTH, 0.5 * Y))
+                         .to(Point.newInstance(2.0 * X + SIDE_LENGTH, 2.0 * Y + SIDE_LENGTH));
     
         LineSegment horizontalLineSegmentLeftOfSquare
-            = LineSegmentBuilder.from(Point.newInstance(0.5*X, 0.5*Y))
-                                .to(Point.newInstance(2.0*X + SIDE_LENGTH, 0.5*Y));
+            = LineSegment.from(Point.newInstance(0.5 * X, 0.5 * Y))
+                         .to(Point.newInstance(2.0 * X + SIDE_LENGTH, 0.5 * Y));
         LineSegment horizontalLineSegmentIntersectingSquare
-            = LineSegmentBuilder.from(Point.newInstance(0.5*X, Y + SIDE_LENGTH/2.0))
-                                .to(Point.newInstance(2.0*X + SIDE_LENGTH, Y + SIDE_LENGTH/2.0));
+            = LineSegment.from(Point.newInstance(0.5 * X, Y + SIDE_LENGTH / 2.0))
+                         .to(Point.newInstance(2.0 * X + SIDE_LENGTH, Y + SIDE_LENGTH / 2.0));
         LineSegment horizontalLineSegmentRightOfSquare
-            = LineSegmentBuilder.from(Point.newInstance(0.5*X, 2.0*Y + SIDE_LENGTH))
-                                .to(Point.newInstance(2.0*X + SIDE_LENGTH, 2.0*Y + SIDE_LENGTH));
+            = LineSegment.from(Point.newInstance(0.5 * X, 2.0 * Y + SIDE_LENGTH))
+                         .to(Point.newInstance(2.0 * X + SIDE_LENGTH, 2.0 * Y + SIDE_LENGTH));
         
         assertThat(SQUARE.intersects(verticalLineSegmentLeftOfSquare)).isFalse();
         assertThat(SQUARE.intersects(verticalLineSegmentIntersectingSquare)).isTrue();
