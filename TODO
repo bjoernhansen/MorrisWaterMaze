@@ -4,6 +4,8 @@ Arbeit an der Klasse Maus:
 - eventuell Klassen herauslösen (dann ggf. Maus mit diesen Klasse in eigenes Paket)
 - Mathematische Operationen herausschreiben und erläutern
 
+Plots direkt in Java erstellen, z.B. mit https://coderslegacy.com/java/jfreechart-histogram/
+
 Andrew Zeiten schicken für Auswertung (verschiedene Simulationsläufe)
 
 JavaFX verbessern --> fxml verwenden, GUI Elemente ergänzen (wie bei der Swing-Simulation)

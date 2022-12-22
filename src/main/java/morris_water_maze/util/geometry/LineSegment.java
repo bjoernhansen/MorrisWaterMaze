@@ -55,7 +55,7 @@ public final class LineSegment
     @Override
     public String toString()
     {
-        return "Line{start=" + start + ", end=" + end + '}';
+        return "LineSegment{start=" + start + ", end=" + end + '}';
     }
     
     

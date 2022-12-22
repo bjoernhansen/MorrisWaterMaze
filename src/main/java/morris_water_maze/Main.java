@@ -11,6 +11,7 @@ import morris_water_maze.model.simulation.WaterMorrisMazeSimulation;
 import morris_water_maze.parameter.ParameterAccessor;
 import morris_water_maze.parameter.ParameterSource;
 import morris_water_maze.report.FileNameProvider;
+import morris_water_maze.report.HistogramCreator;
 import morris_water_maze.report.ImageFileCreator;
 import morris_water_maze.report.ReportWriter;
 import morris_water_maze.util.DirectoryCreator;
@@ -39,13 +40,11 @@ public final class Main
     public static void main(String[] args)
     {
         ParameterAccessor parameterAccessor = PARAMETER_SOURCE.makeParameterAccessorInstance(args);
+        
         FileNameProvider fileNameProvider = new FileNameProvider(parameterAccessor);
         createDirectories(fileNameProvider);
-        
-        Simulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
     
-        ReportWriter reportWriter = new ReportWriter(fileNameProvider);
-        simulation.registerSimulationSeriesCompletionObservers(reportWriter);
+        Simulation simulation = getSimulationWithCompletionObserversRegistered(parameterAccessor, fileNameProvider);
     
         if(parameterAccessor.getNumberOfPics() > 0)
         {
@@ -57,6 +56,19 @@ public final class Main
         
         SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor);
         simulationController.start();
+    }
+    
+    private static Simulation getSimulationWithCompletionObserversRegistered(ParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
+    {
+        Simulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
+        
+        ReportWriter reportWriter = new ReportWriter(fileNameProvider);
+        simulation.registerSimulationSeriesCompletionObservers(reportWriter);
+        
+        HistogramCreator histogramCreator = new HistogramCreator(parameterAccessor, fileNameProvider);
+        simulation.registerSimulationSeriesCompletionObservers(histogramCreator);
+        
+        return simulation;
     }
     
     private static void createDirectories(FileNameProvider fileNameProvider)

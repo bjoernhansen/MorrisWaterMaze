@@ -1,8 +1,10 @@
 package morris_water_maze.util;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -44,5 +46,10 @@ public final class Stack<T> implements Iterable<T>
     public Stream<T> stream()
     {
         return deque.stream();
+    }
+    
+    public List<T> asList()
+    {
+        return new ArrayList<>(deque);
     }
 }

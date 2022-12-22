@@ -2,6 +2,7 @@ package morris_water_maze.model.simulation;
 
 import morris_water_maze.util.Stack;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 
@@ -24,6 +25,13 @@ public final class SearchTimeContainer implements SearchTimeProvider
                    .map(String::valueOf)
                    .forEach(action);
     }
+    
+    @Override
+    public List<Double> getSearchTimes()
+    {
+        return searchTimes.asList();
+    }
+    
     
     void add(double lastSearchTime)
     {
