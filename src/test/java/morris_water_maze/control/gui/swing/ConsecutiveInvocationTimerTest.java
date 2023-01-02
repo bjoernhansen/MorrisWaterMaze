@@ -1,18 +1,19 @@
 package morris_water_maze.control.gui.swing;
 
 import morris_water_maze.util.CurrentTimeProvider;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
+@DisplayName("ConsecutiveInvocationTimer")
 class ConsecutiveInvocationTimerTest
 {
     @Test
+    @DisplayName("works as intended.")
     public void testTimer()
     {
         long timeIntervall = 100;
