@@ -3,6 +3,7 @@ package morris_water_maze.parameter;
 import morris_water_maze.Main;
 import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.model.StartingSide;
+import morris_water_maze.report.ImageFileFormat;
 
 import java.util.List;
 

@@ -1,5 +1,7 @@
 package morris_water_maze.parameter;
 
+import morris_water_maze.report.ImageFileFormat;
+
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.StringJoiner;
@@ -29,5 +31,11 @@ abstract class AbstractParameterAccessor implements ParameterAccessor
               .add(String.valueOf(getMaximumTrajectoriesPerPicture()))
               .add(String.valueOf(getImagePainterTypeForPictureExport()));
         return joiner.toString();
+    }
+    
+    @Override
+    public ImageFileFormat getImageFileFormat()
+    {
+        return getImagePainterTypeForPictureExport().getImageFileFormat();
     }
 }

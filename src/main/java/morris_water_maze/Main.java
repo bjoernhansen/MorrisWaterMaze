@@ -1,6 +1,5 @@
 package morris_water_maze;
 
-import javafx.application.Application;
 import morris_water_maze.control.SimulationController;
 import morris_water_maze.control.SimulationControllerFactory;
 import morris_water_maze.control.gui.GuiType;
@@ -11,7 +10,8 @@ import morris_water_maze.model.simulation.WaterMorrisMazeSimulation;
 import morris_water_maze.parameter.ParameterAccessor;
 import morris_water_maze.parameter.ParameterSource;
 import morris_water_maze.report.FileNameProvider;
-import morris_water_maze.report.HistogramCreator;
+import morris_water_maze.report.histogram.HistogramFileMaker;
+import morris_water_maze.report.histogram.HistogramFileMakerFactory;
 import morris_water_maze.report.ImageFileCreator;
 import morris_water_maze.report.ReportWriter;
 import morris_water_maze.util.DirectoryCreator;
@@ -64,9 +64,10 @@ public final class Main
         
         ReportWriter reportWriter = new ReportWriter(fileNameProvider);
         simulation.registerSimulationSeriesCompletionObservers(reportWriter);
-        
-        HistogramCreator histogramCreator = new HistogramCreator(parameterAccessor, fileNameProvider);
-        simulation.registerSimulationSeriesCompletionObservers(histogramCreator);
+    
+        HistogramFileMakerFactory histogramFileMakerFactory = new HistogramFileMakerFactory(parameterAccessor, fileNameProvider);
+        HistogramFileMaker histogramFileMaker = histogramFileMakerFactory.makeHistogramFileCreator();
+        simulation.registerSimulationSeriesCompletionObservers(histogramFileMaker);
         
         return simulation;
     }

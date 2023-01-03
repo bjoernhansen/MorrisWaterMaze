@@ -50,8 +50,7 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
         lowerBoundOfPictureTimeFrame = parameterAccessor.getLowerBoundOfPictureTimeFrame();
         upperBoundOfPictureTimeFrame = parameterAccessor.getUpperBoundOfPictureTimeFrame();
         maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
-        imageFileFormat = parameterAccessor.getImagePainterTypeForPictureExport()
-                                           .getImageFileFormat();
+        imageFileFormat = parameterAccessor.getImageFileFormat();
     }
     
     @Override
@@ -107,7 +106,7 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
                     String svgString = imagePainter.getSvgString();
                     SVGUtils.writeToSVG(file, svgString, false);
                 }
-                else
+                else if(imageFileFormat == ImageFileFormat.PNG)
                 {
                     ImageIO.write((RenderedImage) imagePainter.getImage(), ImageFileFormat.PNG.getName(), file);
                 }

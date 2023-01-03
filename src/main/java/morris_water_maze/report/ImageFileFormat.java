@@ -9,4 +9,9 @@ public enum ImageFileFormat
     {
         return this.name().toLowerCase();
     }
+    
+    public String getFileExtension()
+    {
+        return "." + getName();
+    }
 }

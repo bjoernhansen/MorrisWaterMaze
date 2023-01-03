@@ -18,16 +18,12 @@ public final class FileNameProvider implements NecessaryDirectoriesReporter
     private final String
         finalReportPath;
     
-    private final String
-        histogramImagePath;
-        
     
     public FileNameProvider(ParameterAccessor parameterAccessor)
     {
         String simulationId = parameterAccessor.getSimulationId();
         subDirectory = LOG_DIRECTORY + simulationId + "/";
         finalReportPath = subDirectory + "search_times.txt";
-        histogramImagePath = subDirectory + "histogram.png";
     }
     
     public String getSubDirectory()
@@ -40,14 +36,9 @@ public final class FileNameProvider implements NecessaryDirectoriesReporter
         return finalReportPath;
     }
     
-    public String getHistogramImagePath()
-    {
-        return histogramImagePath;
-    }
-    
     @Override
     public List<String> getNecessaryDirectories()
     {
-        return Arrays.asList(subDirectory, LOG_DIRECTORY);
+        return Arrays.asList(LOG_DIRECTORY, subDirectory);
     }
 }

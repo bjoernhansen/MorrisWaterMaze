@@ -1,6 +1,7 @@
 package morris_water_maze.parameter;
 
 import morris_water_maze.graphics.painter.image.ImagePainterType;
+import morris_water_maze.report.ImageFileFormat;
 
 public interface ParameterAccessor extends SimulationParameterAccessor
 {
@@ -15,6 +16,8 @@ public interface ParameterAccessor extends SimulationParameterAccessor
     int getMaximumTrajectoriesPerPicture();
     
     ImagePainterType getImagePainterTypeForPictureExport();
+    
+    ImageFileFormat getImageFileFormat();
     
     String getSimulationId();
     
