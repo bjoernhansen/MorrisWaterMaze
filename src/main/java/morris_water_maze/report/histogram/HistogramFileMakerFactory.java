@@ -1,9 +1,9 @@
 package morris_water_maze.report.histogram;
 
-
 import morris_water_maze.parameter.ParameterAccessor;
 import morris_water_maze.report.FileNameProvider;
 import morris_water_maze.report.ImageFileFormat;
+
 
 public final class HistogramFileMakerFactory
 {

@@ -29,6 +29,6 @@ public final class Calculations
     
     private Calculations()
     {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Utility class Calculations can not be instantiated.");
     }
 }

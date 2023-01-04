@@ -1,7 +1,6 @@
 package morris_water_maze.model;
 
 import morris_water_maze.graphics.Paintable;
-import morris_water_maze.util.geometry.Point;
 import morris_water_maze.util.geometry.Square;
 
 

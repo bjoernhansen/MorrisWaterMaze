@@ -1,12 +1,12 @@
 package morris_water_maze.model.simulation;
 
-import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
 import morris_water_maze.control.observer.SimulationRunCompletionObserver;
+import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
 import morris_water_maze.graphics.Paintable;
-import morris_water_maze.model.mouse.Mouse;
-import morris_water_maze.model.mouse.MouseMovement;
 import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
+import morris_water_maze.model.mouse.Mouse;
+import morris_water_maze.model.mouse.MouseMovement;
 import morris_water_maze.parameter.SimulationParameterAccessor;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     
     private final MouseMovement
         mouseMovement;
-        
+    
     private final SearchTimeContainer
         searchTimeContainer = new SearchTimeContainer();
     
@@ -47,14 +47,14 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     @Override
     public void nextStep()
     {
-        if (isSimulationRunInProgress())
+        if(isSimulationRunInProgress())
         {
             mouseMovement.performNextStep();
         }
-        else if (!areAllSimulationRunsCompleted())
+        else if(!areAllSimulationRunsCompleted())
         {
             completeCurrentSimulationRun();
-            if (areAllSimulationRunsCompleted())
+            if(areAllSimulationRunsCompleted())
             {
                 notifyAboutEndOfAllSimulationRuns();
             }

@@ -7,6 +7,7 @@ import morris_water_maze.parameter.MouseParameterAccessor;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
+import morris_water_maze.util.geometry.RotationDirection;
 
 import java.util.Objects;
 import java.util.Random;
@@ -22,9 +23,6 @@ public final class Mouse
     
     private static final double
         FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180°
-        
-    private double
-        trainingLevel;				// Trainingslevel der Maus; [0, 1]; default: 0.5
     
     private final double
         speed;     					// Geschwindigkeit der Maus; default: 5
@@ -40,9 +38,14 @@ public final class Mouse
         
     private final Point
         startingCoordinates;  // Startposition von der Maus
-        
+    
+    private final Random
+        random = new Random();
+    
+    
+    // variable attributes
     private Point
-        coordinates;		// aktueller Aufenthaltsort der Maus
+        coordinates;		    // aktueller Aufenthaltsort der Maus
     
     private double
         movementDirectionAngle;	// Winkel im Polarkoordinatensystem, der bestimmt, in welche Richtung die Maus schwimmt
@@ -50,10 +53,10 @@ public final class Mouse
     private boolean
         isSwimming;				// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
     
-    private final Random
-        random = new Random();
-        
+    private double
+        trainingLevel;		    // Trainingslevel der Maus; [0, 1]; default: 0.5
     
+        
     public Mouse(MouseParameterAccessor parameterAccessor, Pool pool, Platform platform)
     {
         Circle movementBoundaries = this.movementBoundaries = calculateMovementBoundariesThrough(pool);
@@ -68,9 +71,9 @@ public final class Mouse
     
     public void moveFor(double durationOfCurrentSimulationStep)
     {
-        Point coordinates1 = calculateNewCoordinates(durationOfCurrentSimulationStep);
-        Objects.requireNonNull(coordinates1);
-        coordinates = coordinates1;
+        Point newCoordinates = calculateNewCoordinates(durationOfCurrentSimulationStep);
+        Objects.requireNonNull(newCoordinates);
+        coordinates = newCoordinates;
     }
     
     private Point calculateNewCoordinates(double durationOfNextSimulationStep)
@@ -105,16 +108,18 @@ public final class Mouse
         Point movementDirectionVector = VectorBuilder.from(constrainedCoordinates)
                                                      .to(pool.getCenter());
         
-        double direction = LineSegment.relativeCCW(
-            pool.getCenter().getX(),
-            pool.getCenter().getY(),
-            constrainedCoordinates.getX(),
-            constrainedCoordinates.getY(),
-            coordinates.getX(),
-            coordinates.getY());
+        RotationDirection rotationDirection = getRotationDirectionAroundPoolCenterWhenSwimmingTo(constrainedCoordinates);
         
         return calculatePolarAngle(movementDirectionVector)
-               - direction * (Math.PI / 3 + gaussian(0, Math.PI / 12, Math.PI / 6));
+               - rotationDirection.getValue() * (Math.PI / 3 + gaussian(0, Math.PI / 12, Math.PI / 6));
+    }
+    
+    private RotationDirection getRotationDirectionAroundPoolCenterWhenSwimmingTo(Point newCoordinates)
+    {
+        return LineSegment.rotationDirection(
+                            pool.getCenter(),
+                            newCoordinates,
+                            coordinates);
     }
     
     private boolean isProposedMoveTakingMouseOutsidePoolBoundary(LineSegment currentMove)
@@ -148,12 +153,9 @@ public final class Mouse
     }
     
     private Point calculateUnconstrainedCoordinatesAfter(double durationOfNextSimulationStep)
-    // TODO Methode verbessern
     {
         double stepLength = speed * durationOfNextSimulationStep;
-        return Point.newInstance(
-                coordinates.getX() + stepLength * Math.cos(movementDirectionAngle),
-                coordinates.getY() + stepLength * Math.sin(movementDirectionAngle));
+        return coordinates.translate(stepLength, movementDirectionAngle);
     }
     
     private double gaussian(double mu, double sigma)

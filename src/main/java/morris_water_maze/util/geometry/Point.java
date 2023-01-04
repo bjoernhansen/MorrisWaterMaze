@@ -32,6 +32,13 @@ public final class Point
         return Math.sqrt(x * x + y * y);
     }
     
+    public Point translate(double distance, double angle)
+    {
+        return Point.newInstance(
+                    x + distance * Math.cos(angle),
+                    y + distance * Math.sin(angle));
+    }
+    
     public double getX()
     {
         return x;

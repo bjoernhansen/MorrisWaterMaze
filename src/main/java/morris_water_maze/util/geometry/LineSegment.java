@@ -30,11 +30,19 @@ public final class LineSegment
         this.end = end;
     }
     
-    public static int relativeCCW(double x1, double y1,
-                                  double x2, double y2,
-                                  double px, double py)
+    public static RotationDirection rotationDirection(Point lineStart,
+                                                      Point lineEnd,
+                                                      Point point)
+    // TODO: Methode idealer Weise nicht mehr statisch sondern Methode der Instanz
     {
-        return Line2D.relativeCCW(x1, y1, x2, y2, px, py);
+        int relativeCCW = Line2D.relativeCCW(
+                                    lineStart.getX(), lineStart.getY(),
+                                    lineEnd.getX(), lineEnd.getY(),
+                                    point.getX(), point.getY());
+        
+        return relativeCCW == 1
+            ? RotationDirection.COUNTERCLOCKWISE
+            : RotationDirection.CLOCKWISE;
     }
     
     public boolean intersects(Square square)
