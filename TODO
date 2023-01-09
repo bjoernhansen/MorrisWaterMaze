@@ -11,9 +11,3 @@ JavaFX verbessern --> fxml verwenden, GUI Elemente ergänzen (wie bei der Swing-
 JavaDocs an alle öffentlichen Elemente setzen
 
 Zenodo verwenden für die Veröffentlichung des Codes in GitHub
-
-Histogram
-Ausgabe für Paper:
-- keine Überschrift
-- kein grauer Hintergrund
-- nur "Duration" statt "Search Time Duration" oder "Search duration"

@@ -1,9 +1,9 @@
 package morris_water_maze.parameter;
 
 import morris_water_maze.graphics.painter.image.ImagePainterType;
-import morris_water_maze.report.ImageFileFormat;
+import morris_water_maze.report.histogram.HistogramParameterAccessor;
 
-public interface ParameterAccessor extends SimulationParameterAccessor
+public interface ParameterAccessor extends SimulationParameterAccessor, HistogramParameterAccessor
 {
     boolean isStartingWithGui();
     
@@ -17,16 +17,5 @@ public interface ParameterAccessor extends SimulationParameterAccessor
     
     ImagePainterType getImagePainterTypeForPictureExport();
     
-    ImageFileFormat getImageFileFormat();
-    
     String getSimulationId();
-    
-    
-    default int determineMaximumSwimmingTime(String swimmingTimeAsString)
-    {
-        int swimmingTime = Integer.parseInt(swimmingTimeAsString);
-        return swimmingTime > 0
-            ? swimmingTime
-            : Integer.MAX_VALUE;
-    }
 }

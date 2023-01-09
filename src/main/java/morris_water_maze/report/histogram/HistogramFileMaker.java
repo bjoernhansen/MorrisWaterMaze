@@ -2,7 +2,6 @@ package morris_water_maze.report.histogram;
 
 import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
 import morris_water_maze.model.simulation.Simulation;
-import morris_water_maze.parameter.ParameterAccessor;
 import morris_water_maze.util.geometry.Dimension;
 import org.jfree.chart.JFreeChart;
 
@@ -28,7 +27,7 @@ public abstract class HistogramFileMaker implements SimulationSeriesCompletionOb
         simulation;
     
     
-    HistogramFileMaker(ParameterAccessor parameterAccessor, String subDirectory)
+    HistogramFileMaker(HistogramParameterAccessor parameterAccessor, String subDirectory)
     {
         histogramCreator = new HistogramCreator(parameterAccessor);
         histogramImagePath = subDirectory + FILE_NAME_PREFIX + getImageFileExtension();

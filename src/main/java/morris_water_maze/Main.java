@@ -8,7 +8,7 @@ import morris_water_maze.model.Pool;
 import morris_water_maze.model.simulation.Simulation;
 import morris_water_maze.model.simulation.WaterMorrisMazeSimulation;
 import morris_water_maze.parameter.ParameterAccessor;
-import morris_water_maze.parameter.ParameterSource;
+import morris_water_maze.parameter.ParameterAccessorFromPropertiesFile;
 import morris_water_maze.report.FileNameProvider;
 import morris_water_maze.report.histogram.HistogramFileMaker;
 import morris_water_maze.report.histogram.HistogramFileMakerFactory;
@@ -27,9 +27,6 @@ public final class Main
     
     public static final int
         IMAGE_SIZE = (int) (ZOOM_FACTOR * 2.0 * Pool.CENTER_TO_BORDER_DISTANCE);
-    
-    private static final ParameterSource
-        PARAMETER_SOURCE = ParameterSource.PROPERTIES_FILE;
         
     
     private Main()
@@ -39,8 +36,7 @@ public final class Main
     
     public static void main(String[] args)
     {
-        ParameterAccessor parameterAccessor = PARAMETER_SOURCE.makeParameterAccessorInstance(args);
-        
+        ParameterAccessor parameterAccessor = new ParameterAccessorFromPropertiesFile();
         FileNameProvider fileNameProvider = new FileNameProvider(parameterAccessor);
         createDirectories(fileNameProvider);
     

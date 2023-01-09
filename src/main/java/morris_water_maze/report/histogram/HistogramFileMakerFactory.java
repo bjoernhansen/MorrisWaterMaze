@@ -1,13 +1,12 @@
 package morris_water_maze.report.histogram;
 
-import morris_water_maze.parameter.ParameterAccessor;
 import morris_water_maze.report.FileNameProvider;
 import morris_water_maze.report.ImageFileFormat;
 
 
 public final class HistogramFileMakerFactory
 {
-    private final ParameterAccessor
+    private final HistogramParameterAccessor
         parameterAccessor;
     
     private final FileNameProvider
@@ -17,7 +16,7 @@ public final class HistogramFileMakerFactory
         imageFileFormat;
     
     
-    public HistogramFileMakerFactory(ParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
+    public HistogramFileMakerFactory(HistogramParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
     {
         this.parameterAccessor = parameterAccessor;
         this.fileNameProvider = fileNameProvider;

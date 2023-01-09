@@ -6,12 +6,15 @@ import morris_water_maze.report.ImageFileFormat;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.StringJoiner;
 
 
-final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccessor
+public final class ParameterAccessorFromPropertiesFile implements ParameterAccessor
+// TODO Klasse aufspalten
 {
     private static final String
         PARAMETER_PROPERTIES_FILE_NAME = "/parameter.properties";
@@ -19,7 +22,7 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
     private final int
         numberOfSimulations;
     
-    private final int
+    private final double
         maximumMouseSwimmingTime;
     
     private final double
@@ -55,14 +58,25 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
     private final String
         simulationId;
     
+    // Histogram-Parameters
+    private final double
+        displayedSearchDurationCap;
     
-    public ParameterAccessorFromPropertiesFile(List<String> inputParameters)
+    private final double
+        binsPerSecond;
+    
+    private final boolean
+        isPublishable;
+    
+    
+    
+    public ParameterAccessorFromPropertiesFile()
     {
         Properties parameter = getParameter();
         numberOfSimulations = Integer.parseInt(parameter.getProperty("numberOfSimulations", "10"));
-        maximumMouseSwimmingTime = determineMaximumSwimmingTime(parameter.getProperty("maximumMouseSwimmingTime", "0"));
+        maximumMouseSwimmingTime = determineMaximumSwimmingTime(parameter.getProperty("maximumMouseSwimmingTime", "0.0"));
         mouseTrainingLevel = Double.parseDouble(parameter.getProperty("mouseTrainingLevel", "0.5"));
-        stepLengthBias = Double.parseDouble(parameter.getProperty("stepLengthBias", "5"));
+        stepLengthBias = Double.parseDouble(parameter.getProperty("stepLengthBias", "5.0"));
         startingSide = Boolean.parseBoolean(parameter.getProperty("isMouseStartPositionLeft", "true"))
                             ? StartingSide.LEFT
                             : StartingSide.RIGHT;
@@ -75,7 +89,34 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
         imagePainterTypeForPictureExport = Boolean.parseBoolean(parameter.getProperty("isUsingSvgAsImageFileFormat", "false"))
                                             ? ImagePainterType.SVG
                                             : ImagePainterType.DEFAULT;
+        
         simulationId = generateSimulationId();
+        
+        // Histogram
+        binsPerSecond = Double.parseDouble(parameter.getProperty("binsPerSecond", "5.0"));
+        isPublishable = Boolean.parseBoolean(parameter.getProperty("isPublishable", "true"));
+        displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, maximumMouseSwimmingTime);
+        
+        validate();
+    }
+    
+    private void validate()
+    {
+    }
+    
+    private double determineMaximumSwimmingTime(String swimmingTimeAsString)
+    {
+        double swimmingTime = Double.parseDouble(swimmingTimeAsString);
+        return swimmingTime > 0.0
+                ? swimmingTime
+                : Double.MAX_VALUE;
+    }
+    
+    private double calculateDisplayedSearchDurationCap(Properties parameter, double maximumMouseSwimmingTime)
+    {
+        double parsedValue = Double.parseDouble(parameter.getProperty("preferredDisplayedSearchDurationCap", "0"));
+        double preferredDisplayedSearchDurationCap = parsedValue == 0.0 ? Double.MAX_VALUE : parsedValue;
+        return Math.min(maximumMouseSwimmingTime - 1, preferredDisplayedSearchDurationCap);
     }
     
     private Properties getParameter()
@@ -93,6 +134,37 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
         return parameter;
     }
     
+    private String generateSimulationId()
+    {
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy_MM_dd_HH_mm_ss" );
+        return dateFormat.format(date) + "_parameter_" + getParameterString();
+    }
+    
+    private String getParameterString()
+    {
+        StringJoiner joiner = new StringJoiner("_");
+        joiner.add(String.valueOf(getNumberOfSimulations()))
+              .add(String.valueOf(getMaximumMouseSwimmingDuration()))
+              .add(String.valueOf(getMouseTrainingLevel()))
+              .add(String.valueOf(getStepLengthBias()))
+              .add(String.valueOf(getStartingSide()))
+              .add(String.valueOf(mouseSpeed()))
+              .add(String.valueOf(isStartingWithGui()))
+              .add(String.valueOf(getNumberOfPics()))
+              .add(String.valueOf(getLowerBoundOfPictureTimeFrame()))
+              .add(String.valueOf(getUpperBoundOfPictureTimeFrame()))
+              .add(String.valueOf(getMaximumTrajectoriesPerPicture()))
+              .add(String.valueOf(getImagePainterTypeForPictureExport()));
+        return joiner.toString();
+    }
+    
+    @Override
+    public ImageFileFormat getImageFileFormat()
+    {
+        return getImagePainterTypeForPictureExport().getImageFileFormat();
+    }
+    
     @Override
     public int getNumberOfSimulations()
     {
@@ -100,7 +172,7 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
     }
     
     @Override
-    public int getMaximumMouseSwimmingDuration()
+    public double getMaximumMouseSwimmingDuration()
     {
         return maximumMouseSwimmingTime;
     }
@@ -169,5 +241,23 @@ final class ParameterAccessorFromPropertiesFile extends AbstractParameterAccesso
     public String getSimulationId()
     {
         return simulationId;
+    }
+    
+    @Override
+    public boolean isPublishable()
+    {
+        return isPublishable;
+    }
+    
+    @Override
+    public double getBinsPerSecond()
+    {
+        return binsPerSecond;
+    }
+    
+    @Override
+    public double getMaximumDisplayedSearchTimeDuration()
+    {
+        return displayedSearchDurationCap;
     }
 }

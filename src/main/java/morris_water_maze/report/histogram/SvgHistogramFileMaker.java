@@ -1,6 +1,5 @@
 package morris_water_maze.report.histogram;
 
-import morris_water_maze.parameter.ParameterAccessor;
 import morris_water_maze.report.ImageFileFormat;
 import org.jfree.chart.JFreeChart;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
@@ -17,7 +16,7 @@ final class SvgHistogramFileMaker extends HistogramFileMaker
         IMAGE_FILE_FORMAT = ImageFileFormat.SVG;
     
     
-    SvgHistogramFileMaker(ParameterAccessor parameterAccessor, String subDirectory)
+    SvgHistogramFileMaker(HistogramParameterAccessor parameterAccessor, String subDirectory)
     {
         super(parameterAccessor, subDirectory);
     }

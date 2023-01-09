@@ -1,6 +1,5 @@
 package morris_water_maze.report.histogram;
 
-import morris_water_maze.parameter.ParameterAccessor;
 import morris_water_maze.report.ImageFileFormat;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
@@ -15,7 +14,7 @@ final class PngHistogramFileMaker extends HistogramFileMaker
         IMAGE_FILE_FORMAT = ImageFileFormat.PNG;
     
     
-    PngHistogramFileMaker(ParameterAccessor parameterAccessor, String subDirectory)
+    PngHistogramFileMaker(HistogramParameterAccessor parameterAccessor, String subDirectory)
     {
         super(parameterAccessor, subDirectory);
     }

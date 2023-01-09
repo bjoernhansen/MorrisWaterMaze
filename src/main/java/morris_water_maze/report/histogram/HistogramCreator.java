@@ -1,12 +1,12 @@
 package morris_water_maze.report.histogram;
 
 import morris_water_maze.model.simulation.SearchTimeProvider;
-import morris_water_maze.parameter.ParameterAccessor;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.statistics.HistogramDataset;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -16,27 +16,45 @@ import java.util.stream.Collectors;
 
 final class HistogramCreator
 {
-    private static final int
-        MAXIMUM_DISPLAYED_SEARCH_TIME_DURATION = 320;
+    private static final DecimalFormat
+        decimalFormat = new DecimalFormat("###,###,###");
     
-    private static final int
-        BINS_PER_SECOND = 5;
+    private final double
+        maximumDisplayedSearchTimeDuration;
+    
+    private final double
+        binsPerSecond;
         
     private final String
         subtitle;
     
-    private final DecimalFormat
-        decimalFormat = new DecimalFormat("###,###,###");
+    private final boolean
+        isPublishable;
     
     
-    
-    HistogramCreator(ParameterAccessor parameterAccessor)
+
+    HistogramCreator(HistogramParameterAccessor parameterAccessor)
     {
-        this.subtitle = createSubtitleName(parameterAccessor);
+        binsPerSecond = parameterAccessor.getBinsPerSecond();
+        maximumDisplayedSearchTimeDuration = parameterAccessor.getMaximumDisplayedSearchTimeDuration();
+        isPublishable = parameterAccessor.isPublishable();
+        subtitle = createSubtitle(parameterAccessor);
     }
     
-    private String createSubtitleName(ParameterAccessor parameterAccessor)
+    private String createTitle()
     {
+        return isPublishable
+            ? ""
+            : "Frequency distribution of the duration of search times";
+    }
+    
+    private String createSubtitle(HistogramParameterAccessor parameterAccessor)
+    {
+        if(parameterAccessor.isPublishable())
+        {
+            return "";
+        }
+        
         String numberOfSimulations = decimalFormat.format(parameterAccessor.getNumberOfSimulations());
         
         return String.format(
@@ -58,21 +76,28 @@ final class HistogramCreator
         HistogramDataset dataset = new HistogramDataset();
         dataset.addSeries("key", searchTimes, getNumberOfBins());
         
+        String title = createTitle();
+        
         JFreeChart histogram = ChartFactory.createHistogram(
-            "Frequency distribution of the duration of search times",
-            "Search time duration",
+            title,
+            "Search duration",
             "Number of attempts",
             dataset);
         
-        TextTitle title = new TextTitle(subtitle);
-        histogram.setSubtitles(List.of(title));
+        TextTitle subtitleTextTitle = new TextTitle(subtitle);
+        histogram.setSubtitles(List.of(subtitleTextTitle));
+        
+        if(isPublishable)
+        {
+            histogram.getPlot().setBackgroundPaint(Color.WHITE);
+        }
         
         return histogram;
     }
     
     private boolean isValidSearchTimeForHistogram(double value)
     {
-        return value <= MAXIMUM_DISPLAYED_SEARCH_TIME_DURATION;
+        return value <= maximumDisplayedSearchTimeDuration;
     }
     
     private double[] getSearchTimeArrayFrom(List<Double> listOfSearchTimes)
@@ -84,6 +109,6 @@ final class HistogramCreator
     
     private int getNumberOfBins()
     {
-        return BINS_PER_SECOND * MAXIMUM_DISPLAYED_SEARCH_TIME_DURATION;
+        return (int)(binsPerSecond * maximumDisplayedSearchTimeDuration);
     }
 }
