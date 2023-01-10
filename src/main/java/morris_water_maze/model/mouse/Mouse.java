@@ -9,7 +9,7 @@ import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
 import morris_water_maze.util.geometry.RotationDirection;
 
-import java.util.Objects;
+import java.security.InvalidParameterException;
 import java.util.Random;
 
 import static morris_water_maze.model.mouse.Calculations.angle;
@@ -71,55 +71,72 @@ public final class Mouse
     
     public void moveFor(double durationOfCurrentSimulationStep)
     {
-        Point newCoordinates = calculateNewCoordinates(durationOfCurrentSimulationStep);
-        Objects.requireNonNull(newCoordinates);
+        Point newCoordinates = calculateNewCoordinatesAfter(durationOfCurrentSimulationStep);
+        
+        LineSegment nextMove = LineSegment.from(coordinates)
+                                          .to(newCoordinates);
+    
         coordinates = newCoordinates;
+        movementDirectionAngle = recalculateMovementDirectionAngleFor(nextMove);
     }
     
-    private Point calculateNewCoordinates(double durationOfNextSimulationStep)
+    private double recalculateMovementDirectionAngleFor(LineSegment nextMove)
+    {
+        Point newCoordinates = nextMove.getEnd();
+        if(Geometry.isPointOnCircle(movementBoundaries, newCoordinates))
+        {
+            return getMovementDirectionAngle(nextMove);
+        }
+        else
+        {
+            return gaussian(calculateMeanAngleFor(nextMove), calculateSigma());  // for a more trained mouse the standard deviation is smaller
+        }
+    }
+    
+    private Point calculateNewCoordinatesAfter(double durationOfNextSimulationStep)
     {
         Point unconstrainedCoordinates = calculateUnconstrainedCoordinatesAfter(durationOfNextSimulationStep);
+        
         LineSegment proposedMove = LineSegment.from(coordinates)
                                               .to(unconstrainedCoordinates);
         
         if(isReachingPlatformWithin(proposedMove))
         {
             stopSwimming();
-            return getLandingPlaceOnPlatformFor(proposedMove);
+            return calculateLandingPlaceOnPlatformFor(proposedMove);
         }
-        
         if(isProposedMoveTakingMouseOutsidePoolBoundary(proposedMove))
         {
-            Point constrainedCoordinates = Geometry.circleLineSegmentIntersection(movementBoundaries, proposedMove);
-            // TODO Query Command Separation herstellen
-            movementDirectionAngle = getMovementDirectionAngle(constrainedCoordinates);
-            return constrainedCoordinates;
+            return calculateMostDistantReachablePositionFor(proposedMove);
         }
-        
-        // TODO Query Command Separation herstellen
-        movementDirectionAngle = gaussian(calculateMeanAngleFor(unconstrainedCoordinates), calculateSigma());  // for a more trained mouse the standard deviation is smaller
         return unconstrainedCoordinates;
     }
     
+    private Point calculateMostDistantReachablePositionFor(LineSegment proposedMove)
+    {
+        return Geometry.circleLineSegmentIntersection(movementBoundaries, proposedMove)
+                       .orElseThrow(() -> new InvalidParameterException("There is no intersection between " + movementBoundaries + " and " + proposedMove + "."));
+    }
     
-    private double getMovementDirectionAngle(Point constrainedCoordinates)
+    private double getMovementDirectionAngle(LineSegment nextMove)
     // TODO Methode verbessern: Was genau wird hier berechnet - API anpassen
     {
-        Point movementDirectionVector = VectorBuilder.from(constrainedCoordinates)
+        Point newCoordinates = nextMove.getEnd();
+        Point movementDirectionVector = VectorBuilder.from(newCoordinates)
                                                      .to(pool.getCenter());
         
-        RotationDirection rotationDirection = getRotationDirectionAroundPoolCenterWhenSwimmingTo(constrainedCoordinates);
+        RotationDirection rotationDirection = getRotationDirectionAroundPoolCenterWhenSwimmingAlong(nextMove);
         
         return calculatePolarAngle(movementDirectionVector)
                - rotationDirection.getValue() * (Math.PI / 3 + gaussian(0, Math.PI / 12, Math.PI / 6));
     }
     
-    private RotationDirection getRotationDirectionAroundPoolCenterWhenSwimmingTo(Point newCoordinates)
+    private RotationDirection getRotationDirectionAroundPoolCenterWhenSwimmingAlong(LineSegment nextMove)
     {
         return LineSegment.rotationDirection(
                             pool.getCenter(),
-                            newCoordinates,
-                            coordinates);
+                            nextMove.getEnd(),
+                            nextMove.getStart());
     }
     
     private boolean isProposedMoveTakingMouseOutsidePoolBoundary(LineSegment currentMove)
@@ -127,11 +144,11 @@ public final class Mouse
         return !movementBoundaries.contains(currentMove.getEnd());
     }
     
-    private Point getLandingPlaceOnPlatformFor(LineSegment currentMove)
+    private Point calculateLandingPlaceOnPlatformFor(LineSegment currentMove)
     {
         return Geometry.clipLine(currentMove, platform.getBounds())
                        .map(LineSegment::getStart)
-                       .orElse(null);
+                       .orElseThrow(() -> new InvalidParameterException("There is no intersection between " + currentMove + " and " + platform.getBounds() + "."));
     }
     
     private boolean isReachingPlatformWithin(LineSegment currentMove)
@@ -139,13 +156,14 @@ public final class Mouse
         return currentMove.intersects(platform.getBounds());
     }
     
-    private double calculateMeanAngleFor(Point proposedCoordinates)
-    // TODO Methode verbessern
+    private double calculateMeanAngleFor(LineSegment nextMove)
     {
-        Point movementVector = VectorBuilder.from(coordinates)
-                                            .to(proposedCoordinates);
-        Point mouseToPlatformVector = VectorBuilder.from(proposedCoordinates).to(platform.getCenter());
-        if(trainingLevel > Math.random() && Mouse.FIELD_OF_VIEW /2 >= angle(movementVector, mouseToPlatformVector))
+        Point newCoordinates = nextMove.getEnd();
+        Point mouseToPlatformVector = VectorBuilder.from(newCoordinates)
+                                                   .to(platform.getCenter());
+        
+        Point movementVector = VectorBuilder.of(nextMove);
+        if(trainingLevel > Math.random() && FIELD_OF_VIEW /2 >= angle(movementVector, mouseToPlatformVector))
         {
             return calculatePolarAngle(mouseToPlatformVector);
         }
@@ -192,7 +210,7 @@ public final class Mouse
     
     static Circle calculateMovementBoundariesThrough(Pool pool)
     {
-        double radius = pool.getRadius() - Mouse.RADIUS;
+        double radius = pool.getRadius() - RADIUS;
         return Circle.newInstance(pool.getCenter(), radius);
     }
     

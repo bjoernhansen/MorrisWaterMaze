@@ -1,5 +1,6 @@
 package morris_water_maze.model.mouse;
 
+import morris_water_maze.util.DoubleComparison;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
@@ -106,8 +107,9 @@ final class Geometry
         return Optional.of(LineSegment.from(start).to(end));
     }
     
-    static Point circleLineSegmentIntersection(Circle circle, LineSegment lineSegment)
-    // TODO Implementierung verbessern: null-Rückgabe und Verständlichkeit
+    static Optional<Point> circleLineSegmentIntersection(Circle circle, LineSegment lineSegment)
+    // TODO Implementierung verbessern: null-Rückgabe und Verständlichkeit, Name anpassen: es wird nur ein Punkt ausgegeben,
+    //  ein Durchstoßpunkt von innen, entsprechende Unit-Tests erstellen
     {
         // Source: http://www.seibsprogrammladen.de/frame1.html?Prgm/Algorithmen/Schnittpunkte
         
@@ -127,18 +129,25 @@ final class Geometry
             double u1 = (-b - e) / a, u2 = (-b + e) / a;
             if (0 <= u1 && u1 <= 1)
             {
-                return Point.newInstance(
-                            lineSegment.getStart().getX() + x21 * u1,
-                            lineSegment.getStart().getY() + y21 * u1);
+                return Optional.of(Point.newInstance(
+                                        lineSegment.getStart().getX() + x21 * u1,
+                                        lineSegment.getStart().getY() + y21 * u1));
             }
             else
             {
-                return Point.newInstance(
-                            lineSegment.getStart().getX() + x21 * u2,
-                            lineSegment.getStart().getY() + y21 * u2);
+                return Optional.of(Point.newInstance(
+                                        lineSegment.getStart().getX() + x21 * u2,
+                                        lineSegment.getStart().getY() + y21 * u2));
             }
         }
-        throw new InvalidParameterException("There is no intersection between " + circle + " and " + lineSegment + ".");
+        return Optional.empty();
+    }
+    
+    static boolean isPointOnCircle(Circle circle, Point position)
+    {
+        Point vector = VectorBuilder.from(circle.getCenter())
+                                    .to(position);
+        return DoubleComparison.doubleEquals(Calculations.length(vector), circle.getRadius());
     }
     
     private Geometry()
