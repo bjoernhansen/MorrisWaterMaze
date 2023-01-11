@@ -70,7 +70,8 @@ public class HistogramParameterAccessorImplementation implements HistogramParame
     @Override
     public ImageFileFormat getImageFileFormat()
     {
-        return parameterAccessor.getImageFileFormat();
+        return parameterAccessor.getImageFileParameterAccessor()
+                                .getImageFileFormat();
     }
     
     @Override

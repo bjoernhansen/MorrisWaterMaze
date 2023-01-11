@@ -28,7 +28,7 @@ public final class Main
     
     public static final int
         IMAGE_SIZE = (int) (ZOOM_FACTOR * 2.0 * Pool.CENTER_TO_BORDER_DISTANCE);
-        
+    
     
     private Main()
     {
@@ -40,7 +40,7 @@ public final class Main
         ParameterAccessor parameterAccessor = new ParameterAccessorFromPropertiesFile();
         FileNameProvider fileNameProvider = new FileNameProvider(parameterAccessor);
         createDirectories(fileNameProvider);
-    
+        
         Simulation simulation = getSimulationWithObserversRegistered(parameterAccessor, fileNameProvider);
         
         SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor);
@@ -53,23 +53,29 @@ public final class Main
         
         ReportWriter reportWriter = new ReportWriter(fileNameProvider);
         simulation.registerSimulationSeriesCompletionObservers(reportWriter);
-    
+        
         HistogramFileMakerFactory histogramFileMakerFactory = new HistogramFileMakerFactory(parameterAccessor.getHistogramParameterAccessor(), fileNameProvider);
         HistogramFileMaker histogramFileMaker = histogramFileMakerFactory.makeHistogramFileCreator();
         simulation.registerSimulationSeriesCompletionObservers(histogramFileMaker);
-    
+        
         SimulationProgressReporter simulationProgressReporter = new SimulationProgressReporter();
         simulation.registerSimulationStepObservers(simulationProgressReporter);
         
-        if(parameterAccessor.getNumberOfPics() > 0)
+        if(parameterAccessor.getImageFileParameterAccessor().getNumberOfPics() > 0)
         {
-            ImagePainter imagePainterForImageFileCreator = parameterAccessor.getImagePainterTypeForPictureExport()
-                                                                            .makeInstance();
-            ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainterForImageFileCreator, parameterAccessor, fileNameProvider);
+            ImagePainter imagePainterForImageFileCreator = makeInstanceOfImagePainterForImageFileCreator(parameterAccessor);
+            ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainterForImageFileCreator, parameterAccessor.getImageFileParameterAccessor(), fileNameProvider);
             simulation.registerSimulationStepObservers(imageFileCreator);
         }
         
         return simulation;
+    }
+    
+    private static ImagePainter makeInstanceOfImagePainterForImageFileCreator(ParameterAccessor parameterAccessor)
+    {
+        return parameterAccessor.getImageFileParameterAccessor()
+                                .getImagePainterTypeForPictureExport()
+                                .makeInstance();
     }
     
     private static void createDirectories(FileNameProvider fileNameProvider)

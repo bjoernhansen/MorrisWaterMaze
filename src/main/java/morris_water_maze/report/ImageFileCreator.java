@@ -42,7 +42,7 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
         imageFileFormat;
     
     
-    public ImageFileCreator(ImagePainter imagePainter, ParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
+    public ImageFileCreator(ImagePainter imagePainter, ImageFileParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
     {
         this.imagePainter = imagePainter;
         this.fileNameProvider = fileNameProvider;

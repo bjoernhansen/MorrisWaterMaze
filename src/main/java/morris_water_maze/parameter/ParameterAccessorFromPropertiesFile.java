@@ -4,6 +4,7 @@ import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.model.StartingSide;
 import morris_water_maze.model.mouse.MouseParameterAccessor;
 import morris_water_maze.report.ImageFileFormat;
+import morris_water_maze.report.ImageFileParameterAccessor;
 import morris_water_maze.report.histogram.HistogramParameterAccessor;
 
 import java.io.IOException;
@@ -27,52 +28,30 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     private final boolean
         isStartingWithGui;
     
-    private final int
-        numberOfPics;
-    
-    private final double
-        lowerBoundOfPictureTimeFrame;
-    
-    private final double
-        upperBoundOfPictureTimeFrame;
-    
-    private final int
-        maximumTrajectoriesPerPicture;
-    
-    private final ImagePainterType
-        imagePainterTypeForPictureExport;
-    
     private final String
         simulationId;
 
     private final HistogramParameterAccessor
         histogramParameterAccessor;
     
-    
     private final MouseParameterAccessor
         mouseParameterAccessor;
+    
+    private final ImageFileParameterAccessor
+        imageFileParameterAccessor;
+        
     
     
     public ParameterAccessorFromPropertiesFile()
     {
         Properties parameter = getParameter();
         numberOfSimulations = Integer.parseInt(parameter.getProperty("numberOfSimulations", "10"));
-        
         isStartingWithGui = Boolean.parseBoolean(parameter.getProperty("isStartingWithGui", "true"));
-        numberOfPics = Integer.parseInt(parameter.getProperty("numberOfPics", "0"));
-        lowerBoundOfPictureTimeFrame = Double.parseDouble(parameter.getProperty("lowerBoundOfPictureTimeFrame", "10.74"));
-        upperBoundOfPictureTimeFrame = Double.parseDouble(parameter.getProperty("upperBoundOfPictureTimeFrame", "25.76"));
-        maximumTrajectoriesPerPicture = Integer.parseInt(parameter.getProperty("maximumTrajectoriesPerPicture", "25"));
-        imagePainterTypeForPictureExport = Boolean.parseBoolean(parameter.getProperty("isUsingSvgAsImageFileFormat", "false"))
-                                            ? ImagePainterType.SVG
-                                            : ImagePainterType.DEFAULT;
-    
-    
-    
+        
         mouseParameterAccessor = new MouseParameterAccessorImplementation(parameter);
         histogramParameterAccessor = new HistogramParameterAccessorImplementation(this, parameter);
+        imageFileParameterAccessor = new ImageFileParameterAccessorImplementation(parameter);
         
-    
         simulationId = generateSimulationId();
         
         validate();
@@ -114,12 +93,6 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     }
     
     @Override
-    public ImageFileFormat getImageFileFormat()
-    {
-        return getImagePainterTypeForPictureExport().getImageFileFormat();
-    }
-    
-    @Override
     public int getNumberOfSimulations()
     {
         return numberOfSimulations;
@@ -131,35 +104,6 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
         return isStartingWithGui;
     }
     
-    @Override
-    public int getNumberOfPics()
-    {
-        return numberOfPics;
-    }
-    
-    @Override
-    public double getLowerBoundOfPictureTimeFrame()
-    {
-        return lowerBoundOfPictureTimeFrame;
-    }
-    
-    @Override
-    public double getUpperBoundOfPictureTimeFrame()
-    {
-        return upperBoundOfPictureTimeFrame;
-    }
-    
-    @Override
-    public int getMaximumTrajectoriesPerPicture()
-    {
-        return maximumTrajectoriesPerPicture;
-    }
-    
-    @Override
-    public ImagePainterType getImagePainterTypeForPictureExport()
-    {
-        return imagePainterTypeForPictureExport;
-    }
     
     @Override
     public String getSimulationId()
@@ -183,5 +127,11 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     public double getMouseTrainingLevel()
     {
         return mouseParameterAccessor.getMouseTrainingLevel();
+    }
+    
+    @Override
+    public ImageFileParameterAccessor getImageFileParameterAccessor()
+    {
+        return imageFileParameterAccessor;
     }
 }
