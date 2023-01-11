@@ -7,6 +7,7 @@ import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
 import morris_water_maze.model.mouse.Mouse;
 import morris_water_maze.model.mouse.MouseMovement;
+import morris_water_maze.model.mouse.MouseParameterAccessor;
 import morris_water_maze.parameter.SimulationParameterAccessor;
 
 import java.util.ArrayList;
@@ -40,8 +41,10 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         
         pool = new Pool();
         platform = new Platform();
-        Mouse mouse = new Mouse(parameterAccessor, pool, platform);
-        mouseMovement = new MouseMovement(parameterAccessor, mouse);
+        
+        MouseParameterAccessor mouseParameterAccessor = parameterAccessor.getMouseParameterAccessor();
+        Mouse mouse = new Mouse(mouseParameterAccessor, pool, platform);
+        mouseMovement = new MouseMovement(mouseParameterAccessor, mouse);
     }
     
     @Override

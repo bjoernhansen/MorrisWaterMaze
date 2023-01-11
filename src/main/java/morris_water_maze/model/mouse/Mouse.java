@@ -3,7 +3,6 @@ package morris_water_maze.model.mouse;
 import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
 import morris_water_maze.model.StartingSide;
-import morris_water_maze.parameter.MouseParameterAccessor;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
@@ -133,10 +132,7 @@ public final class Mouse
     
     private RotationDirection getRotationDirectionAroundPoolCenterWhenSwimmingAlong(LineSegment nextMove)
     {
-        return LineSegment.rotationDirection(
-                            pool.getCenter(),
-                            nextMove.getEnd(),
-                            nextMove.getStart());
+        return nextMove.getRotationDirectionWithRespectTo(pool.getCenter());
     }
     
     private boolean isProposedMoveTakingMouseOutsidePoolBoundary(LineSegment currentMove)

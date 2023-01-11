@@ -1,4 +1,4 @@
-package morris_water_maze.parameter;
+package morris_water_maze.model.mouse;
 
 import morris_water_maze.model.StartingSide;
 

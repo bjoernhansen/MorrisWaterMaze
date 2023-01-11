@@ -1,6 +1,10 @@
 package morris_water_maze.parameter;
 
-public interface SimulationParameterAccessor extends MouseParameterAccessor
+import morris_water_maze.model.mouse.MouseParameterAccessor;
+
+public interface SimulationParameterAccessor
 {
     int getNumberOfSimulations();
+    
+    MouseParameterAccessor getMouseParameterAccessor();
 }

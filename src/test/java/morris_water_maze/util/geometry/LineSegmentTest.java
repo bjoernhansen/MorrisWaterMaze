@@ -22,7 +22,11 @@ class LineSegmentTest
     private static final LineSegment
         HORIZONTAL_LINE_SEGMENT = LineSegment.from(POINT_1).to(POINT_3);
     
-   
+    private static final LineSegment
+        DIAGONAL_LINE_SEGMENT = LineSegment.from(POINT_3).to(POINT_2);
+    
+    
+    
     @Test
     void shouldInstantiateLineSegmentCorrectly()
     {
@@ -51,5 +55,12 @@ class LineSegmentTest
         assertThat(VERTICAL_LINE_SEGMENT.intersects(squareLeftOfVerticalLine)).isFalse();
         assertThat(VERTICAL_LINE_SEGMENT.intersects(squareIntersectingVerticalLine)).isTrue();
         assertThat(VERTICAL_LINE_SEGMENT.intersects(squareBelowRightOfVerticalLine)).isFalse();
+    }
+    
+    @Test
+    void shouldCalculateRotationDirectionCorrectly()
+    {
+        assertThat(VERTICAL_LINE_SEGMENT.getRotationDirectionWithRespectTo(POINT_3)).isEqualTo(RotationDirection.COUNTERCLOCKWISE);
+        assertThat(DIAGONAL_LINE_SEGMENT.getRotationDirectionWithRespectTo(POINT_1)).isEqualTo(RotationDirection.CLOCKWISE);
     }
 }

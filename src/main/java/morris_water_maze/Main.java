@@ -54,7 +54,7 @@ public final class Main
         ReportWriter reportWriter = new ReportWriter(fileNameProvider);
         simulation.registerSimulationSeriesCompletionObservers(reportWriter);
     
-        HistogramFileMakerFactory histogramFileMakerFactory = new HistogramFileMakerFactory(parameterAccessor, fileNameProvider);
+        HistogramFileMakerFactory histogramFileMakerFactory = new HistogramFileMakerFactory(parameterAccessor.getHistogramParameterAccessor(), fileNameProvider);
         HistogramFileMaker histogramFileMaker = histogramFileMakerFactory.makeHistogramFileCreator();
         simulation.registerSimulationSeriesCompletionObservers(histogramFileMaker);
     

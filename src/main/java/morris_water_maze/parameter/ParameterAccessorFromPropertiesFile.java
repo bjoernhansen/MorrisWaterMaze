@@ -2,7 +2,9 @@ package morris_water_maze.parameter;
 
 import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.model.StartingSide;
+import morris_water_maze.model.mouse.MouseParameterAccessor;
 import morris_water_maze.report.ImageFileFormat;
+import morris_water_maze.report.histogram.HistogramParameterAccessor;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,22 +23,7 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
  
     private final int
         numberOfSimulations;
-    
-    private final double
-        maximumMouseSwimmingTime;
-    
-    private final double
-        mouseTrainingLevel;
-    
-    private final double
-        stepLengthBias;
-    
-    private final StartingSide
-        startingSide;
-    
-    private final double
-        mouseSpeed;
-    
+        
     private final boolean
         isStartingWithGui;
     
@@ -57,30 +44,20 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     
     private final String
         simulationId;
+
+    private final HistogramParameterAccessor
+        histogramParameterAccessor;
     
-    // Histogram-Parameters
-    private final double
-        displayedSearchDurationCap;
     
-    private final double
-        binsPerSecond;
-    
-    private final boolean
-        isPublishable;
-    
+    private final MouseParameterAccessor
+        mouseParameterAccessor;
     
     
     public ParameterAccessorFromPropertiesFile()
     {
         Properties parameter = getParameter();
         numberOfSimulations = Integer.parseInt(parameter.getProperty("numberOfSimulations", "10"));
-        maximumMouseSwimmingTime = determineMaximumSwimmingTime(parameter.getProperty("maximumMouseSwimmingTime", "0.0"));
-        mouseTrainingLevel = Double.parseDouble(parameter.getProperty("mouseTrainingLevel", "0.5"));
-        stepLengthBias = Double.parseDouble(parameter.getProperty("stepLengthBias", "5.0"));
-        startingSide = Boolean.parseBoolean(parameter.getProperty("isMouseStartPositionLeft", "true"))
-                            ? StartingSide.LEFT
-                            : StartingSide.RIGHT;
-        mouseSpeed = Double.parseDouble(parameter.getProperty("mouseSpeed", "5"));
+        
         isStartingWithGui = Boolean.parseBoolean(parameter.getProperty("isStartingWithGui", "true"));
         numberOfPics = Integer.parseInt(parameter.getProperty("numberOfPics", "0"));
         lowerBoundOfPictureTimeFrame = Double.parseDouble(parameter.getProperty("lowerBoundOfPictureTimeFrame", "10.74"));
@@ -89,13 +66,14 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
         imagePainterTypeForPictureExport = Boolean.parseBoolean(parameter.getProperty("isUsingSvgAsImageFileFormat", "false"))
                                             ? ImagePainterType.SVG
                                             : ImagePainterType.DEFAULT;
+    
+    
+    
+        mouseParameterAccessor = new MouseParameterAccessorImplementation(parameter);
+        histogramParameterAccessor = new HistogramParameterAccessorImplementation(this, parameter);
         
+    
         simulationId = generateSimulationId();
-        
-        // Histogram
-        binsPerSecond = Double.parseDouble(parameter.getProperty("binsPerSecond", "5.0"));
-        isPublishable = Boolean.parseBoolean(parameter.getProperty("isPublishable", "true"));
-        displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, maximumMouseSwimmingTime);
         
         validate();
     }
@@ -103,21 +81,6 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     private void validate()
     {
         // TODO implementieren: zulässigleit aller eingabewerte Prüfen
-    }
-    
-    private double determineMaximumSwimmingTime(String swimmingTimeAsString)
-    {
-        double swimmingTime = Double.parseDouble(swimmingTimeAsString);
-        return swimmingTime > 0.0
-                ? swimmingTime
-                : Double.MAX_VALUE;
-    }
-    
-    private double calculateDisplayedSearchDurationCap(Properties parameter, double maximumMouseSwimmingTime)
-    {
-        double parsedValue = Double.parseDouble(parameter.getProperty("preferredDisplayedSearchDurationCap", "0"));
-        double preferredDisplayedSearchDurationCap = parsedValue == 0.0 ? Double.MAX_VALUE : parsedValue;
-        return Math.min(maximumMouseSwimmingTime - 1, preferredDisplayedSearchDurationCap);
     }
     
     private Properties getParameter()
@@ -146,17 +109,7 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     {
         StringJoiner joiner = new StringJoiner("_");
         joiner.add(String.valueOf(getNumberOfSimulations()))
-              .add(String.valueOf(getMaximumMouseSwimmingDuration()))
-              .add(String.valueOf(getMouseTrainingLevel()))
-              .add(String.valueOf(getStepLengthBias()))
-              .add(String.valueOf(getStartingSide()))
-              .add(String.valueOf(mouseSpeed()))
-              .add(String.valueOf(isStartingWithGui()))
-              .add(String.valueOf(getNumberOfPics()))
-              .add(String.valueOf(getLowerBoundOfPictureTimeFrame()))
-              .add(String.valueOf(getUpperBoundOfPictureTimeFrame()))
-              .add(String.valueOf(getMaximumTrajectoriesPerPicture()))
-              .add(String.valueOf(getImagePainterTypeForPictureExport()));
+              .add(String.valueOf(mouseParameterAccessor.getMouseTrainingLevel()));
         return joiner.toString();
     }
     
@@ -170,36 +123,6 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     public int getNumberOfSimulations()
     {
         return numberOfSimulations;
-    }
-    
-    @Override
-    public double getMaximumMouseSwimmingDuration()
-    {
-        return maximumMouseSwimmingTime;
-    }
-    
-    @Override
-    public double getMouseTrainingLevel()
-    {
-        return mouseTrainingLevel;
-    }
-    
-    @Override
-    public double getStepLengthBias()
-    {
-        return stepLengthBias;
-    }
-    
-    @Override
-    public StartingSide getStartingSide()
-    {
-        return startingSide;
-    }
-    
-    @Override
-    public double mouseSpeed()
-    {
-        return mouseSpeed;
     }
     
     @Override
@@ -245,20 +168,20 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     }
     
     @Override
-    public boolean isPublishable()
+    public HistogramParameterAccessor getHistogramParameterAccessor()
     {
-        return isPublishable;
+        return histogramParameterAccessor;
     }
     
     @Override
-    public double getBinsPerSecond()
+    public MouseParameterAccessor getMouseParameterAccessor()
     {
-        return binsPerSecond;
+        return mouseParameterAccessor;
     }
     
     @Override
-    public double getMaximumDisplayedSearchTimeDuration()
+    public double getMouseTrainingLevel()
     {
-        return displayedSearchDurationCap;
+        return mouseParameterAccessor.getMouseTrainingLevel();
     }
 }

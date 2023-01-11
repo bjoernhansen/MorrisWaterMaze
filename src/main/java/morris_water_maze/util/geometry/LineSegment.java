@@ -30,19 +30,16 @@ public final class LineSegment
         this.end = end;
     }
     
-    public static RotationDirection rotationDirection(Point lineStart,
-                                                      Point lineEnd,
-                                                      Point point)
-    // TODO: Methode idealer Weise nicht mehr statisch sondern Methode der Instanz
+    public RotationDirection getRotationDirectionWithRespectTo(Point point)
     {
         int relativeCCW = Line2D.relativeCCW(
-                                    lineStart.getX(), lineStart.getY(),
-                                    lineEnd.getX(), lineEnd.getY(),
-                                    point.getX(), point.getY());
+                                    point.getX(), point.getY(),
+                                    end.getX(), end.getY(),
+                                    start.getX(), start.getY());
         
         return relativeCCW == 1
-            ? RotationDirection.COUNTERCLOCKWISE
-            : RotationDirection.CLOCKWISE;
+                ? RotationDirection.CLOCKWISE
+                : RotationDirection.COUNTERCLOCKWISE;
     }
     
     public boolean intersects(Square square)
