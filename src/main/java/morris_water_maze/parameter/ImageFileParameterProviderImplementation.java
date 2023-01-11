@@ -34,6 +34,28 @@ public class ImageFileParameterProviderImplementation implements ImageFileParame
         imagePainterTypeForPictureExport = Boolean.parseBoolean(parameter.getProperty("isUsingSvgAsImageFileFormat", "false"))
             ? ImagePainterType.SVG
             : ImagePainterType.DEFAULT;
+    
+        validate();
+    }
+    
+    private void validate()
+    {
+        if(numberOfPics < 0)
+        {
+            throw new IllegalArgumentException("Illegal Argument: Number of pics < 0");
+        }
+        if(lowerBoundOfPictureTimeFrame < 0.0)
+        {
+            throw new IllegalArgumentException("Illegal Argument: lower bound of picture time frame < 0.0");
+        }
+        if(upperBoundOfPictureTimeFrame <= lowerBoundOfPictureTimeFrame)
+        {
+            throw new IllegalArgumentException("Illegal Argument: upper bound of picture time frame <= lower bound");
+        }
+        if(maximumTrajectoriesPerPicture < 1.0)
+        {
+            throw new IllegalArgumentException("Illegal Argument: Number of simulations < 1");
+        }
     }
     
     @Override

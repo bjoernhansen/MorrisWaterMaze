@@ -28,6 +28,20 @@ public class HistogramParameterProviderImplementation implements HistogramParame
         displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, maximumMouseSwimmingDuration);
         binsPerSecond = Double.parseDouble(parameter.getProperty("binsPerSecond", "5.0"));
         isPublishable = Boolean.parseBoolean(parameter.getProperty("isPublishable", "true"));
+        
+        validate();
+    }
+    
+    private void validate()
+    {
+        if(displayedSearchDurationCap <= 0)
+        {
+            throw new IllegalArgumentException("Illegal argument: displayed search duration cap does not exceed 0.0");
+        }
+        if(binsPerSecond <= 0)
+        {
+            throw new IllegalArgumentException("Illegal argument: bins per second value does not exceed 0.0");
+        }
     }
     
     private double getMaximumMouseSwimmingDurationFrom(ParameterProvider parameterProvider)

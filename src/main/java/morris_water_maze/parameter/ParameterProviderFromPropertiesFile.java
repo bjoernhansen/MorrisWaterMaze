@@ -55,7 +55,10 @@ public final class ParameterProviderFromPropertiesFile implements ParameterProvi
     
     private void validate()
     {
-        // TODO implementieren: zulässigleit aller eingabewerte Prüfen
+        if(numberOfSimulations < 1)
+        {
+            throw new IllegalArgumentException("Illegal Argument: Number of simulations < 1");
+        }
     }
     
     private Properties getParameter()

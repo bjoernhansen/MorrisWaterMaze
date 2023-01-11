@@ -32,6 +32,28 @@ public class MouseParameterProviderImplementation implements MouseParameterProvi
             ? StartingSide.LEFT
             : StartingSide.RIGHT;
         mouseSpeed = Double.parseDouble(parameter.getProperty("mouseSpeed", "5"));
+        
+        validate();
+    }
+    
+    private void validate()
+    {
+        if(maximumMouseSwimmingDuration < 0.0)
+        {
+            throw new IllegalArgumentException("Illegal argument: maximum mouse swimming duration < 0.0");
+        }
+        if(mouseTrainingLevel < 0.0 || mouseTrainingLevel > 1.0)
+        {
+            throw new IllegalArgumentException("Illegal argument: mouse training level is outside of intervall [0.0, 1.0]");
+        }
+        if(stepLengthBias <= 1.0)
+        {
+            throw new IllegalArgumentException("Illegal argument: step length bias does not exceed 1.0");
+        }
+        if(mouseSpeed <= 0.0)
+        {
+            throw new IllegalArgumentException("Illegal argument: step length bias does not exceed 0.0");
+        }
     }
     
     private double determineMaximumSwimmingTime(String swimmingTimeAsString)
