@@ -102,6 +102,7 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     
     private void validate()
     {
+        // TODO implementieren: zulässigleit aller eingabewerte Prüfen
     }
     
     private double determineMaximumSwimmingTime(String swimmingTimeAsString)

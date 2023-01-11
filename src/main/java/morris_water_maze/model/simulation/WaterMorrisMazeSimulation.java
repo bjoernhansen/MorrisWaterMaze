@@ -83,6 +83,12 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     }
     
     @Override
+    public double getLastSearchTime()
+    {
+        return searchTimeContainer.getLastSearchTime();
+    }
+    
+    @Override
     public void clearSearchTime()
     {
         searchTimeContainer.clear();

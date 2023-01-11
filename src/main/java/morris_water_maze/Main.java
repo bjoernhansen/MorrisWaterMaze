@@ -10,6 +10,7 @@ import morris_water_maze.model.simulation.WaterMorrisMazeSimulation;
 import morris_water_maze.parameter.ParameterAccessor;
 import morris_water_maze.parameter.ParameterAccessorFromPropertiesFile;
 import morris_water_maze.report.FileNameProvider;
+import morris_water_maze.report.SimulationProgressReporter;
 import morris_water_maze.report.histogram.HistogramFileMaker;
 import morris_water_maze.report.histogram.HistogramFileMakerFactory;
 import morris_water_maze.report.ImageFileCreator;
@@ -40,21 +41,13 @@ public final class Main
         FileNameProvider fileNameProvider = new FileNameProvider(parameterAccessor);
         createDirectories(fileNameProvider);
     
-        Simulation simulation = getSimulationWithCompletionObserversRegistered(parameterAccessor, fileNameProvider);
-    
-        if(parameterAccessor.getNumberOfPics() > 0)
-        {
-            ImagePainter imagePainterForImageFileCreator = parameterAccessor.getImagePainterTypeForPictureExport()
-                                                                            .makeInstance();
-            ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainterForImageFileCreator, parameterAccessor, fileNameProvider);
-            simulation.registerSimulationStepObservers(imageFileCreator);
-        }
+        Simulation simulation = getSimulationWithObserversRegistered(parameterAccessor, fileNameProvider);
         
         SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterAccessor);
         simulationController.start();
     }
     
-    private static Simulation getSimulationWithCompletionObserversRegistered(ParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
+    private static Simulation getSimulationWithObserversRegistered(ParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
     {
         Simulation simulation = new WaterMorrisMazeSimulation(parameterAccessor);
         
@@ -64,6 +57,17 @@ public final class Main
         HistogramFileMakerFactory histogramFileMakerFactory = new HistogramFileMakerFactory(parameterAccessor, fileNameProvider);
         HistogramFileMaker histogramFileMaker = histogramFileMakerFactory.makeHistogramFileCreator();
         simulation.registerSimulationSeriesCompletionObservers(histogramFileMaker);
+    
+        SimulationProgressReporter simulationProgressReporter = new SimulationProgressReporter();
+        simulation.registerSimulationStepObservers(simulationProgressReporter);
+        
+        if(parameterAccessor.getNumberOfPics() > 0)
+        {
+            ImagePainter imagePainterForImageFileCreator = parameterAccessor.getImagePainterTypeForPictureExport()
+                                                                            .makeInstance();
+            ImageFileCreator imageFileCreator = new ImageFileCreator(imagePainterForImageFileCreator, parameterAccessor, fileNameProvider);
+            simulation.registerSimulationStepObservers(imageFileCreator);
+        }
         
         return simulation;
     }

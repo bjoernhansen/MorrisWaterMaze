@@ -4,8 +4,6 @@ Arbeit an der Klasse Maus:
 - eventuell Klassen herauslösen (dann ggf. Maus mit diesen Klasse in eigenes Paket)
 - Mathematische Operationen herausschreiben und erläutern
 
-Andrew Zeiten schicken für Auswertung (verschiedene Simulationsläufe)
-
 JavaFX verbessern --> fxml verwenden, GUI Elemente ergänzen (wie bei der Swing-Simulation)
 
 JavaDocs an alle öffentlichen Elemente setzen

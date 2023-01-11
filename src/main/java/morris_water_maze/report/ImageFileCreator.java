@@ -56,24 +56,10 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
     @Override
     public void beNotifiedAboutCompletionOfCurrentSimulationRun()
     {
-        System.out.println(getSimulationRunCompletionMessage());
         if (isAnotherPictureToBePainted() && isSearchTimesWithinSpecifiedTimeFrame())
         {
             saveImage();
         }
-    }
-    
-    private String getSimulationRunCompletionMessage()
-    {
-        return  "Simulation " + simulation.getNumberOfCompletedSimulationRuns()
-            + " of " + simulation.getTotalNumberOfSimulationRuns()
-            + ", simulation time: " + getLastSearchTime();
-    }
-    
-    private double getLastSearchTime()
-    {
-        return simulation.getSearchTimeProvider()
-                         .getLastSearchTime();
     }
 
     private boolean isAnotherPictureToBePainted()
@@ -83,8 +69,8 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
     
     private boolean isSearchTimesWithinSpecifiedTimeFrame()
     {
-        return getLastSearchTime() >= lowerBoundOfPictureTimeFrame
-            && getLastSearchTime() <= upperBoundOfPictureTimeFrame;
+        return simulation.getLastSearchTime() >= lowerBoundOfPictureTimeFrame
+            && simulation.getLastSearchTime() <= upperBoundOfPictureTimeFrame;
     }
     
     private void saveImage()

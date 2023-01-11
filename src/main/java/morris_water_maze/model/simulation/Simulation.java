@@ -23,5 +23,7 @@ public interface Simulation extends SettingModifier, Paintable
     
     double getAverageSearchTime();
     
+    double getLastSearchTime();
+    
     SearchTimeProvider getSearchTimeProvider();
 }
