@@ -4,20 +4,20 @@ import morris_water_maze.control.gui.GuiType;
 import morris_water_maze.control.gui.javafx.JavaFxSimulationController;
 import morris_water_maze.control.gui.swing.SwingSimulationController;
 import morris_water_maze.model.simulation.Simulation;
-import morris_water_maze.parameter.ParameterAccessor;
+import morris_water_maze.parameter.ParameterProvider;
 
 import static morris_water_maze.Main.GUI_TYPE;
 
 
 public final class SimulationControllerFactory
 {
-    public static SimulationController newInstance(Simulation simulation, ParameterAccessor parameterAccessor)
+    public static SimulationController newInstance(Simulation simulation, ParameterProvider parameterProvider)
     {
-        if(parameterAccessor.isStartingWithGui())
+        if(parameterProvider.isStartingWithGui())
         {
             return GUI_TYPE == GuiType.SWING
-                ? new SwingSimulationController(simulation, parameterAccessor)
-                : new JavaFxSimulationController(simulation, parameterAccessor);
+                ? new SwingSimulationController(simulation, parameterProvider)
+                : new JavaFxSimulationController(simulation);
         }
         else
         {

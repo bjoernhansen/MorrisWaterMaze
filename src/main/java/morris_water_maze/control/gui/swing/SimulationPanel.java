@@ -5,7 +5,8 @@ import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.graphics.Paintable;
 import morris_water_maze.graphics.painter.image.ImagePainter;
 import morris_water_maze.model.simulation.SettingModifier;
-import morris_water_maze.parameter.ParameterAccessor;
+import morris_water_maze.parameter.ParameterProvider;
+import morris_water_maze.parameter.SimulationParameterProvider;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -64,14 +65,18 @@ final class SimulationPanel extends JPanel
         numberOfSimulationsSpinner;
     
     
-    public SimulationPanel(SettingModifier settingModifier, ParameterAccessor parameterAccessor, SwingSimulationController simulationController, ImagePainter imagePainter, Paintable simulation)
+    public SimulationPanel(SettingModifier settingModifier,
+                           SimulationParameterProvider simulationParameterProvider,
+                           SwingSimulationController simulationController,
+                           ImagePainter imagePainter,
+                           Paintable simulation)
     {
         this.simulationController = simulationController;
         this.settingModifier = settingModifier;
         this.imagePainter = imagePainter;
         this.simulation = simulation;
-        this.initialNumberOfSimulations = parameterAccessor.getNumberOfSimulations();
-        this.initialMouseTrainingLevel = parameterAccessor.getMouseTrainingLevel();
+        this.initialNumberOfSimulations = simulationParameterProvider.getNumberOfSimulations();
+        this.initialMouseTrainingLevel = simulationParameterProvider.getMouseParameterAccessor().getMouseTrainingLevel();
         
         prepareGui();
     }

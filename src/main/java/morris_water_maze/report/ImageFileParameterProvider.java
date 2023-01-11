@@ -2,7 +2,7 @@ package morris_water_maze.report;
 
 import morris_water_maze.graphics.painter.image.ImagePainterType;
 
-public interface ImageFileParameterAccessor
+public interface ImageFileParameterProvider
 {
     int getNumberOfPics();
     

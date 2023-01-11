@@ -33,7 +33,7 @@ final class HistogramCreator
     
     
 
-    HistogramCreator(HistogramParameterAccessor parameterAccessor)
+    HistogramCreator(HistogramParameterProvider parameterAccessor)
     {
         binsPerSecond = parameterAccessor.getBinsPerSecond();
         maximumDisplayedSearchTimeDuration = parameterAccessor.getMaximumDisplayedSearchTimeDuration();
@@ -48,7 +48,7 @@ final class HistogramCreator
             : "Frequency distribution of the duration of search times";
     }
     
-    private String createSubtitle(HistogramParameterAccessor parameterAccessor)
+    private String createSubtitle(HistogramParameterProvider parameterAccessor)
     {
         if(parameterAccessor.isPublishable())
         {

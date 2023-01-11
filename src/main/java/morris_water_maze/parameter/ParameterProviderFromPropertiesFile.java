@@ -1,11 +1,8 @@
 package morris_water_maze.parameter;
 
-import morris_water_maze.graphics.painter.image.ImagePainterType;
-import morris_water_maze.model.StartingSide;
-import morris_water_maze.model.mouse.MouseParameterAccessor;
-import morris_water_maze.report.ImageFileFormat;
-import morris_water_maze.report.ImageFileParameterAccessor;
-import morris_water_maze.report.histogram.HistogramParameterAccessor;
+import morris_water_maze.model.mouse.MouseParameterProvider;
+import morris_water_maze.report.ImageFileParameterProvider;
+import morris_water_maze.report.histogram.HistogramParameterProvider;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,8 +13,7 @@ import java.util.Properties;
 import java.util.StringJoiner;
 
 
-public final class ParameterAccessorFromPropertiesFile implements ParameterAccessor
-// TODO Klasse aufspalten
+public final class ParameterProviderFromPropertiesFile implements ParameterProvider
 {
     private static final String
         PARAMETER_PROPERTIES_FILE_NAME = "/parameter.properties";
@@ -31,26 +27,26 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     private final String
         simulationId;
 
-    private final HistogramParameterAccessor
-        histogramParameterAccessor;
+    private final HistogramParameterProvider
+        histogramParameterProvider;
     
-    private final MouseParameterAccessor
-        mouseParameterAccessor;
+    private final MouseParameterProvider
+        mouseParameterProvider;
     
-    private final ImageFileParameterAccessor
-        imageFileParameterAccessor;
-        
+    private final ImageFileParameterProvider
+        imageFileParameterProvider;
     
     
-    public ParameterAccessorFromPropertiesFile()
+    public ParameterProviderFromPropertiesFile()
     {
         Properties parameter = getParameter();
+        
         numberOfSimulations = Integer.parseInt(parameter.getProperty("numberOfSimulations", "10"));
         isStartingWithGui = Boolean.parseBoolean(parameter.getProperty("isStartingWithGui", "true"));
         
-        mouseParameterAccessor = new MouseParameterAccessorImplementation(parameter);
-        histogramParameterAccessor = new HistogramParameterAccessorImplementation(this, parameter);
-        imageFileParameterAccessor = new ImageFileParameterAccessorImplementation(parameter);
+        mouseParameterProvider = new MouseParameterProviderImplementation(parameter);
+        histogramParameterProvider = new HistogramParameterProviderImplementation(this, parameter);
+        imageFileParameterProvider = new ImageFileParameterProviderImplementation(parameter);
         
         simulationId = generateSimulationId();
         
@@ -87,8 +83,8 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     private String getParameterString()
     {
         StringJoiner joiner = new StringJoiner("_");
-        joiner.add(String.valueOf(getNumberOfSimulations()))
-              .add(String.valueOf(mouseParameterAccessor.getMouseTrainingLevel()));
+        joiner.add(String.valueOf(numberOfSimulations))
+              .add(String.valueOf(mouseParameterProvider.getMouseTrainingLevel()));
         return joiner.toString();
     }
     
@@ -112,26 +108,20 @@ public final class ParameterAccessorFromPropertiesFile implements ParameterAcces
     }
     
     @Override
-    public HistogramParameterAccessor getHistogramParameterAccessor()
+    public HistogramParameterProvider getHistogramParameterAccessor()
     {
-        return histogramParameterAccessor;
+        return histogramParameterProvider;
     }
     
     @Override
-    public MouseParameterAccessor getMouseParameterAccessor()
+    public MouseParameterProvider getMouseParameterAccessor()
     {
-        return mouseParameterAccessor;
+        return mouseParameterProvider;
     }
     
     @Override
-    public double getMouseTrainingLevel()
+    public ImageFileParameterProvider getImageFileParameterAccessor()
     {
-        return mouseParameterAccessor.getMouseTrainingLevel();
-    }
-    
-    @Override
-    public ImageFileParameterAccessor getImageFileParameterAccessor()
-    {
-        return imageFileParameterAccessor;
+        return imageFileParameterProvider;
     }
 }

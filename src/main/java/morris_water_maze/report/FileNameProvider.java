@@ -1,7 +1,7 @@
 package morris_water_maze.report;
 
 import morris_water_maze.util.NecessaryDirectoriesReporter;
-import morris_water_maze.parameter.ParameterAccessor;
+import morris_water_maze.parameter.ParameterProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,9 +19,8 @@ public final class FileNameProvider implements NecessaryDirectoriesReporter
         finalReportPath;
     
     
-    public FileNameProvider(ParameterAccessor parameterAccessor)
+    public FileNameProvider(String simulationId)
     {
-        String simulationId = parameterAccessor.getSimulationId();
         subDirectory = LOG_DIRECTORY + simulationId + "/";
         finalReportPath = subDirectory + "search_times.txt";
     }

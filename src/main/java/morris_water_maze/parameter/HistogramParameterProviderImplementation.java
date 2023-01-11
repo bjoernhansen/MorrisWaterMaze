@@ -1,15 +1,15 @@
 package morris_water_maze.parameter;
 
 import morris_water_maze.report.ImageFileFormat;
-import morris_water_maze.report.histogram.HistogramParameterAccessor;
+import morris_water_maze.report.histogram.HistogramParameterProvider;
 
 import java.util.Properties;
 
 
-public class HistogramParameterAccessorImplementation implements HistogramParameterAccessor
+public class HistogramParameterProviderImplementation implements HistogramParameterProvider
 {
-    private final ParameterAccessor
-        parameterAccessor;
+    private final ParameterProvider
+        parameterProvider;
     
     private final double
         displayedSearchDurationCap;
@@ -21,18 +21,18 @@ public class HistogramParameterAccessorImplementation implements HistogramParame
         isPublishable;
 
     
-    public HistogramParameterAccessorImplementation(ParameterAccessor parameterAccessor, Properties parameter)
+    public HistogramParameterProviderImplementation(ParameterProvider parameterProvider, Properties parameter)
     {
-        this.parameterAccessor = parameterAccessor;
-        double maximumMouseSwimmingDuration = getMaximumMouseSwimmingDurationFrom(parameterAccessor);
+        this.parameterProvider = parameterProvider;
+        double maximumMouseSwimmingDuration = getMaximumMouseSwimmingDurationFrom(parameterProvider);
         displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, maximumMouseSwimmingDuration);
         binsPerSecond = Double.parseDouble(parameter.getProperty("binsPerSecond", "5.0"));
         isPublishable = Boolean.parseBoolean(parameter.getProperty("isPublishable", "true"));
     }
     
-    private double getMaximumMouseSwimmingDurationFrom(ParameterAccessor parameterAccessor)
+    private double getMaximumMouseSwimmingDurationFrom(ParameterProvider parameterProvider)
     {
-        return parameterAccessor.getMouseParameterAccessor()
+        return parameterProvider.getMouseParameterAccessor()
                                 .getMaximumMouseSwimmingDuration();
     }
     
@@ -64,19 +64,20 @@ public class HistogramParameterAccessorImplementation implements HistogramParame
     @Override
     public int getNumberOfSimulations()
     {
-        return parameterAccessor.getNumberOfSimulations();
+        return parameterProvider.getNumberOfSimulations();
     }
     
     @Override
     public ImageFileFormat getImageFileFormat()
     {
-        return parameterAccessor.getImageFileParameterAccessor()
+        return parameterProvider.getImageFileParameterAccessor()
                                 .getImageFileFormat();
     }
     
     @Override
     public double getMouseTrainingLevel()
     {
-        return parameterAccessor.getMouseTrainingLevel();
+        return parameterProvider.getMouseParameterAccessor()
+                                .getMouseTrainingLevel();
     }
 }

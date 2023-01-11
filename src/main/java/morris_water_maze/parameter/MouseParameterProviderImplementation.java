@@ -1,11 +1,11 @@
 package morris_water_maze.parameter;
 
 import morris_water_maze.model.StartingSide;
-import morris_water_maze.model.mouse.MouseParameterAccessor;
+import morris_water_maze.model.mouse.MouseParameterProvider;
 
 import java.util.Properties;
 
-public class MouseParameterAccessorImplementation implements MouseParameterAccessor
+public class MouseParameterProviderImplementation implements MouseParameterProvider
 {
     private final double
         maximumMouseSwimmingDuration;
@@ -23,7 +23,7 @@ public class MouseParameterAccessorImplementation implements MouseParameterAcces
         mouseSpeed;
     
     
-    public MouseParameterAccessorImplementation(Properties parameter)
+    public MouseParameterProviderImplementation(Properties parameter)
     {
         maximumMouseSwimmingDuration = determineMaximumSwimmingTime(parameter.getProperty("maximumMouseSwimmingTime", "0.0"));
         mouseTrainingLevel = Double.parseDouble(parameter.getProperty("mouseTrainingLevel", "0.5"));

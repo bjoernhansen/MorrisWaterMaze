@@ -3,7 +3,6 @@ package morris_water_maze.report;
 import morris_water_maze.control.observer.SimulationRunCompletionObserver;
 import morris_water_maze.graphics.painter.image.ImagePainter;
 import morris_water_maze.model.simulation.Simulation;
-import morris_water_maze.parameter.ParameterAccessor;
 import org.jfree.graphics2d.svg.SVGUtils;
 
 import javax.imageio.ImageIO;
@@ -42,7 +41,7 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
         imageFileFormat;
     
     
-    public ImageFileCreator(ImagePainter imagePainter, ImageFileParameterAccessor parameterAccessor, FileNameProvider fileNameProvider)
+    public ImageFileCreator(ImagePainter imagePainter, ImageFileParameterProvider parameterAccessor, FileNameProvider fileNameProvider)
     {
         this.imagePainter = imagePainter;
         this.fileNameProvider = fileNameProvider;

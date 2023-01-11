@@ -2,12 +2,12 @@ package morris_water_maze.parameter;
 
 import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.report.ImageFileFormat;
-import morris_water_maze.report.ImageFileParameterAccessor;
+import morris_water_maze.report.ImageFileParameterProvider;
 
 import java.util.Properties;
 
 
-public class ImageFileParameterAccessorImplementation implements ImageFileParameterAccessor
+public class ImageFileParameterProviderImplementation implements ImageFileParameterProvider
 {
     private final int
         numberOfPics;
@@ -25,7 +25,7 @@ public class ImageFileParameterAccessorImplementation implements ImageFileParame
         imagePainterTypeForPictureExport;
     
     
-    public ImageFileParameterAccessorImplementation(Properties parameter)
+    public ImageFileParameterProviderImplementation(Properties parameter)
     {
         numberOfPics = Integer.parseInt(parameter.getProperty("numberOfPics", "0"));
         lowerBoundOfPictureTimeFrame = Double.parseDouble(parameter.getProperty("lowerBoundOfPictureTimeFrame", "10.74"));

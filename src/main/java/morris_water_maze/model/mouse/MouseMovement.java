@@ -23,7 +23,7 @@ public final class MouseMovement implements Paintable
 		mouse;
 	
 	
-	public MouseMovement(MouseParameterAccessor parameterAccessor, Mouse mouse)
+	public MouseMovement(MouseParameterProvider parameterAccessor, Mouse mouse)
 	{
 		this.mouse = mouse;
 		escapeRoute = new EscapeRoute(mouse.getCoordinates());

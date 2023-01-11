@@ -3,7 +3,8 @@ package morris_water_maze.control.gui.swing;
 import morris_water_maze.control.gui.GuiSimulationController;
 import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.model.simulation.Simulation;
-import morris_water_maze.parameter.ParameterAccessor;
+import morris_water_maze.parameter.ParameterProvider;
+import morris_water_maze.parameter.SimulationParameterProvider;
 
 import javax.swing.JFrame;
 import java.util.Optional;
@@ -25,11 +26,11 @@ public final class SwingSimulationController extends GuiSimulationController imp
     
 
 
-    public SwingSimulationController(Simulation simulationInstance, ParameterAccessor parameterAccessor)
+    public SwingSimulationController(Simulation simulationInstance, SimulationParameterProvider simulationParameterProvider)
     {
         super(simulationInstance);
     
-        simulationPanel = new SimulationPanel(getSimulation(), parameterAccessor, this, ImagePainterType.DEFAULT.makeInstance(), getSimulation());
+        simulationPanel = new SimulationPanel(getSimulation(), simulationParameterProvider, this, ImagePainterType.DEFAULT.makeInstance(), getSimulation());
         simulationFrame = new SimulationFrame(simulationPanel);
         simulationFrame.setVisible(true);
     
