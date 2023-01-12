@@ -35,9 +35,4 @@ public final class Pool implements Paintable
 	{
 		return border.getCenter();
 	}
-	
-	public double getRadius()
-	{
-		return RADIUS;
-	}
 }

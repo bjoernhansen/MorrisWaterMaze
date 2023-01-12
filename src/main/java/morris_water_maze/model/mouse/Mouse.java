@@ -56,13 +56,13 @@ public final class Mouse
         trainingLevel;		    // Trainingslevel der Maus; [0, 1]; default: 0.5
     
         
-    public Mouse(MouseParameterProvider parameterAccessor, Pool pool, Platform platform)
+    public Mouse(MouseParameterProvider mouseParameterProvider, Pool pool, Platform platform)
     {
         Circle movementBoundaries = this.movementBoundaries = calculateMovementBoundariesThrough(pool);
-        coordinates = startingCoordinates = getStartPosition(parameterAccessor.getStartingSide(), movementBoundaries);
+        coordinates = startingCoordinates = getStartPosition(mouseParameterProvider.getStartingSide(), movementBoundaries);
         
-        trainingLevel = parameterAccessor.getMouseTrainingLevel();
-        speed = parameterAccessor.mouseSpeed();
+        trainingLevel = mouseParameterProvider.getMouseTrainingLevel();
+        speed = mouseParameterProvider.mouseSpeed();
         
         this.platform = platform;
         this.pool = pool;
@@ -206,7 +206,7 @@ public final class Mouse
     
     static Circle calculateMovementBoundariesThrough(Pool pool)
     {
-        double radius = pool.getRadius() - RADIUS;
+        double radius = Pool.RADIUS - RADIUS;
         return Circle.newInstance(pool.getCenter(), radius);
     }
     

@@ -57,14 +57,14 @@ public final class Main
         ReportWriter reportWriter = new ReportWriter(fileNameProvider);
         simulation.registerSimulationSeriesCompletionObservers(reportWriter);
         
-        HistogramFileMakerFactory histogramFileMakerFactory = new HistogramFileMakerFactory(parameterProviderGenerator.getHistogramParameterAccessor(), fileNameProvider);
+        HistogramFileMakerFactory histogramFileMakerFactory = new HistogramFileMakerFactory(parameterProviderGenerator.getHistogramParameterProvider(), fileNameProvider);
         HistogramFileMaker histogramFileMaker = histogramFileMakerFactory.makeHistogramFileCreator();
         simulation.registerSimulationSeriesCompletionObservers(histogramFileMaker);
         
         SimulationProgressReporter simulationProgressReporter = new SimulationProgressReporter();
         simulation.registerSimulationStepObservers(simulationProgressReporter);
         
-        ImageFileParameterProvider imageFileParameterProvider = parameterProviderGenerator.getImageFileParameterAccessor();
+        ImageFileParameterProvider imageFileParameterProvider = parameterProviderGenerator.getImageFileParameterProvider();
         if(areMouseTrajectoryImagesToBeCreated(imageFileParameterProvider))
         {
             ImagePainter imagePainterForImageFileCreator = makeInstanceOfImagePainterForImageFileCreator(imageFileParameterProvider);

@@ -41,15 +41,15 @@ public final class ImageFileCreator implements SimulationRunCompletionObserver
         imageFileFormat;
     
     
-    public ImageFileCreator(ImagePainter imagePainter, ImageFileParameterProvider parameterAccessor, FileNameProvider fileNameProvider)
+    public ImageFileCreator(ImagePainter imagePainter, ImageFileParameterProvider imageFileParameterProvider, FileNameProvider fileNameProvider)
     {
         this.imagePainter = imagePainter;
         this.fileNameProvider = fileNameProvider;
-        missingPicturesCount = parameterAccessor.getNumberOfPics();
-        lowerBoundOfPictureTimeFrame = parameterAccessor.getLowerBoundOfPictureTimeFrame();
-        upperBoundOfPictureTimeFrame = parameterAccessor.getUpperBoundOfPictureTimeFrame();
-        maxNrOfPicInSeries = parameterAccessor.getMaximumTrajectoriesPerPicture();
-        imageFileFormat = parameterAccessor.getImageFileFormat();
+        missingPicturesCount = imageFileParameterProvider.getNumberOfPics();
+        lowerBoundOfPictureTimeFrame = imageFileParameterProvider.getLowerBoundOfPictureTimeFrame();
+        upperBoundOfPictureTimeFrame = imageFileParameterProvider.getUpperBoundOfPictureTimeFrame();
+        maxNrOfPicInSeries = imageFileParameterProvider.getMaximumTrajectoriesPerPicture();
+        imageFileFormat = imageFileParameterProvider.getImageFileFormat();
     }
     
     @Override

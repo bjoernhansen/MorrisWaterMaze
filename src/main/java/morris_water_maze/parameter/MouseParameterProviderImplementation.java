@@ -5,7 +5,7 @@ import morris_water_maze.model.mouse.MouseParameterProvider;
 
 import java.util.Properties;
 
-public class MouseParameterProviderImplementation implements MouseParameterProvider
+public final class MouseParameterProviderImplementation implements MouseParameterProvider
 {
     private final double
         maximumMouseSwimmingDuration;

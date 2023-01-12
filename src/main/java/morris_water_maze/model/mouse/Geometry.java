@@ -7,7 +7,6 @@ import morris_water_maze.util.geometry.Point;
 import morris_water_maze.util.geometry.Square;
 
 import java.awt.geom.Rectangle2D;
-import java.security.InvalidParameterException;
 import java.util.Optional;
 
 

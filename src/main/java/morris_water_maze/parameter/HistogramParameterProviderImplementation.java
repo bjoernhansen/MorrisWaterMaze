@@ -7,7 +7,7 @@ import morris_water_maze.report.histogram.HistogramParameterProvider;
 import java.util.Properties;
 
 
-public class HistogramParameterProviderImplementation implements HistogramParameterProvider
+public final class HistogramParameterProviderImplementation implements HistogramParameterProvider
 {
     private final double
         displayedSearchDurationCap;
@@ -36,11 +36,11 @@ public class HistogramParameterProviderImplementation implements HistogramParame
         numberOfSimulations = parameterProviderGenerator.getSimulationParameterProvider()
                                                         .getNumberOfSimulations();
     
-        MouseParameterProvider mouseParameterAccessor = parameterProviderGenerator.getMouseParameterAccessor();
-        mouseTrainingLevel = mouseParameterAccessor.getMouseTrainingLevel();
-        displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, mouseParameterAccessor.getMaximumMouseSwimmingDuration());
+        MouseParameterProvider mouseParameterProvider = parameterProviderGenerator.getMouseParameterProvider();
+        mouseTrainingLevel = mouseParameterProvider.getMouseTrainingLevel();
+        displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, mouseParameterProvider.getMaximumMouseSwimmingDuration());
     
-        imageFileFormat = parameterProviderGenerator.getImageFileParameterAccessor()
+        imageFileFormat = parameterProviderGenerator.getImageFileParameterProvider()
                                                     .getImageFileFormat();
         validate();
     }

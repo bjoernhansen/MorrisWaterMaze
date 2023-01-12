@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 
-public class ParameterProviderGenerator
+public final class ParameterProviderGenerator
 {
     private static final String
         PARAMETER_PROPERTIES_FILE_NAME = "/parameter.properties";
@@ -55,17 +55,17 @@ public class ParameterProviderGenerator
         return parameter;
     }
     
-    public HistogramParameterProvider getHistogramParameterAccessor()
+    public HistogramParameterProvider getHistogramParameterProvider()
     {
         return histogramParameterProvider;
     }
     
-    public MouseParameterProvider getMouseParameterAccessor()
+    public MouseParameterProvider getMouseParameterProvider()
     {
         return mouseParameterProvider;
     }
     
-    public ImageFileParameterProvider getImageFileParameterAccessor()
+    public ImageFileParameterProvider getImageFileParameterProvider()
     {
         return imageFileParameterProvider;
     }

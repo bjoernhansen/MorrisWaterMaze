@@ -76,7 +76,7 @@ final class SimulationPanel extends JPanel
         this.simulation = simulation;
         this.initialNumberOfSimulations = parameterProviderGenerator.getSimulationParameterProvider()
                                                                     .getNumberOfSimulations();
-        this.initialMouseTrainingLevel = parameterProviderGenerator.getMouseParameterAccessor()
+        this.initialMouseTrainingLevel = parameterProviderGenerator.getMouseParameterProvider()
                                                                    .getMouseTrainingLevel();
         prepareGui();
     }
@@ -149,7 +149,7 @@ final class SimulationPanel extends JPanel
         startAndPauseButton.setText("Start");
     }
     
-    ActionListener startAndPauseButtonActionListener = new ActionListener()
+    private final ActionListener startAndPauseButtonActionListener = new ActionListener()
     {
         @Override
         public void actionPerformed(ActionEvent e)
@@ -168,7 +168,7 @@ final class SimulationPanel extends JPanel
         }
     };
     
-    ActionListener resetButtonActionListener = new ActionListener()
+    private final ActionListener resetButtonActionListener = new ActionListener()
     {
         @Override
         public void actionPerformed(ActionEvent e)
@@ -182,7 +182,7 @@ final class SimulationPanel extends JPanel
         }
     };
     
-    ChangeListener mouseTrainingLevelSpinnerListener = new ChangeListener()
+    private final ChangeListener mouseTrainingLevelSpinnerListener = new ChangeListener()
     {
         @Override
         public void stateChanged(ChangeEvent e)
@@ -192,7 +192,7 @@ final class SimulationPanel extends JPanel
         }
     };
     
-    ChangeListener numberOfSimulationsSpinnerListener = new ChangeListener()
+    private final ChangeListener numberOfSimulationsSpinnerListener = new ChangeListener()
     {
         @Override
         public void stateChanged(ChangeEvent e)

@@ -12,9 +12,9 @@ abstract class AbstractSimulation implements Simulation
         totalNumberOfSimulations;
     
     
-    AbstractSimulation(SimulationParameterProvider parameterAccessor)
+    AbstractSimulation(SimulationParameterProvider simulationParameterProvider)
     {
-        int numberOfSimulations = parameterAccessor.getNumberOfSimulations();
+        int numberOfSimulations = simulationParameterProvider.getNumberOfSimulations();
         setRemainingAndTotalNumberOfSimulationRuns(numberOfSimulations);
     }
     

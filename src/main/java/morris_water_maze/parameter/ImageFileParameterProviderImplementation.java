@@ -7,7 +7,7 @@ import morris_water_maze.report.ImageFileParameterProvider;
 import java.util.Properties;
 
 
-public class ImageFileParameterProviderImplementation implements ImageFileParameterProvider
+public final class ImageFileParameterProviderImplementation implements ImageFileParameterProvider
 {
     private final int
         numberOfPics;

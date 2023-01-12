@@ -14,9 +14,9 @@ final class PngHistogramFileMaker extends HistogramFileMaker
         IMAGE_FILE_FORMAT = ImageFileFormat.PNG;
     
     
-    PngHistogramFileMaker(HistogramParameterProvider parameterAccessor, String subDirectory)
+    PngHistogramFileMaker(HistogramParameterProvider histogramParameterProvider, String subDirectory)
     {
-        super(parameterAccessor, subDirectory);
+        super(histogramParameterProvider, subDirectory);
     }
     
     @Override
