@@ -8,7 +8,7 @@ import morris_water_maze.model.Pool;
 import morris_water_maze.model.mouse.Mouse;
 import morris_water_maze.model.mouse.MouseMovement;
 import morris_water_maze.model.mouse.MouseParameterProvider;
-import morris_water_maze.parameter.SimulationParameterProvider;
+import morris_water_maze.parameter.ParameterProviderGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +35,14 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         simulationRunCompletionObservers = new ArrayList<>();
     
     
-    public WaterMorrisMazeSimulation(SimulationParameterProvider simulationParameterProvider)
+    public WaterMorrisMazeSimulation(ParameterProviderGenerator parameterProviderGenerator)
     {
-        super(simulationParameterProvider);
+        super(parameterProviderGenerator.getSimulationParameterProvider());
         
         pool = new Pool();
         platform = new Platform();
         
-        MouseParameterProvider mouseParameterProvider = simulationParameterProvider.getMouseParameterAccessor();
+        MouseParameterProvider mouseParameterProvider = parameterProviderGenerator.getMouseParameterAccessor();
         Mouse mouse = new Mouse(mouseParameterProvider, pool, platform);
         mouseMovement = new MouseMovement(mouseParameterProvider, mouse);
     }

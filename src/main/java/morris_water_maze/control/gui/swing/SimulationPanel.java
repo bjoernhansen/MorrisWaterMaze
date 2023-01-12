@@ -1,12 +1,12 @@
 package morris_water_maze.control.gui.swing;
 
+import morris_water_maze.graphics.Paintable;
 import morris_water_maze.graphics.adapter.Graphics2dAdapter;
 import morris_water_maze.graphics.adapter.GraphicsAdapter;
-import morris_water_maze.graphics.Paintable;
 import morris_water_maze.graphics.painter.image.ImagePainter;
+import morris_water_maze.graphics.painter.image.ImagePainterType;
 import morris_water_maze.model.simulation.SettingModifier;
-import morris_water_maze.parameter.ParameterProvider;
-import morris_water_maze.parameter.SimulationParameterProvider;
+import morris_water_maze.parameter.ParameterProviderGenerator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -66,18 +66,18 @@ final class SimulationPanel extends JPanel
     
     
     public SimulationPanel(SettingModifier settingModifier,
-                           SimulationParameterProvider simulationParameterProvider,
+                           ParameterProviderGenerator parameterProviderGenerator,
                            SwingSimulationController simulationController,
-                           ImagePainter imagePainter,
                            Paintable simulation)
     {
         this.simulationController = simulationController;
         this.settingModifier = settingModifier;
-        this.imagePainter = imagePainter;
+        this.imagePainter = ImagePainterType.DEFAULT.makeInstance();
         this.simulation = simulation;
-        this.initialNumberOfSimulations = simulationParameterProvider.getNumberOfSimulations();
-        this.initialMouseTrainingLevel = simulationParameterProvider.getMouseParameterAccessor().getMouseTrainingLevel();
-        
+        this.initialNumberOfSimulations = parameterProviderGenerator.getSimulationParameterProvider()
+                                                                    .getNumberOfSimulations();
+        this.initialMouseTrainingLevel = parameterProviderGenerator.getMouseParameterAccessor()
+                                                                   .getMouseTrainingLevel();
         prepareGui();
     }
     

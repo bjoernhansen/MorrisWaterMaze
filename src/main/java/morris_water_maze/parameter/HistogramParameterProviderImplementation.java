@@ -1,5 +1,6 @@
 package morris_water_maze.parameter;
 
+import morris_water_maze.model.mouse.MouseParameterProvider;
 import morris_water_maze.report.ImageFileFormat;
 import morris_water_maze.report.histogram.HistogramParameterProvider;
 
@@ -8,9 +9,6 @@ import java.util.Properties;
 
 public class HistogramParameterProviderImplementation implements HistogramParameterProvider
 {
-    private final ParameterProvider
-        parameterProvider;
-    
     private final double
         displayedSearchDurationCap;
     
@@ -19,16 +17,31 @@ public class HistogramParameterProviderImplementation implements HistogramParame
     
     private final boolean
         isPublishable;
-
     
-    public HistogramParameterProviderImplementation(ParameterProvider parameterProvider, Properties parameter)
+    private final double
+        mouseTrainingLevel;
+    
+    private final int
+        numberOfSimulations;
+    
+    private final ImageFileFormat
+        imageFileFormat;
+    
+    
+    public HistogramParameterProviderImplementation(Properties parameter, ParameterProviderGenerator parameterProviderGenerator)
     {
-        this.parameterProvider = parameterProvider;
-        double maximumMouseSwimmingDuration = getMaximumMouseSwimmingDurationFrom(parameterProvider);
-        displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, maximumMouseSwimmingDuration);
         binsPerSecond = Double.parseDouble(parameter.getProperty("binsPerSecond", "5.0"));
         isPublishable = Boolean.parseBoolean(parameter.getProperty("isPublishable", "true"));
-        
+    
+        numberOfSimulations = parameterProviderGenerator.getSimulationParameterProvider()
+                                                        .getNumberOfSimulations();
+    
+        MouseParameterProvider mouseParameterAccessor = parameterProviderGenerator.getMouseParameterAccessor();
+        mouseTrainingLevel = mouseParameterAccessor.getMouseTrainingLevel();
+        displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, mouseParameterAccessor.getMaximumMouseSwimmingDuration());
+    
+        imageFileFormat = parameterProviderGenerator.getImageFileParameterAccessor()
+                                                    .getImageFileFormat();
         validate();
     }
     
@@ -42,12 +55,6 @@ public class HistogramParameterProviderImplementation implements HistogramParame
         {
             throw new IllegalArgumentException("Illegal argument: bins per second value does not exceed 0.0");
         }
-    }
-    
-    private double getMaximumMouseSwimmingDurationFrom(ParameterProvider parameterProvider)
-    {
-        return parameterProvider.getMouseParameterAccessor()
-                                .getMaximumMouseSwimmingDuration();
     }
     
     private double calculateDisplayedSearchDurationCap(Properties parameter, double maximumMouseSwimmingTime)
@@ -78,20 +85,18 @@ public class HistogramParameterProviderImplementation implements HistogramParame
     @Override
     public int getNumberOfSimulations()
     {
-        return parameterProvider.getNumberOfSimulations();
+        return numberOfSimulations;
     }
     
     @Override
     public ImageFileFormat getImageFileFormat()
     {
-        return parameterProvider.getImageFileParameterAccessor()
-                                .getImageFileFormat();
+        return imageFileFormat;
     }
     
     @Override
     public double getMouseTrainingLevel()
     {
-        return parameterProvider.getMouseParameterAccessor()
-                                .getMouseTrainingLevel();
+        return mouseTrainingLevel;
     }
 }

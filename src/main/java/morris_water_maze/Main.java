@@ -7,8 +7,8 @@ import morris_water_maze.graphics.painter.image.ImagePainter;
 import morris_water_maze.model.Pool;
 import morris_water_maze.model.simulation.Simulation;
 import morris_water_maze.model.simulation.WaterMorrisMazeSimulation;
-import morris_water_maze.parameter.ParameterProvider;
-import morris_water_maze.parameter.ParameterProviderFromPropertiesFile;
+import morris_water_maze.parameter.ParameterProviderGenerator;
+import morris_water_maze.parameter.SimulationParameterProvider;
 import morris_water_maze.report.FileNameProvider;
 import morris_water_maze.report.ImageFileParameterProvider;
 import morris_water_maze.report.SimulationProgressReporter;
@@ -38,32 +38,33 @@ public final class Main
     
     public static void main(String[] args)
     {
-        ParameterProvider parameterProvider = new ParameterProviderFromPropertiesFile();
-        String simulationId = parameterProvider.getSimulationId();
+        ParameterProviderGenerator parameterProviderGenerator = new ParameterProviderGenerator();
+        SimulationParameterProvider simulationParameterProvider = parameterProviderGenerator.getSimulationParameterProvider();
+        String simulationId = simulationParameterProvider.getSimulationId();
         FileNameProvider fileNameProvider = new FileNameProvider(simulationId);
         createDirectories(fileNameProvider);
         
-        Simulation simulation = getSimulationWithObserversRegistered(parameterProvider, fileNameProvider);
+        Simulation simulation = getSimulationWithObserversRegistered(parameterProviderGenerator, fileNameProvider);
         
-        SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterProvider);
+        SimulationController simulationController = SimulationControllerFactory.newInstance(simulation, parameterProviderGenerator);
         simulationController.start();
     }
     
-    private static Simulation getSimulationWithObserversRegistered(ParameterProvider parameterProvider, FileNameProvider fileNameProvider)
+    private static Simulation getSimulationWithObserversRegistered(ParameterProviderGenerator parameterProviderGenerator, FileNameProvider fileNameProvider)
     {
-        Simulation simulation = new WaterMorrisMazeSimulation(parameterProvider);
+        Simulation simulation = new WaterMorrisMazeSimulation(parameterProviderGenerator);
         
         ReportWriter reportWriter = new ReportWriter(fileNameProvider);
         simulation.registerSimulationSeriesCompletionObservers(reportWriter);
         
-        HistogramFileMakerFactory histogramFileMakerFactory = new HistogramFileMakerFactory(parameterProvider.getHistogramParameterAccessor(), fileNameProvider);
+        HistogramFileMakerFactory histogramFileMakerFactory = new HistogramFileMakerFactory(parameterProviderGenerator.getHistogramParameterAccessor(), fileNameProvider);
         HistogramFileMaker histogramFileMaker = histogramFileMakerFactory.makeHistogramFileCreator();
         simulation.registerSimulationSeriesCompletionObservers(histogramFileMaker);
         
         SimulationProgressReporter simulationProgressReporter = new SimulationProgressReporter();
         simulation.registerSimulationStepObservers(simulationProgressReporter);
         
-        ImageFileParameterProvider imageFileParameterProvider = parameterProvider.getImageFileParameterAccessor();
+        ImageFileParameterProvider imageFileParameterProvider = parameterProviderGenerator.getImageFileParameterAccessor();
         if(areMouseTrajectoryImagesToBeCreated(imageFileParameterProvider))
         {
             ImagePainter imagePainterForImageFileCreator = makeInstanceOfImagePainterForImageFileCreator(imageFileParameterProvider);

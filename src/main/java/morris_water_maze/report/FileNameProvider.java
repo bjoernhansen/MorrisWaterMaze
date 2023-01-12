@@ -1,7 +1,6 @@
 package morris_water_maze.report;
 
 import morris_water_maze.util.NecessaryDirectoriesReporter;
-import morris_water_maze.parameter.ParameterProvider;
 
 import java.util.Arrays;
 import java.util.List;

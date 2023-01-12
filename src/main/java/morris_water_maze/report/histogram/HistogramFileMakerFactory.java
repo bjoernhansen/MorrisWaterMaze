@@ -7,7 +7,7 @@ import morris_water_maze.report.ImageFileFormat;
 public final class HistogramFileMakerFactory
 {
     private final HistogramParameterProvider
-        parameterAccessor;
+        histogramParameterProvider;
     
     private final FileNameProvider
         fileNameProvider;
@@ -16,11 +16,11 @@ public final class HistogramFileMakerFactory
         imageFileFormat;
     
     
-    public HistogramFileMakerFactory(HistogramParameterProvider parameterAccessor, FileNameProvider fileNameProvider)
+    public HistogramFileMakerFactory(HistogramParameterProvider histogramParameterProvider, FileNameProvider fileNameProvider)
     {
-        this.parameterAccessor = parameterAccessor;
+        this.histogramParameterProvider = histogramParameterProvider;
         this.fileNameProvider = fileNameProvider;
-        this.imageFileFormat = parameterAccessor.getImageFileFormat();
+        this.imageFileFormat = histogramParameterProvider.getImageFileFormat();
     }
     
     public HistogramFileMaker makeHistogramFileCreator()
@@ -28,8 +28,8 @@ public final class HistogramFileMakerFactory
         String subDirectoryPath = fileNameProvider.getSubDirectory();
         if (imageFileFormat == ImageFileFormat.SVG)
         {
-            return new SvgHistogramFileMaker(parameterAccessor, subDirectoryPath);
+            return new SvgHistogramFileMaker(histogramParameterProvider, subDirectoryPath);
         }
-        return new PngHistogramFileMaker(parameterAccessor, subDirectoryPath);
+        return new PngHistogramFileMaker(histogramParameterProvider, subDirectoryPath);
     }
 }

@@ -1,7 +1,7 @@
 package morris_water_maze.model.simulation;
 
-import morris_water_maze.parameter.SimulationParameterProvider;
 
+import morris_water_maze.parameter.SimulationParameterProvider;
 
 abstract class AbstractSimulation implements Simulation
 {
