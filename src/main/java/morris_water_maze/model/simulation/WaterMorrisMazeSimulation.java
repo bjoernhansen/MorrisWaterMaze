@@ -1,13 +1,14 @@
 package morris_water_maze.model.simulation;
 
-import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
 import morris_water_maze.control.observer.SimulationRunCompletionObserver;
+import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
 import morris_water_maze.graphics.Paintable;
-import morris_water_maze.model.Mouse;
-import morris_water_maze.model.MouseMovement;
 import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
-import morris_water_maze.parameter.SimulationParameterAccessor;
+import morris_water_maze.model.mouse.Mouse;
+import morris_water_maze.model.mouse.MouseMovement;
+import morris_water_maze.model.mouse.MouseParameterProvider;
+import morris_water_maze.parameter.ParameterProviderGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     
     private final MouseMovement
         mouseMovement;
-        
+    
     private final SearchTimeContainer
         searchTimeContainer = new SearchTimeContainer();
     
@@ -34,27 +35,29 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         simulationRunCompletionObservers = new ArrayList<>();
     
     
-    public WaterMorrisMazeSimulation(SimulationParameterAccessor parameterAccessor)
+    public WaterMorrisMazeSimulation(ParameterProviderGenerator parameterProviderGenerator)
     {
-        super(parameterAccessor);
+        super(parameterProviderGenerator.getSimulationParameterProvider());
         
         pool = new Pool();
         platform = new Platform();
-        Mouse mouse = new Mouse(parameterAccessor, pool, platform);
-        mouseMovement = new MouseMovement(parameterAccessor, mouse);
+        
+        MouseParameterProvider mouseParameterProvider = parameterProviderGenerator.getMouseParameterProvider();
+        Mouse mouse = new Mouse(mouseParameterProvider, pool, platform);
+        mouseMovement = new MouseMovement(mouseParameterProvider, mouse);
     }
     
     @Override
     public void nextStep()
     {
-        if (isSimulationRunInProgress())
+        if(isSimulationRunInProgress())
         {
             mouseMovement.performNextStep();
         }
-        else if (!areAllSimulationRunsCompleted())
+        else if(!areAllSimulationRunsCompleted())
         {
             completeCurrentSimulationRun();
-            if (areAllSimulationRunsCompleted())
+            if(areAllSimulationRunsCompleted())
             {
                 notifyAboutEndOfAllSimulationRuns();
             }
@@ -67,6 +70,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         searchTimeContainer.add(lastSearchTime);
         decrementRemainingNumberOfSimulationRuns();
         notifyAboutEndOfCurrentSimulationRun();
+        reset();
     }
     
     @Override
@@ -79,6 +83,12 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     public double getAverageSearchTime()
     {
         return searchTimeContainer.calculateSumOfSearchTimes() / getTotalNumberOfSimulationRuns();
+    }
+    
+    @Override
+    public double getLastSearchTime()
+    {
+        return searchTimeContainer.getLastSearchTime();
     }
     
     @Override
