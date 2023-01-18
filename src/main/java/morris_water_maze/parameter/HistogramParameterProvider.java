@@ -1,13 +1,13 @@
 package morris_water_maze.parameter;
 
-import morris_water_maze.model.mouse.MouseParameterProvider;
+import morris_water_maze.model.mouse.MouseParameter;
 import morris_water_maze.report.ImageFileFormat;
-import morris_water_maze.report.histogram.HistogramParameterProvider;
+import morris_water_maze.report.histogram.HistogramParameter;
 
 import java.util.Properties;
 
 
-public final class HistogramParameterProviderImplementation implements HistogramParameterProvider
+public final class HistogramParameterProvider implements HistogramParameter
 {
     private final double
         displayedSearchDurationCap;
@@ -28,20 +28,20 @@ public final class HistogramParameterProviderImplementation implements Histogram
         imageFileFormat;
     
     
-    public HistogramParameterProviderImplementation(Properties parameter, ParameterProviderGenerator parameterProviderGenerator)
+    public HistogramParameterProvider(Properties parameter, ParameterProvider parameterProvider)
     {
         binsPerSecond = Double.parseDouble(parameter.getProperty("binsPerSecond", "5.0"));
         isPublishable = Boolean.parseBoolean(parameter.getProperty("isPublishable", "true"));
     
-        numberOfSimulations = parameterProviderGenerator.getSimulationParameterProvider()
-                                                        .getNumberOfSimulations();
+        numberOfSimulations = parameterProvider.getSimulationParameterProvider()
+                                               .getNumberOfSimulations();
     
-        MouseParameterProvider mouseParameterProvider = parameterProviderGenerator.getMouseParameterProvider();
-        mouseTrainingLevel = mouseParameterProvider.getMouseTrainingLevel();
-        displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, mouseParameterProvider.getMaximumMouseSwimmingDuration());
+        MouseParameter mouseParameter = parameterProvider.getMouseParameterProvider();
+        mouseTrainingLevel = mouseParameter.getMouseTrainingLevel();
+        displayedSearchDurationCap = calculateDisplayedSearchDurationCap(parameter, mouseParameter.getMaximumMouseSwimmingDuration());
     
-        imageFileFormat = parameterProviderGenerator.getImageFileParameterProvider()
-                                                    .getImageFileFormat();
+        imageFileFormat = parameterProvider.getImageFileParameterProvider()
+                                           .getImageFileFormat();
         validate();
     }
     

@@ -1,6 +1,9 @@
 package morris_water_maze.util.geometry;
 
+import morris_water_maze.model.mouse.Geometry;
+
 import java.awt.geom.Line2D;
+import java.lang.IllegalArgumentException;
 import java.util.Objects;
 
 
@@ -63,7 +66,19 @@ public final class LineSegment
         return "LineSegment{start=" + start + ", end=" + end + '}';
     }
     
+    public Point getExitPointOutOf(Circle circle)
+    {
+        return Geometry.lineSegmentExitPointOutOfCircle(this, circle)
+                       .orElseThrow(() -> new IllegalArgumentException("There is no exit point from " + this + " out of " + circle + "."));
+    }
     
+    public Point getEntryPointInto(Square square)
+    {
+        return Geometry.clipLine(this, square)
+                       .map(LineSegment::getStart)
+                       .orElseThrow(() -> new IllegalArgumentException("There is no intersection between " + this + " and " + square + "."));
+    }
+
     public static class Builder
     {
         private final Point
@@ -84,5 +99,20 @@ public final class LineSegment
         {
             return LineSegment.newInstance(start, end);
         }
+    }
+    
+    @Override
+    public boolean equals(Object o)
+    {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        LineSegment other = (LineSegment) o;
+        return start.equals(other.start) && end.equals(other.end);
+    }
+    
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(start, end);
     }
 }

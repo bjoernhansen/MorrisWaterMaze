@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Test;
 
 import static morris_water_maze.model.mouse.Calculations.angle;
 import static morris_water_maze.model.mouse.Calculations.dotProduct;
+import static morris_water_maze.model.mouse.Calculations.square;
 import static morris_water_maze.model.mouse.VectorBuilderTest.VECTOR_1_1;
 import static morris_water_maze.model.mouse.VectorBuilderTest.VECTOR_1_2;
 import static morris_water_maze.model.mouse.VectorBuilderTest.VECTOR_3_4;
 import static morris_water_maze.util.DoubleComparison.EPSILON;
+import static morris_water_maze.util.DoubleComparison.doubleEquals;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
@@ -51,5 +53,12 @@ class CalculationsTest
     private static Point negate(Point point)
     {
         return Point.newInstance(-point.getX(), -point.getY());
+    }
+    
+    @Test
+    void shouldSquareValuesCorrectly()
+    {
+        assertThat(doubleEquals(square(Math.PI), Math.PI*Math.PI)).isTrue();
+        assertThat(doubleEquals(square(VECTOR_3_4), 25.0)).isTrue();
     }
 }

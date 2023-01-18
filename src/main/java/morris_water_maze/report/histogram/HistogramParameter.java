@@ -3,7 +3,7 @@ package morris_water_maze.report.histogram;
 import morris_water_maze.report.ImageFileFormat;
 
 
-public interface HistogramParameterProvider
+public interface HistogramParameter
 {
     ImageFileFormat getImageFileFormat();
     

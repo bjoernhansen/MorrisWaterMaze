@@ -1,7 +1,11 @@
 package morris_water_maze.util.geometry;
 
+import morris_water_maze.model.mouse.VectorBuilder;
+import morris_water_maze.util.DoubleComparison;
+
 import java.util.Objects;
 
+import static morris_water_maze.model.mouse.Calculations.length;
 import static morris_water_maze.util.DoubleComparison.doubleEquals;
 
 
@@ -37,6 +41,13 @@ public final class Point
         return Point.newInstance(
                     x + distance * Math.cos(angle),
                     y + distance * Math.sin(angle));
+    }
+    
+    public boolean isOnTheEdgeOf(Circle circle)
+    {
+        Point vector = VectorBuilder.from(circle.getCenter())
+                                    .to(this);
+        return DoubleComparison.doubleEquals(length(vector), circle.getRadius());
     }
     
     public double getX()

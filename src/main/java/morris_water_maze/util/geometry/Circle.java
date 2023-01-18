@@ -2,6 +2,7 @@ package morris_water_maze.util.geometry;
 
 
 import java.awt.geom.Ellipse2D;
+import java.lang.IllegalArgumentException;
 
 public final class Circle
 {
@@ -30,6 +31,7 @@ public final class Circle
                                         center.getY() - radius,
                                         diameter,
                                         diameter);
+        validate();
     }
     
     public double getX(){
@@ -68,5 +70,13 @@ public final class Circle
     public String toString()
     {
         return "Circle{center=" + center + ", radius=" + radius + '}';
+    }
+    
+    private void validate()
+    {
+        if(radius <= 0)
+        {
+            throw new IllegalArgumentException("Circle radius must be greater than 0.");
+        }
     }
 }

@@ -8,7 +8,6 @@ import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
 import morris_water_maze.util.geometry.RotationDirection;
 
-import java.security.InvalidParameterException;
 import java.util.Random;
 
 import static morris_water_maze.model.mouse.Calculations.angle;
@@ -56,13 +55,13 @@ public final class Mouse
         trainingLevel;		    // Trainingslevel der Maus; [0, 1]; default: 0.5
     
         
-    public Mouse(MouseParameterProvider mouseParameterProvider, Pool pool, Platform platform)
+    public Mouse(MouseParameter mouseParameter, Pool pool, Platform platform)
     {
         Circle movementBoundaries = this.movementBoundaries = calculateMovementBoundariesThrough(pool);
-        coordinates = startingCoordinates = getStartPosition(mouseParameterProvider.getStartingSide(), movementBoundaries);
+        coordinates = startingCoordinates = getStartPosition(mouseParameter.getStartingSide(), movementBoundaries);
         
-        trainingLevel = mouseParameterProvider.getMouseTrainingLevel();
-        speed = mouseParameterProvider.mouseSpeed();
+        trainingLevel = mouseParameter.getMouseTrainingLevel();
+        speed = mouseParameter.mouseSpeed();
         
         this.platform = platform;
         this.pool = pool;
@@ -82,7 +81,7 @@ public final class Mouse
     private double recalculateMovementDirectionAngleFor(LineSegment nextMove)
     {
         Point newCoordinates = nextMove.getEnd();
-        if(Geometry.isPointOnCircle(movementBoundaries, newCoordinates))
+        if(newCoordinates.isOnTheEdgeOf(movementBoundaries))
         {
             return getMovementDirectionAngle(nextMove);
         }
@@ -113,8 +112,7 @@ public final class Mouse
     
     private Point calculateMostDistantReachablePositionFor(LineSegment proposedMove)
     {
-        return Geometry.circleLineSegmentIntersection(movementBoundaries, proposedMove)
-                       .orElseThrow(() -> new InvalidParameterException("There is no intersection between " + movementBoundaries + " and " + proposedMove + "."));
+        return proposedMove.getExitPointOutOf(movementBoundaries);
     }
     
     private double getMovementDirectionAngle(LineSegment nextMove)
@@ -142,9 +140,7 @@ public final class Mouse
     
     private Point calculateLandingPlaceOnPlatformFor(LineSegment currentMove)
     {
-        return Geometry.clipLine(currentMove, platform.getBounds())
-                       .map(LineSegment::getStart)
-                       .orElseThrow(() -> new InvalidParameterException("There is no intersection between " + currentMove + " and " + platform.getBounds() + "."));
+        return currentMove.getEntryPointInto(platform.getBounds());
     }
     
     private boolean isReachingPlatformWithin(LineSegment currentMove)
@@ -177,12 +173,15 @@ public final class Mouse
         return sigma*random.nextGaussian()+mu;
     }
     
-    private double gaussian(double mu, double sigma, double max)
+    private double gaussian(double mean, double sigma, double max)
     {
         // TODO schlechte und unklare Implementierung (rekursiver Aufruf bis Random-Ausgabe stimmig?)
         double gaussian = sigma*random.nextGaussian();
-        if(Math.abs(gaussian) < max)return gaussian+mu;
-        return gaussian(mu, sigma, max);
+        if(Math.abs(gaussian) < max)
+        {
+            return gaussian+mean;
+        }
+        return gaussian(mean, sigma, max);
     }
     
     private double calculatePolarAngle(Point vector)

@@ -1,6 +1,5 @@
 package morris_water_maze.model.mouse;
 
-import morris_water_maze.util.DoubleComparison;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
@@ -9,11 +8,13 @@ import morris_water_maze.util.geometry.Square;
 import java.awt.geom.Rectangle2D;
 import java.util.Optional;
 
+import static morris_water_maze.model.mouse.Calculations.dotProduct;
+import static morris_water_maze.model.mouse.Calculations.square;
 
-final class Geometry
+
+public final class Geometry
 {
-    static Optional<LineSegment> clipLine(LineSegment lineSegment, Square square)
-    // TODO ausgiebig UnitTests erstellen und Implementierung anschließend übersichtlicher gestalten (mehr Methoden, etc.)
+    public static Optional<LineSegment> clipLine(LineSegment lineSegment, Square square)
     {
         if(lineSegment == null || square == null)
         {
@@ -106,47 +107,34 @@ final class Geometry
         return Optional.of(LineSegment.from(start).to(end));
     }
     
-    static Optional<Point> circleLineSegmentIntersection(Circle circle, LineSegment lineSegment)
-    // TODO Implementierung verbessern: null-Rückgabe und Verständlichkeit, Name anpassen: es wird nur ein Punkt ausgegeben,
-    //  ein Durchstoßpunkt von innen, entsprechende Unit-Tests erstellen
+    public static Optional<Point> lineSegmentExitPointOutOfCircle(LineSegment lineSegment, Circle circle)
     {
-        // Source: http://www.seibsprogrammladen.de/frame1.html?Prgm/Algorithmen/Schnittpunkte
+        if(lineSegment == null || circle == null)
+        {
+            return Optional.empty();
+        }
         
-        double rr = circle.getRadius() * circle.getRadius();
-        double x21 = lineSegment.getEnd().getX() - lineSegment.getStart().getX();
-        double y21 = lineSegment.getEnd().getY() - lineSegment.getStart().getY();
-        double x10 = lineSegment.getStart().getX() - circle.getCenter().getX();
-        double y10 = lineSegment.getStart().getY() - circle.getCenter().getY();
-        double a = (x21 * x21 + y21 * y21) / rr;
-        double b = (x21 * x10 + y21 * y10) / rr;
-        double c = (x10 * x10 + y10 * y10) / rr;
-        double d = b * b - a * (c - 1);
+        // inspired by: http://www.seibsprogrammladen.de/frame1.html?Prgm/Algorithmen/Schnittpunkte
+        Point lineStartToEndVector = VectorBuilder.from(lineSegment.getStart())
+                                                  .to(lineSegment.getEnd());
+        Point circleCenterToLineStartVector = VectorBuilder.from(circle.getCenter())
+                                                           .to(lineSegment.getStart());
+        double rr = square(circle.getRadius());
+        double a = square(lineStartToEndVector) / rr;
+        double b = dotProduct(lineStartToEndVector, circleCenterToLineStartVector) / rr;
+        double c = square(circleCenterToLineStartVector) / rr;
+        double d = square(b) - a * (c - 1);
         
         if (d >= 0)
         {
             double e = Math.sqrt(d);
-            double u1 = (-b - e) / a, u2 = (-b + e) / a;
-            if (0 <= u1 && u1 <= 1)
-            {
-                return Optional.of(Point.newInstance(
-                                        lineSegment.getStart().getX() + x21 * u1,
-                                        lineSegment.getStart().getY() + y21 * u1));
-            }
-            else
-            {
-                return Optional.of(Point.newInstance(
-                                        lineSegment.getStart().getX() + x21 * u2,
-                                        lineSegment.getStart().getY() + y21 * u2));
-            }
+            double u = (-b + e) / a;
+    
+            return Optional.of(Point.newInstance(
+                                    lineSegment.getStart().getX() + lineStartToEndVector.getX() * u,
+                                    lineSegment.getStart().getY() + lineStartToEndVector.getY() * u));
         }
         return Optional.empty();
-    }
-    
-    static boolean isPointOnCircle(Circle circle, Point position)
-    {
-        Point vector = VectorBuilder.from(circle.getCenter())
-                                    .to(position);
-        return DoubleComparison.doubleEquals(Calculations.length(vector), circle.getRadius());
     }
     
     private Geometry()

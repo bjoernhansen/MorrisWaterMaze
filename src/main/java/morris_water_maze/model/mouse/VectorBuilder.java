@@ -4,7 +4,7 @@ import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
 
 
-final class VectorBuilder
+public final class VectorBuilder
 {
     private final Point start;
     

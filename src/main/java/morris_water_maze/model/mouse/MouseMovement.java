@@ -23,12 +23,12 @@ public final class MouseMovement implements Paintable
 		mouse;
 	
 	
-	public MouseMovement(MouseParameterProvider mouseParameterProvider, Mouse mouse)
+	public MouseMovement(MouseParameter mouseParameter, Mouse mouse)
 	{
 		this.mouse = mouse;
 		escapeRoute = new EscapeRoute(mouse.getCoordinates());
-		maximumSwimmingDuration = mouseParameterProvider.getMaximumMouseSwimmingDuration();
-		stepLengthBias = mouseParameterProvider.getStepLengthBias();
+		maximumSwimmingDuration = mouseParameter.getMaximumMouseSwimmingDuration();
+		stepLengthBias = mouseParameter.getStepLengthBias();
 	}
 	
 	public void performNextStep()

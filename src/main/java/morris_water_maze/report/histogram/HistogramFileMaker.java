@@ -27,9 +27,9 @@ public abstract class HistogramFileMaker implements SimulationSeriesCompletionOb
         simulation;
     
     
-    HistogramFileMaker(HistogramParameterProvider histogramParameterProvider, String subDirectory)
+    HistogramFileMaker(HistogramParameter histogramParameter, String subDirectory)
     {
-        histogramCreator = new HistogramCreator(histogramParameterProvider);
+        histogramCreator = new HistogramCreator(histogramParameter);
         histogramImagePath = subDirectory + FILE_NAME_PREFIX + getImageFileExtension();
     }
     

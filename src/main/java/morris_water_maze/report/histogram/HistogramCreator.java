@@ -33,12 +33,12 @@ final class HistogramCreator
     
     
 
-    HistogramCreator(HistogramParameterProvider histogramParameterProvider)
+    HistogramCreator(HistogramParameter histogramParameter)
     {
-        binsPerSecond = histogramParameterProvider.getBinsPerSecond();
-        maximumDisplayedSearchTimeDuration = histogramParameterProvider.getMaximumDisplayedSearchTimeDuration();
-        isPublishable = histogramParameterProvider.isPublishable();
-        subtitle = createSubtitle(histogramParameterProvider);
+        binsPerSecond = histogramParameter.getBinsPerSecond();
+        maximumDisplayedSearchTimeDuration = histogramParameter.getMaximumDisplayedSearchTimeDuration();
+        isPublishable = histogramParameter.isPublishable();
+        subtitle = createSubtitle(histogramParameter);
     }
     
     private String createTitle()
@@ -48,20 +48,20 @@ final class HistogramCreator
             : "Frequency distribution of the duration of search times";
     }
     
-    private String createSubtitle(HistogramParameterProvider histogramParameterProvider)
+    private String createSubtitle(HistogramParameter histogramParameter)
     {
-        if(histogramParameterProvider.isPublishable())
+        if(histogramParameter.isPublishable())
         {
             return "";
         }
         
-        String numberOfSimulations = decimalFormat.format(histogramParameterProvider.getNumberOfSimulations());
+        String numberOfSimulations = decimalFormat.format(histogramParameter.getNumberOfSimulations());
         
         return String.format(
             Locale.ENGLISH,
             "Histogram for a %s trials with mouse training level %.2f",
             numberOfSimulations,
-            histogramParameterProvider.getMouseTrainingLevel());
+            histogramParameter.getMouseTrainingLevel());
     }
     
     JFreeChart createHistogram(SearchTimeProvider searchTimeProvider)

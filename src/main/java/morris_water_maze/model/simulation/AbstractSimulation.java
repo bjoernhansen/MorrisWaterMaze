@@ -1,7 +1,7 @@
 package morris_water_maze.model.simulation;
 
 
-import morris_water_maze.parameter.SimulationParameterProvider;
+import morris_water_maze.parameter.SimulationParameter;
 
 abstract class AbstractSimulation implements Simulation
 {
@@ -12,9 +12,9 @@ abstract class AbstractSimulation implements Simulation
         totalNumberOfSimulations;
     
     
-    AbstractSimulation(SimulationParameterProvider simulationParameterProvider)
+    AbstractSimulation(SimulationParameter simulationParameter)
     {
-        int numberOfSimulations = simulationParameterProvider.getNumberOfSimulations();
+        int numberOfSimulations = simulationParameter.getNumberOfSimulations();
         setRemainingAndTotalNumberOfSimulationRuns(numberOfSimulations);
     }
     

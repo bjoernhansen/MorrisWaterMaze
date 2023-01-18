@@ -16,9 +16,9 @@ final class SvgHistogramFileMaker extends HistogramFileMaker
         IMAGE_FILE_FORMAT = ImageFileFormat.SVG;
     
     
-    SvgHistogramFileMaker(HistogramParameterProvider histogramParameterProvider, String subDirectory)
+    SvgHistogramFileMaker(HistogramParameter histogramParameter, String subDirectory)
     {
-        super(histogramParameterProvider, subDirectory);
+        super(histogramParameter, subDirectory);
     }
     
     @Override

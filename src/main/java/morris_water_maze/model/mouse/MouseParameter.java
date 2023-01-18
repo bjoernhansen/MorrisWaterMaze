@@ -3,7 +3,7 @@ package morris_water_maze.model.mouse;
 import morris_water_maze.model.StartingSide;
 
 
-public interface MouseParameterProvider
+public interface MouseParameter
 {
     double getMaximumMouseSwimmingDuration();
     

@@ -22,9 +22,19 @@ public final class Calculations
                 + point1.getY() * point2.getY();
     }
     
-    static double length(Point point)
+    public static double length(Point point)
     {
         return point.distance(ORIGIN);
+    }
+    
+    static double square(double value)
+    {
+        return value * value;
+    }
+    
+    static double square(Point point)
+    {
+        return dotProduct(point, point);
     }
     
     private Calculations()
