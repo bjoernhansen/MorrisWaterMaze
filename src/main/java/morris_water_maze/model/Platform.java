@@ -33,8 +33,4 @@ public final class Platform implements Paintable
     public Square getBounds() {
         return bounds;
     }
-   
-    public Point getCenter() {
-        return bounds.getCenter();
-    }
 }

@@ -1,16 +1,11 @@
 package morris_water_maze.model.mouse;
 
-import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
 import morris_water_maze.model.StartingSide;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
-import morris_water_maze.util.geometry.RotationDirection;
-
-import java.util.Random;
-
-import static morris_water_maze.model.mouse.Calculations.angle;
+import morris_water_maze.util.geometry.Square;
 
 
 public final class Mouse
@@ -19,17 +14,11 @@ public final class Mouse
     private static final double
         RADIUS = 3;					// Radius des die Maus repräsentierenden Kreises
     
-    private static final double
-        FIELD_OF_VIEW = Math.PI/2;	// Sichtfenster der Maus; default: 90° zu beiden Seiten der Blickrichtung --> 180°
-    
     private final double
         speed;     					// Geschwindigkeit der Maus; default: 5
     
-    private final Pool
-        pool;
-    
-    private final Platform
-        platform;
+    private final Square
+        platformBounds;
     
     private final Circle
         movementBoundaries;	// Der Mittelpunkt der Maus muss sich innerhalb dieses Kreises befinden.
@@ -37,34 +26,27 @@ public final class Mouse
     private final Point
         startingCoordinates;  // Startposition von der Maus
     
-    private final Random
-        random = new Random();
-    
-    
     // variable attributes
     private Point
         coordinates;		    // aktueller Aufenthaltsort der Maus
     
-    private double
-        movementDirectionAngle;	// Winkel im Polarkoordinatensystem, der bestimmt, in welche Richtung die Maus schwimmt
+    private final MovementDirection
+        movementDirection;
     
     private boolean
         isSwimming;				// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
     
-    private double
-        trainingLevel;		    // Trainingslevel der Maus; [0, 1]; default: 0.5
-    
         
-    public Mouse(MouseParameter mouseParameter, Pool pool, Platform platform)
+    public Mouse(MouseParameter mouseParameter, Point poolCenter, Square platformBounds)
     {
-        Circle movementBoundaries = this.movementBoundaries = calculateMovementBoundariesThrough(pool);
+        Circle movementBoundaries = this.movementBoundaries = calculateMovementBoundariesThrough(poolCenter);
         coordinates = startingCoordinates = getStartPosition(mouseParameter.getStartingSide(), movementBoundaries);
         
-        trainingLevel = mouseParameter.getMouseTrainingLevel();
         speed = mouseParameter.mouseSpeed();
         
-        this.platform = platform;
-        this.pool = pool;
+        this.platformBounds = platformBounds;
+        
+        movementDirection = new MovementDirection(mouseParameter.getMouseTrainingLevel(), movementBoundaries, startingCoordinates, poolCenter, platformBounds.getCenter());
     }
     
     public void moveFor(double durationOfCurrentSimulationStep)
@@ -75,20 +57,8 @@ public final class Mouse
                                           .to(newCoordinates);
     
         coordinates = newCoordinates;
-        movementDirectionAngle = recalculateMovementDirectionAngleFor(nextMove);
-    }
-    
-    private double recalculateMovementDirectionAngleFor(LineSegment nextMove)
-    {
-        Point newCoordinates = nextMove.getEnd();
-        if(newCoordinates.isOnTheEdgeOf(movementBoundaries))
-        {
-            return getMovementDirectionAngle(nextMove);
-        }
-        else
-        {
-            return gaussian(calculateMeanAngleFor(nextMove), calculateSigma());  // for a more trained mouse the standard deviation is smaller
-        }
+        
+        movementDirection.recalculateAngleFor(nextMove);
     }
     
     private Point calculateNewCoordinatesAfter(double durationOfNextSimulationStep)
@@ -115,24 +85,6 @@ public final class Mouse
         return proposedMove.getExitPointOutOf(movementBoundaries);
     }
     
-    private double getMovementDirectionAngle(LineSegment nextMove)
-    // TODO Methode verbessern: Was genau wird hier berechnet - API anpassen
-    {
-        Point newCoordinates = nextMove.getEnd();
-        Point movementDirectionVector = VectorBuilder.from(newCoordinates)
-                                                     .to(pool.getCenter());
-        
-        RotationDirection rotationDirection = getRotationDirectionAroundPoolCenterWhenSwimmingAlong(nextMove);
-        
-        return calculatePolarAngle(movementDirectionVector)
-               - rotationDirection.getValue() * (Math.PI / 3 + gaussian(0, Math.PI / 12, Math.PI / 6));
-    }
-    
-    private RotationDirection getRotationDirectionAroundPoolCenterWhenSwimmingAlong(LineSegment nextMove)
-    {
-        return nextMove.getRotationDirectionWithRespectTo(pool.getCenter());
-    }
-    
     private boolean isProposedMoveTakingMouseOutsidePoolBoundary(LineSegment currentMove)
     {
         return !movementBoundaries.contains(currentMove.getEnd());
@@ -140,61 +92,21 @@ public final class Mouse
     
     private Point calculateLandingPlaceOnPlatformFor(LineSegment currentMove)
     {
-        return currentMove.getEntryPointInto(platform.getBounds());
+        return currentMove.getEntryPointInto(platformBounds);
     }
     
     private boolean isReachingPlatformWithin(LineSegment currentMove)
     {
-        return currentMove.intersects(platform.getBounds());
-    }
-    
-    private double calculateMeanAngleFor(LineSegment nextMove)
-    {
-        Point newCoordinates = nextMove.getEnd();
-        Point mouseToPlatformVector = VectorBuilder.from(newCoordinates)
-                                                   .to(platform.getCenter());
-        
-        Point movementVector = VectorBuilder.of(nextMove);
-        if(trainingLevel > Math.random() && FIELD_OF_VIEW /2 >= angle(movementVector, mouseToPlatformVector))
-        {
-            return calculatePolarAngle(mouseToPlatformVector);
-        }
-        return calculatePolarAngle(movementVector);
+        return currentMove.intersects(platformBounds);
     }
     
     private Point calculateUnconstrainedCoordinatesAfter(double durationOfNextSimulationStep)
     {
         double stepLength = speed * durationOfNextSimulationStep;
-        return coordinates.translate(stepLength, movementDirectionAngle);
+        return coordinates.translate(stepLength, movementDirection.getAngle());
     }
     
-    private double gaussian(double mu, double sigma)
-    {
-        return sigma*random.nextGaussian()+mu;
-    }
-    
-    private double gaussian(double mean, double sigma, double max)
-    {
-        // TODO schlechte und unklare Implementierung (rekursiver Aufruf bis Random-Ausgabe stimmig?)
-        double gaussian = sigma*random.nextGaussian();
-        if(Math.abs(gaussian) < max)
-        {
-            return gaussian+mean;
-        }
-        return gaussian(mean, sigma, max);
-    }
-    
-    private double calculatePolarAngle(Point vector)
-    {
-        return Math.atan2(vector.getY(), vector.getX());
-    }
-    
-    private double calculateSigma()
-    {
-        return (1 - trainingLevel) * 22.5 * Math.PI / 180;
-    }
-    
-    static Point getStartPosition(StartingSide startingSide, Circle movementBoundaries)
+    private Point getStartPosition(StartingSide startingSide, Circle movementBoundaries)
     {
         if(startingSide == StartingSide.LEFT)
         {
@@ -203,10 +115,10 @@ public final class Mouse
         return Point.newInstance(movementBoundaries.getMaxX(), movementBoundaries.getCenter().getY());
     }
     
-    static Circle calculateMovementBoundariesThrough(Pool pool)
+    private Circle calculateMovementBoundariesThrough(Point poolCenter)
     {
         double radius = Pool.RADIUS - RADIUS;
-        return Circle.newInstance(pool.getCenter(), radius);
+        return Circle.newInstance(poolCenter, radius);
     }
     
     public Point getCoordinates()
@@ -217,12 +129,7 @@ public final class Mouse
     public void reset()
     {
         coordinates = startingCoordinates;
-        resetPolarAngleRandomly();
-    }
-    
-    private void resetPolarAngleRandomly()
-    {
-        movementDirectionAngle = Math.PI*(Math.random()-0.5) + calculatePolarAngle(VectorBuilder.from(startingCoordinates).to(pool.getCenter()));
+        movementDirection.resetRandomly();
     }
     
     public boolean isSwimming()
@@ -242,6 +149,6 @@ public final class Mouse
     
     public void setTrainingLevel(double trainingLevel)
     {
-        this.trainingLevel = trainingLevel;
+        movementDirection.setTrainingLevel(trainingLevel);
     }
 }

@@ -43,7 +43,7 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         platform = new Platform();
         
         MouseParameter mouseParameter = parameterProvider.getMouseParameterProvider();
-        Mouse mouse = new Mouse(mouseParameter, pool, platform);
+        Mouse mouse = new Mouse(mouseParameter, pool.getCenter(), platform.getBounds());
         mouseMovement = new MouseMovement(mouseParameter, mouse);
     }
     
