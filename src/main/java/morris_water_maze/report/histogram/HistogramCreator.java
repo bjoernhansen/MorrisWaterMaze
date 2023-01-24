@@ -32,7 +32,6 @@ final class HistogramCreator
         isPublishable;
     
     
-
     HistogramCreator(HistogramParameter histogramParameter)
     {
         binsPerSecond = histogramParameter.getBinsPerSecond();
@@ -70,6 +69,9 @@ final class HistogramCreator
                                                            .stream()
                                                            .filter(this::isValidSearchTimeForHistogram)
                                                            .collect(Collectors.toList());
+        
+        /*GaussianPseudoSearchDurationProvider searchDurationProvider = new GaussianPseudoSearchDurationProvider();
+        listOfSearchTimes = searchDurationProvider.getPseudoSearchTimeList();*/
         
         double[] searchTimes = getSearchTimeArrayFrom(listOfSearchTimes);
         
