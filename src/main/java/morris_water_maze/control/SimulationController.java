@@ -8,10 +8,10 @@ public abstract class SimulationController
     private final Simulation
         simulation;
     
-    protected SimulationController(Simulation simulationInstance)
+    protected SimulationController(Simulation simulation)
     {
-        simulation = simulationInstance;
         simulation.reset();
+        this.simulation = simulation;
     }
     
     protected Simulation getSimulation()

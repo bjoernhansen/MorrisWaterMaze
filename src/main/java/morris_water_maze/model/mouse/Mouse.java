@@ -1,6 +1,5 @@
 package morris_water_maze.model.mouse;
 
-import morris_water_maze.model.Pool;
 import morris_water_maze.model.StartingSide;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
@@ -11,7 +10,7 @@ import morris_water_maze.util.geometry.Square;
 public final class Mouse
 // TODO gegebenenfalls weiter "pure functions" auslagern in Klasse Utility-Calculations
 {
-    private static final double
+    public static final double
         RADIUS = 3;					// Radius des die Maus repräsentierenden Kreises
     
     private final double
@@ -26,39 +25,38 @@ public final class Mouse
     private final Point
         startingCoordinates;  // Startposition von der Maus
     
+    private final MovementDirection
+        movementDirection;
+    
     // variable attributes
     private Point
         coordinates;		    // aktueller Aufenthaltsort der Maus
     
-    private final MovementDirection
-        movementDirection;
-    
     private boolean
         isSwimming;				// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
     
+
         
-    public Mouse(MouseParameter mouseParameter, Point poolCenter, Square platformBounds)
+    public Mouse(MouseParameter mouseParameter, Circle movementBoundaries, Square platformBounds)
     {
-        Circle movementBoundaries = this.movementBoundaries = calculateMovementBoundariesThrough(poolCenter);
-        coordinates = startingCoordinates = getStartPosition(mouseParameter.getStartingSide(), movementBoundaries);
-        
+        this.movementBoundaries = movementBoundaries;
+        coordinates = this.startingCoordinates = getStartPosition(mouseParameter.getStartingSide(), movementBoundaries);
         speed = mouseParameter.mouseSpeed();
-        
-        this.platformBounds = platformBounds;
-        
-        movementDirection = new MovementDirection(mouseParameter.getMouseTrainingLevel(), movementBoundaries, startingCoordinates, poolCenter, platformBounds.getCenter());
+        this.platformBounds = platformBounds;    
+        this.movementDirection = new MovementDirection(
+                                        mouseParameter.getMouseTrainingLevel(),
+                                        movementBoundaries,
+                                        startingCoordinates,
+                                        platformBounds.getCenter());
     }
     
     public void moveFor(double durationOfCurrentSimulationStep)
     {
         Point newCoordinates = calculateNewCoordinatesAfter(durationOfCurrentSimulationStep);
-        
-        LineSegment nextMove = LineSegment.from(coordinates)
-                                          .to(newCoordinates);
-    
+        LineSegment currentMove = LineSegment.from(coordinates)
+                                             .to(newCoordinates);
         coordinates = newCoordinates;
-        
-        movementDirection.recalculateAngleFor(nextMove);
+        movementDirection.recalculateForMoveAfter(currentMove);
     }
     
     private Point calculateNewCoordinatesAfter(double durationOfNextSimulationStep)
@@ -115,12 +113,6 @@ public final class Mouse
         return Point.newInstance(movementBoundaries.getMaxX(), movementBoundaries.getCenter().getY());
     }
     
-    private Circle calculateMovementBoundariesThrough(Point poolCenter)
-    {
-        double radius = Pool.RADIUS - RADIUS;
-        return Circle.newInstance(poolCenter, radius);
-    }
-    
     public Point getCoordinates()
     {
         return coordinates;
@@ -149,6 +141,6 @@ public final class Mouse
     
     public void setTrainingLevel(double trainingLevel)
     {
-        movementDirection.setTrainingLevel(trainingLevel);
+        movementDirection.setMouseTrainingLevel(trainingLevel);
     }
 }

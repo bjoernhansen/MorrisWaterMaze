@@ -1,10 +1,14 @@
 package morris_water_maze.model.mouse;
 
+import morris_water_maze.util.CurrentTimeProvider;
 import morris_water_maze.util.geometry.Point;
 import org.junit.jupiter.api.Test;
 
 import static morris_water_maze.model.mouse.Calculations.angle;
+import static morris_water_maze.model.mouse.Calculations.calculatePolarAngle;
+import static morris_water_maze.model.mouse.Calculations.degreesToRadians;
 import static morris_water_maze.model.mouse.Calculations.dotProduct;
+import static morris_water_maze.model.mouse.Calculations.gaussian;
 import static morris_water_maze.model.mouse.Calculations.square;
 import static morris_water_maze.model.mouse.VectorBuilderTest.VECTOR_1_1;
 import static morris_water_maze.model.mouse.VectorBuilderTest.VECTOR_1_2;
@@ -13,6 +17,8 @@ import static morris_water_maze.util.DoubleComparison.EPSILON;
 import static morris_water_maze.util.DoubleComparison.doubleEquals;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 class CalculationsTest
@@ -60,5 +66,33 @@ class CalculationsTest
     {
         assertThat(doubleEquals(square(Math.PI), Math.PI*Math.PI)).isTrue();
         assertThat(doubleEquals(square(VECTOR_3_4), 25.0)).isTrue();
+    }
+    
+    @Test
+    void shouldCalculateDegreesToRadiansConversionCorrectly()
+    {
+        assertThat(doubleEquals(degreesToRadians(90), Math.PI/2.0)).isTrue();
+    }
+    
+    @Test
+    void shouldCalculatePolarAngleCorrectly()
+    {
+        assertThat(doubleEquals(calculatePolarAngle(unitVector1), degreesToRadians(0.0))).isTrue();
+        assertThat(doubleEquals(calculatePolarAngle(unitVector2), degreesToRadians(90.0))).isTrue();
+        assertThat(doubleEquals(calculatePolarAngle(VECTOR_1_1), degreesToRadians(45.0))).isTrue();
+    }
+    
+    @Test
+    void shouldGaussianCorrectly()
+    {
+        RandomNumbers randomNumberGenerator = mock(RandomNumbers.class);
+        when(randomNumberGenerator.nextGaussian()).thenReturn(0.0, 1.0);
+        Calculations.setRandom(randomNumberGenerator);
+        
+        double mean = 30.0;
+        double sigma = 10.0;
+        
+        assertThat(doubleEquals(gaussian(mean, sigma), mean)).isTrue();
+        assertThat(doubleEquals(gaussian(mean, sigma), mean + sigma)).isTrue();
     }
 }

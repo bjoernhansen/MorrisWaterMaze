@@ -5,6 +5,7 @@ import morris_water_maze.graphics.adapter.Graphics2dAdapter;
 import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.graphics.painter.image.ImagePainter;
 import morris_water_maze.graphics.painter.image.ImagePainterType;
+import morris_water_maze.model.simulation.MouseTrainingLevelModifier;
 import morris_water_maze.model.simulation.SettingModifier;
 import morris_water_maze.parameter.ParameterProvider;
 
@@ -43,6 +44,9 @@ final class SimulationPanel extends JPanel
     private final SettingModifier
         settingModifier;
     
+    private final MouseTrainingLevelModifier
+        mouseTrainingLevelModifier;
+    
     private final SwingSimulationController
         simulationController;
     
@@ -66,12 +70,14 @@ final class SimulationPanel extends JPanel
     
     
     public SimulationPanel(SettingModifier settingModifier,
+                           MouseTrainingLevelModifier mouseTrainingLevelModifier,
                            ParameterProvider parameterProvider,
                            SwingSimulationController simulationController,
                            Paintable simulation)
     {
         this.simulationController = simulationController;
         this.settingModifier = settingModifier;
+        this.mouseTrainingLevelModifier = mouseTrainingLevelModifier;
         this.imagePainter = ImagePainterType.DEFAULT.makeInstance();
         this.simulation = simulation;
         this.initialNumberOfSimulations = parameterProvider.getSimulationParameterProvider()
@@ -188,7 +194,7 @@ final class SimulationPanel extends JPanel
         public void stateChanged(ChangeEvent e)
         {
             double mouseTrainingLevel = getDoubleValueFrom(mouseTrainingLevelSpinner);
-            settingModifier.setMouseTrainingLevel(mouseTrainingLevel);
+            mouseTrainingLevelModifier.setMouseTrainingLevel(mouseTrainingLevel);
         }
     };
     

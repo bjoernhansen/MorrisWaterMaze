@@ -5,10 +5,14 @@ import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
 import morris_water_maze.graphics.Paintable;
 import morris_water_maze.model.Platform;
 import morris_water_maze.model.Pool;
+import morris_water_maze.model.StartingSide;
 import morris_water_maze.model.mouse.Mouse;
 import morris_water_maze.model.mouse.MouseMovement;
 import morris_water_maze.model.mouse.MouseParameter;
+import morris_water_maze.model.mouse.MovementDirection;
 import morris_water_maze.parameter.ParameterProvider;
+import morris_water_maze.util.geometry.Circle;
+import morris_water_maze.util.geometry.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +47,8 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
         platform = new Platform();
         
         MouseParameter mouseParameter = parameterProvider.getMouseParameterProvider();
-        Mouse mouse = new Mouse(mouseParameter, pool.getCenter(), platform.getBounds());
+        Circle movementBoundaries = Circle.newInstance(pool.getCenter(), Pool.RADIUS - Mouse.RADIUS);
+        Mouse mouse = new Mouse(mouseParameter, movementBoundaries, platform.getBounds());
         mouseMovement = new MouseMovement(mouseParameter, mouse);
     }
     
