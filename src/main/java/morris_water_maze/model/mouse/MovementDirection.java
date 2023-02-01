@@ -32,7 +32,7 @@ public final class MovementDirection implements MouseTrainingLevelModifier
         REBOUND_ANGLE_DISTRIBUTION_SIGMA = degreesToRadians(15.0);
     
     private static final double
-        STARTING_DIRECTION_ANGLE_RANGE = degreesToRadians(90.0);
+        STARTING_DIRECTION_ANGLE_RANGE = degreesToRadians(180.0);
     
     private final Point
         poolCenter;
