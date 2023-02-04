@@ -41,10 +41,10 @@ public final class Mouse
     {
         this.movementBoundaries = movementBoundaries;
         coordinates = this.startingCoordinates = getStartPosition(mouseParameter.getStartingSide(), movementBoundaries);
-        speed = mouseParameter.mouseSpeed();
+        speed = mouseParameter.getMouseSpeed();
         this.platformBounds = platformBounds;    
         this.movementDirection = new MovementDirection(
-                                        mouseParameter.getMouseTrainingLevel(),
+                                        mouseParameter,
                                         movementBoundaries,
                                         startingCoordinates,
                                         platformBounds.getCenter());

@@ -3,6 +3,8 @@ package morris_water_maze.model.mouse;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.Point;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static morris_water_maze.model.mouse.Calculations.calculatePolarAngle;
 import static org.mockito.Mockito.mock;
@@ -29,21 +31,25 @@ class MovementDirectionTest
         polarAngleOfStartToPoolCenterVector = calculatePolarAngle(startToPoolCenterVector);
     
     
+    
     @Test
     void shouldResetCorrectly()
     {
+        // TODO test fertig stellen
         RandomNumbers randomNumberGenerator = mock(RandomNumbers.class);
         when(randomNumberGenerator.nextDouble()).thenReturn(0.5, 0.0);
         Calculations.setRandom(randomNumberGenerator);
     
+        MouseParameter mouseParameter= new MouseParameterForTest();
+        
         MovementDirection movementDirection = new MovementDirection(
-                                                    0.5,
+                                                    mouseParameter,
                                                     movementBoundaries,
                                                     startingCoordinates,
                                                     platformCenter);
     
         movementDirection.resetRandomly();
-            
+        
         
         
             /*

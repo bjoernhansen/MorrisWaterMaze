@@ -15,25 +15,6 @@ import static morris_water_maze.model.mouse.Calculations.random;
 
 public final class MovementDirection implements MouseTrainingLevelModifier
 {
-    //TODO make parameter
-    private static final double
-        FIELD_OF_VIEW = degreesToRadians(90);	// Sichtfenster der Maus; default: 90°
-    
-    //TODO make parameter
-    private static final double
-        UNTRAINED_ANGLE_DISTRIBUTION_SIGMA = degreesToRadians(22.5);
-    
-    //TODO make parameter
-    private static final double
-        MEAN_POOL_BORDER_REBOUND_ANGLE = degreesToRadians(60.0);
-    
-    //TODO make parameter
-    private static final double
-        REBOUND_ANGLE_DISTRIBUTION_SIGMA = degreesToRadians(15.0);
-    
-    private static final double
-        STARTING_DIRECTION_ANGLE_RANGE = degreesToRadians(180.0);
-    
     private final Point
         poolCenter;
     
@@ -52,19 +33,41 @@ public final class MovementDirection implements MouseTrainingLevelModifier
     private double
         trainingLevel;		    // Trainingslevel der Maus; [0, 1]; default: 0.5
     
+    private final double
+        fieldOfView;
     
-    public MovementDirection(double trainingLevel,
+    private final double
+        untrainedAngleDistributionSigma;
+    
+    private final double
+        meanPoolBorderReboundAngle;
+    
+    private final double
+        reboundAngleDistributionSigma;
+    
+    private final double
+        startingDirectionAngleRange;
+    
+    
+    public MovementDirection(MouseParameter mouseParameter,
                              Circle movementBoundaries,
                              Point mouseStartingCoordinates,
                              Point platformCenter)
     {
-        this.trainingLevel = trainingLevel;
         this.movementBoundaries = movementBoundaries;
         this.poolCenter = movementBoundaries.getCenter();
         this.platformCenter = platformCenter;
         Point startToPoolCenterVector = VectorBuilder.from(mouseStartingCoordinates)
                                                      .to(poolCenter);
         polarAngleOfStartToPoolCenterVector = calculatePolarAngle(startToPoolCenterVector);
+    
+        trainingLevel = mouseParameter.getMouseTrainingLevel();
+        
+        fieldOfView = degreesToRadians(mouseParameter.getFieldOfView());
+        untrainedAngleDistributionSigma = degreesToRadians(mouseParameter.getUntrainedAngleDistributionSigma());
+        meanPoolBorderReboundAngle = degreesToRadians(mouseParameter.getMeanPoolBorderReboundAngle());
+        reboundAngleDistributionSigma = degreesToRadians(mouseParameter.getReboundAngleDistributionSigma());
+        startingDirectionAngleRange = degreesToRadians(mouseParameter.getStartingDirectionAngleRange());
     }
     
     public void recalculateForMoveAfter(LineSegment currentMove)
@@ -82,7 +85,7 @@ public final class MovementDirection implements MouseTrainingLevelModifier
     
     public void resetRandomly()
     {
-        double angularDeviation = STARTING_DIRECTION_ANGLE_RANGE * (random()-0.5);
+        double angularDeviation = startingDirectionAngleRange * (random()-0.5);
         angle = polarAngleOfStartToPoolCenterVector + angularDeviation;
     }
     
@@ -104,7 +107,7 @@ public final class MovementDirection implements MouseTrainingLevelModifier
         
         RotationDirection rotationDirection = getRotationDirectionAroundPoolCenterWhenSwimmingAlong(currentMove);
     
-        double gaussian = gaussian(MEAN_POOL_BORDER_REBOUND_ANGLE, REBOUND_ANGLE_DISTRIBUTION_SIGMA);
+        double gaussian = gaussian(meanPoolBorderReboundAngle, reboundAngleDistributionSigma);
         return calculatePolarAngle(currentPositionToPoolCenterVector) - rotationDirection.getValue() * gaussian;
     }
     
@@ -118,7 +121,7 @@ public final class MovementDirection implements MouseTrainingLevelModifier
     private double calculateSigmaForGaussianDistributedAngles()
     {
         // for a more trained mouse the standard deviation is smaller
-        return (1 - trainingLevel) * UNTRAINED_ANGLE_DISTRIBUTION_SIGMA;
+        return (1 - trainingLevel) * untrainedAngleDistributionSigma;
     }
     
     private RotationDirection getRotationDirectionAroundPoolCenterWhenSwimmingAlong(LineSegment nextMove)
@@ -141,6 +144,6 @@ public final class MovementDirection implements MouseTrainingLevelModifier
     
     private boolean isMouseDetectingPlatformGiven(Point mouseToPlatformVector, Point movementVector)
     {
-        return trainingLevel > random() && FIELD_OF_VIEW >= 2 * angle(movementVector, mouseToPlatformVector);
+        return trainingLevel > random() && fieldOfView >= 2 * angle(movementVector, mouseToPlatformVector);
     }
 }

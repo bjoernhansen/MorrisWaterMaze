@@ -11,17 +11,25 @@ public final class FileNameProvider implements NecessaryDirectoriesReporter
     private static final String
         LOG_DIRECTORY = "logs/";
     
+    private final static String
+        USED_PARAMETERS_FILE_PATH = "src/main/resources/parameter.properties";
+    
     private final String
         subDirectory;
     
     private final String
         finalReportPath;
     
+    private final String
+        usedParametersCopyPath;
+ 
+        
     
     public FileNameProvider(String simulationId)
     {
         subDirectory = LOG_DIRECTORY + simulationId + "/";
         finalReportPath = subDirectory + "search_times.txt";
+        usedParametersCopyPath = subDirectory + "usedParameters.txt";
     }
     
     public String getSubDirectory()
@@ -38,5 +46,15 @@ public final class FileNameProvider implements NecessaryDirectoriesReporter
     public List<String> getNecessaryDirectories()
     {
         return Arrays.asList(LOG_DIRECTORY, subDirectory);
+    }
+    
+    public String getUsedParametersFilePath()
+    {
+        return USED_PARAMETERS_FILE_PATH;
+    }
+    
+    public String getUsedParametersCopyPath()
+    {
+        return usedParametersCopyPath;
     }
 }

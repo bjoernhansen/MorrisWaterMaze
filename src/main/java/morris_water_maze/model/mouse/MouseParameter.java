@@ -13,5 +13,15 @@ public interface MouseParameter
     
     StartingSide getStartingSide();
     
-    double mouseSpeed();
+    double getMouseSpeed();
+    
+    double getFieldOfView();
+    
+    double getUntrainedAngleDistributionSigma();
+    
+    double getMeanPoolBorderReboundAngle();
+    
+    double getReboundAngleDistributionSigma();
+    
+    double getStartingDirectionAngleRange();
 }

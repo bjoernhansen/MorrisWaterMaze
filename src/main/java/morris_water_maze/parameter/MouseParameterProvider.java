@@ -5,6 +5,7 @@ import morris_water_maze.model.mouse.MouseParameter;
 
 import java.util.Properties;
 
+
 public final class MouseParameterProvider implements MouseParameter
 {
     private final double
@@ -22,6 +23,22 @@ public final class MouseParameterProvider implements MouseParameter
     private final double
         mouseSpeed;
     
+    private final double
+        fieldOfView;
+    
+    private final double
+        untrainedAngleDistributionSigma;
+    
+    private final double
+        meanPoolBorderReboundAngle;
+    
+    private final double
+        reboundAngleDistributionSigma;
+    
+    private final double
+        startingDirectionAngleRange;
+    
+    
     
     public MouseParameterProvider(Properties parameter)
     {
@@ -32,6 +49,11 @@ public final class MouseParameterProvider implements MouseParameter
             ? StartingSide.LEFT
             : StartingSide.RIGHT;
         mouseSpeed = Double.parseDouble(parameter.getProperty("mouseSpeed", "5"));
+        fieldOfView = Double.parseDouble(parameter.getProperty("fieldOfView", " 90.0"));
+        untrainedAngleDistributionSigma = Double.parseDouble(parameter.getProperty("untrainedAngleDistributionSigma", " 22.5"));
+        meanPoolBorderReboundAngle = Double.parseDouble(parameter.getProperty("meanPoolBorderReboundAngle", " 15.0"));
+        reboundAngleDistributionSigma = Double.parseDouble(parameter.getProperty("reboundAngleDistributionSigma", " 60.0"));
+        startingDirectionAngleRange = Double.parseDouble(parameter.getProperty("startingDirectionAngleRange", " 180.0"));
         
         validate();
     }
@@ -89,8 +111,38 @@ public final class MouseParameterProvider implements MouseParameter
     }
     
     @Override
-    public double mouseSpeed()
+    public double getMouseSpeed()
     {
         return mouseSpeed;
+    }
+    
+    @Override
+    public double getFieldOfView()
+    {
+        return fieldOfView;
+    }
+    
+    @Override
+    public double getUntrainedAngleDistributionSigma()
+    {
+        return untrainedAngleDistributionSigma;
+    }
+    
+    @Override
+    public double getMeanPoolBorderReboundAngle()
+    {
+        return meanPoolBorderReboundAngle;
+    }
+    
+    @Override
+    public double getReboundAngleDistributionSigma()
+    {
+        return reboundAngleDistributionSigma;
+    }
+    
+    @Override
+    public double getStartingDirectionAngleRange()
+    {
+        return startingDirectionAngleRange;
     }
 }

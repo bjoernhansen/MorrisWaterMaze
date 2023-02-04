@@ -3,6 +3,10 @@ package morris_water_maze.report;
 import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
 import morris_water_maze.model.simulation.Simulation;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
 
 public final class ReportWriter implements SimulationSeriesCompletionObserver
 {
@@ -23,6 +27,26 @@ public final class ReportWriter implements SimulationSeriesCompletionObserver
     {
         printAverageSearchTimeOnScreen();
         writeFinalSimulationReport();
+        copyParameterPropertiesFile();
+    }
+    
+    private void copyParameterPropertiesFile()
+    {
+        File source = new File(fileNameProvider.getUsedParametersFilePath());
+        File destination = new File(fileNameProvider.getUsedParametersCopyPath());
+        copyFiles(source, destination);
+    }
+    
+    private void copyFiles(File source, File destination)
+    {
+        try
+        {
+            Files.copy(source.toPath(), destination.toPath());
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
     
     private void printAverageSearchTimeOnScreen()
