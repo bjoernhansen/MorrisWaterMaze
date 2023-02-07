@@ -3,7 +3,7 @@ package morris_water_maze.model.mouse;
 import morris_water_maze.model.StartingSide;
 
 
-public interface MouseParameter
+public interface MouseParameter extends MovementDirectionParameter
 {
     double getMaximumMouseSwimmingDuration();
     
@@ -14,14 +14,4 @@ public interface MouseParameter
     StartingSide getStartingSide();
     
     double getMouseSpeed();
-    
-    double getFieldOfView();
-    
-    double getUntrainedAngleDistributionSigma();
-    
-    double getMeanPoolBorderReboundAngle();
-    
-    double getReboundAngleDistributionSigma();
-    
-    double getStartingDirectionAngleRange();
 }

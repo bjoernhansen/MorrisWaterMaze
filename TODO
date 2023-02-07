@@ -1,8 +1,5 @@
-Arbeit an der Klasse Maus:
-- Unit-Tests für die mathematischen Operationen
-- Methoden verbessern
-- eventuell Klassen herauslösen (dann ggf. Maus mit diesen Klasse in eigenes Paket)
-- Mathematische Operationen herausschreiben und erläutern
+
+Mathematische Operationen herausschreiben und erläutern
 
 JavaFX verbessern --> fxml verwenden, GUI Elemente ergänzen (wie bei der Swing-Simulation)
 

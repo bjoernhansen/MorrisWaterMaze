@@ -9,8 +9,6 @@ class MouseTest
     @Test
     void getStartPosition()
     {
-    
-    
     }
     
     @Test

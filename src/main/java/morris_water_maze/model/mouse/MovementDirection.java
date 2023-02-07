@@ -49,7 +49,8 @@ public final class MovementDirection implements MouseTrainingLevelModifier
         startingDirectionAngleRange;
     
     
-    public MovementDirection(MouseParameter mouseParameter,
+    public MovementDirection(MovementDirectionParameter movementDirectionParameter,
+                             double trainingLevel,
                              Circle movementBoundaries,
                              Point mouseStartingCoordinates,
                              Point platformCenter)
@@ -59,15 +60,15 @@ public final class MovementDirection implements MouseTrainingLevelModifier
         this.platformCenter = platformCenter;
         Point startToPoolCenterVector = VectorBuilder.from(mouseStartingCoordinates)
                                                      .to(poolCenter);
-        polarAngleOfStartToPoolCenterVector = calculatePolarAngle(startToPoolCenterVector);
     
-        trainingLevel = mouseParameter.getMouseTrainingLevel();
-        
-        fieldOfView = degreesToRadians(mouseParameter.getFieldOfView());
-        untrainedAngleDistributionSigma = degreesToRadians(mouseParameter.getUntrainedAngleDistributionSigma());
-        meanPoolBorderReboundAngle = degreesToRadians(mouseParameter.getMeanPoolBorderReboundAngle());
-        reboundAngleDistributionSigma = degreesToRadians(mouseParameter.getReboundAngleDistributionSigma());
-        startingDirectionAngleRange = degreesToRadians(mouseParameter.getStartingDirectionAngleRange());
+        this.trainingLevel = trainingLevel;
+    
+        polarAngleOfStartToPoolCenterVector = calculatePolarAngle(startToPoolCenterVector);
+        fieldOfView = degreesToRadians(movementDirectionParameter.getFieldOfView());
+        untrainedAngleDistributionSigma = degreesToRadians(movementDirectionParameter.getUntrainedAngleDistributionSigma());
+        meanPoolBorderReboundAngle = degreesToRadians(movementDirectionParameter.getMeanPoolBorderReboundAngle());
+        reboundAngleDistributionSigma = degreesToRadians(movementDirectionParameter.getReboundAngleDistributionSigma());
+        startingDirectionAngleRange = degreesToRadians(movementDirectionParameter.getStartingDirectionAngleRange());
     }
     
     public void recalculateForMoveAfter(LineSegment currentMove)

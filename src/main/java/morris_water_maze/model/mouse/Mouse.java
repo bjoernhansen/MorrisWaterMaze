@@ -8,7 +8,6 @@ import morris_water_maze.util.geometry.Square;
 
 
 public final class Mouse
-// TODO gegebenenfalls weiter "pure functions" auslagern in Klasse Utility-Calculations
 {
     public static final double
         RADIUS = 3;					// Radius des die Maus repräsentierenden Kreises
@@ -45,6 +44,7 @@ public final class Mouse
         this.platformBounds = platformBounds;    
         this.movementDirection = new MovementDirection(
                                         mouseParameter,
+                                        mouseParameter.getMouseTrainingLevel(),
                                         movementBoundaries,
                                         startingCoordinates,
                                         platformBounds.getCenter());
