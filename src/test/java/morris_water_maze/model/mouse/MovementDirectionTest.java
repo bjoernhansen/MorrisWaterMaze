@@ -3,16 +3,16 @@ package morris_water_maze.model.mouse;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static morris_water_maze.model.mouse.Calculations.calculatePolarAngle;
 import static morris_water_maze.model.mouse.Calculations.degreesToRadians;
-import static morris_water_maze.util.DoubleComparison.doubleEquals;
+import static morris_water_maze.util.DoubleComparisonAssert.assertThatDouble;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 
 @DisplayName("Movement direction")
 class MovementDirectionTest
@@ -56,13 +56,13 @@ class MovementDirectionTest
         
         movementDirection.resetRandomly();
         
-        assertThat(doubleEquals(movementDirection.getAngle(), polarAngleOfStartToPoolCenterVector)).isTrue();
+        assertThatDouble(movementDirection.getAngle()).isCloseTo(polarAngleOfStartToPoolCenterVector);
         
         movementDirection.resetRandomly();
         double maximumCounterClockwiseTurn = -0.5 * degreesToRadians(mouseParameter.getStartingDirectionAngleRange());
         double smallestStartingDirectionAngle = polarAngleOfStartToPoolCenterVector + maximumCounterClockwiseTurn;
     
-        assertThat(doubleEquals(movementDirection.getAngle(), smallestStartingDirectionAngle)).isTrue();
+        assertThatDouble(movementDirection.getAngle()).isCloseTo(smallestStartingDirectionAngle);
     }
     
     @Test
@@ -79,7 +79,7 @@ class MovementDirectionTest
         
         movementDirection.recalculateForMoveAfter(firstMove);
     
-        assertThat(doubleEquals(polarAngleOfFirstMove, movementDirection.getAngle())).isTrue();
+        assertThatDouble(polarAngleOfFirstMove).isCloseTo(movementDirection.getAngle());
     
         
         LineSegment secondMove = LineSegment.from(poolCenter).to(startingCoordinates);
@@ -89,6 +89,6 @@ class MovementDirectionTest
         movementDirection.recalculateForMoveAfter(secondMove);
     
         assertThat(startingCoordinates.isOnTheEdgeOf(movementBoundaries)).isTrue();
-        assertThat(doubleEquals(polarAngleOfMoveAfterTouchingPoolBorder, movementDirection.getAngle())).isTrue();
+        assertThatDouble(polarAngleOfMoveAfterTouchingPoolBorder).isCloseTo(movementDirection.getAngle());
     }
 }
