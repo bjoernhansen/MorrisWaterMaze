@@ -40,6 +40,13 @@ public final class Main
         simulationController.start();
     }
     
+    private static void createDirectories(ParameterProvider parameterProvider)
+    {
+        FileNameProvider fileNameProvider = parameterProvider.getFileNameProvider();
+        DirectoryCreator directoryCreator = new DirectoryCreator(fileNameProvider);
+        directoryCreator.makeDirectories();
+    }
+    
     private static Simulation getSimulationWithObserversRegistered(ParameterProvider parameterProvider)
     {
         Simulation simulation = new WaterMorrisMazeSimulation(parameterProvider);
@@ -48,12 +55,5 @@ public final class Main
         observerRegistrator.registerObserversFor(simulation);
         
         return simulation;
-    }
-    
-    private static void createDirectories(ParameterProvider parameterProvider)
-    {
-        FileNameProvider fileNameProvider = parameterProvider.getFileNameProvider();
-        DirectoryCreator directoryCreator = new DirectoryCreator(fileNameProvider);
-        directoryCreator.makeDirectories();
     }
 }
