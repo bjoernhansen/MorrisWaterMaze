@@ -1,6 +1,7 @@
 package morris_water_maze.report.histogram;
 
 import morris_water_maze.control.observer.SimulationSeriesCompletionObserver;
+import morris_water_maze.model.simulation.SearchTimeProvider;
 import morris_water_maze.model.simulation.Simulation;
 import morris_water_maze.util.geometry.Dimension;
 import org.jfree.chart.JFreeChart;
@@ -55,7 +56,10 @@ public abstract class HistogramFileMaker implements SimulationSeriesCompletionOb
     
     private JFreeChart createHistogram()
     {
-        return histogramCreator.createHistogram(simulation.getSearchTimeProvider());
+        SearchTimeProvider searchDurationProvider = simulation.getSearchTimeProvider();
+        //        RandomNumberGenerator randomNumberGenerator = new GaussianNumberGenerator(100, 10);
+        //        searchDurationProvider = new PseudoSearchDurationProvider(100, randomNumberGenerator);
+        return histogramCreator.createHistogram(searchDurationProvider);
     }
     
     final void reportHistogramFileCreation()

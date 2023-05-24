@@ -69,10 +69,7 @@ final class HistogramCreator
                                                            .stream()
                                                            .filter(this::isValidSearchTimeForHistogram)
                                                            .collect(Collectors.toList());
-        
-        /*GaussianPseudoSearchDurationProvider searchDurationProvider = new GaussianPseudoSearchDurationProvider();
-        listOfSearchTimes = searchDurationProvider.getPseudoSearchTimeList();*/
-        
+                
         double[] searchTimes = getSearchTimeArrayFrom(listOfSearchTimes);
         
         HistogramDataset dataset = new HistogramDataset();
