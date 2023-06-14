@@ -2,8 +2,8 @@ package morris_water_maze.util;
 
 import org.junit.jupiter.api.Test;
 
-import static morris_water_maze.util.DoubleComparison.EPSILON;
-import static morris_water_maze.util.DoubleComparison.doubleEquals;
+import static morris_water_maze.util.calculations.DoubleComparison.EPSILON;
+import static morris_water_maze.util.calculations.DoubleComparison.doubleEquals;
 import static org.assertj.core.api.Assertions.assertThat;
 
 

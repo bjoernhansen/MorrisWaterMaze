@@ -1,8 +1,8 @@
 package morris_water_maze.model.mouse;
 
+import morris_water_maze.util.calculations.number_generation_2.EvenlyDistributedNumberGenerator;
+import morris_water_maze.util.calculations.number_generation_2.RandomNumberGenerator;
 import morris_water_maze.util.geometry.Point;
-
-import java.util.Random;
 
 import static java.lang.Math.acos;
 
@@ -15,19 +15,19 @@ public final class Calculations
     private static final double
         RAD_PER_DEGREE = Math.PI / 180.0;
     
-    private static RandomNumbers
-        random = new RandomNumberGenerator();
+    private static RandomNumberGenerator
+        evenlyDistributedNumbers = new EvenlyDistributedNumberGenerator();
     
     
     static double angle(Point point1, Point point2)
     {
-        return acos( dotProduct(point1, point2) / (length(point1) * length(point2)) );
+        return acos(dotProduct(point1, point2) / (length(point1) * length(point2)));
     }
     
     static double dotProduct(Point point1, Point point2)
     {
-        return    point1.getX() * point2.getX()
-                + point1.getY() * point2.getY();
+        return point1.getX() * point2.getX()
+            + point1.getY() * point2.getY();
     }
     
     public static double length(Point point)
@@ -55,19 +55,14 @@ public final class Calculations
         return Math.atan2(vector.getY(), vector.getX());
     }
     
-    static double gaussian(double mean, double sigma)
-    {
-        return mean + sigma * random.nextGaussian();
-    }
-    
     static double random()
     {
-        return random.nextDouble();
+        return evenlyDistributedNumbers.nextDouble();
     }
     
-    static void setRandom(RandomNumbers randomNumbers)
+    static void setEvenlyDistributedNumberGenerator(RandomNumberGenerator randomNumberGenerator)
     {
-        random = randomNumbers;
+        evenlyDistributedNumbers = randomNumberGenerator;
     }
     
     private Calculations()

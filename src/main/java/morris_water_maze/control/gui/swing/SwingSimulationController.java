@@ -28,7 +28,7 @@ public final class SwingSimulationController extends GuiSimulationController imp
     {
         super(simulationInstance);
     
-        simulationPanel = new SimulationPanel(getSimulation(), getSimulation(), parameterProvider, this, getSimulation());
+        simulationPanel = new SimulationPanel(getSimulation(), parameterProvider, this, getSimulation());
         simulationFrame = new SimulationFrame(simulationPanel);
         simulationFrame.setVisible(true);
     

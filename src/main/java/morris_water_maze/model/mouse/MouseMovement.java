@@ -105,10 +105,6 @@ public final class MouseMovement implements Paintable
 		timeSteps.add(0.0);
 	}
 	
-	public void setMouseTrainingLevel(double trainingLevel) {
-		mouse.setTrainingLevel(trainingLevel);
-	}
-	
 	public boolean isMouseSwimming() {
 		return mouse.isSwimming();
 	}

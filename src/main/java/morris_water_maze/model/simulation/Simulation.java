@@ -5,7 +5,7 @@ import morris_water_maze.control.observer.SimulationRunCompletionObserver;
 import morris_water_maze.graphics.Paintable;
 
 
-public interface Simulation extends SettingModifier, MouseTrainingLevelModifier, Paintable
+public interface Simulation extends SettingModifier, Paintable
 {
     void nextStep();
     

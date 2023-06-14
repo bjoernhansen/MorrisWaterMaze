@@ -7,11 +7,15 @@ public interface MouseParameter extends MovementDirectionParameter
 {
     double getMaximumMouseSwimmingDuration();
     
-    double getMouseTrainingLevel();
-    
     double getStepLengthBias();
     
     StartingSide getStartingSide();
     
     double getMouseSpeed();
+    
+    double getUntrainedAngleDistributionSigma();
+    
+    double getMeanPoolBorderReboundAngle();
+    
+    double getReboundAngleDistributionSigma();
 }

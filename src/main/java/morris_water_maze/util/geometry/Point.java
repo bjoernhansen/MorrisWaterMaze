@@ -1,12 +1,12 @@
 package morris_water_maze.util.geometry;
 
 import morris_water_maze.model.mouse.VectorBuilder;
-import morris_water_maze.util.DoubleComparison;
+import morris_water_maze.util.calculations.DoubleComparison;
 
 import java.util.Objects;
 
 import static morris_water_maze.model.mouse.Calculations.length;
-import static morris_water_maze.util.DoubleComparison.doubleEquals;
+import static morris_water_maze.util.calculations.DoubleComparison.doubleEquals;
 
 
 public final class Point

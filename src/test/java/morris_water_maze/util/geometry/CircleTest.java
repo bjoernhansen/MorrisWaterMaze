@@ -1,6 +1,6 @@
 package morris_water_maze.util.geometry;
 
-import morris_water_maze.util.DoubleComparison;
+import morris_water_maze.util.calculations.DoubleComparison;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

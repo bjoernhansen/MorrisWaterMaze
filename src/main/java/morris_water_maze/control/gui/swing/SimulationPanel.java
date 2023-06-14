@@ -5,7 +5,6 @@ import morris_water_maze.graphics.adapter.Graphics2dAdapter;
 import morris_water_maze.graphics.adapter.GraphicsAdapter;
 import morris_water_maze.graphics.painter.image.ImagePainter;
 import morris_water_maze.graphics.painter.image.ImagePainterType;
-import morris_water_maze.model.simulation.MouseTrainingLevelModifier;
 import morris_water_maze.model.simulation.SettingModifier;
 import morris_water_maze.parameter.ParameterProvider;
 
@@ -43,10 +42,7 @@ final class SimulationPanel extends JPanel
         
     private final SettingModifier
         settingModifier;
-    
-    private final MouseTrainingLevelModifier
-        mouseTrainingLevelModifier;
-    
+
     private final SwingSimulationController
         simulationController;
     
@@ -61,23 +57,18 @@ final class SimulationPanel extends JPanel
     
     private JButton
         restartButton;
-    
-    private JSpinner
-        mouseTrainingLevelSpinner;
-    
+        
     private JSpinner
         numberOfSimulationsSpinner;
     
     
     public SimulationPanel(SettingModifier settingModifier,
-                           MouseTrainingLevelModifier mouseTrainingLevelModifier,
                            ParameterProvider parameterProvider,
                            SwingSimulationController simulationController,
                            Paintable simulation)
     {
         this.simulationController = simulationController;
         this.settingModifier = settingModifier;
-        this.mouseTrainingLevelModifier = mouseTrainingLevelModifier;
         this.imagePainter = ImagePainterType.DEFAULT.makeInstance();
         this.simulation = simulation;
         this.initialNumberOfSimulations = parameterProvider.getSimulationParameterProvider()
@@ -99,7 +90,6 @@ final class SimulationPanel extends JPanel
     {
         startAndPauseButton = new JButton("Starten");
         restartButton = new JButton("Neustart");
-        mouseTrainingLevelSpinner = new JSpinner(new SpinnerNumberModel(initialMouseTrainingLevel, 0.0, 1.0, 0.01));
         numberOfSimulationsSpinner = new JSpinner(new SpinnerNumberModel(initialNumberOfSimulations, 1.0, MAXIMUM_NUMBER_OF_SIMULATIONS, 1.00));
     }
     
@@ -107,7 +97,6 @@ final class SimulationPanel extends JPanel
     {
         startAndPauseButton.addActionListener(startAndPauseButtonActionListener);
         restartButton.addActionListener(resetButtonActionListener);
-        mouseTrainingLevelSpinner.addChangeListener(mouseTrainingLevelSpinnerListener);
         numberOfSimulationsSpinner.addChangeListener(numberOfSimulationsSpinnerListener);
     }
     
@@ -123,7 +112,7 @@ final class SimulationPanel extends JPanel
         panel.add(startAndPauseButton);
         panel.add(restartButton);
         panel.add(mouseLevelLabel);
-        panel.add(mouseTrainingLevelSpinner);
+        panel.add(new JLabel(Double.toString(initialMouseTrainingLevel)));
         panel.add(numberOfSimulationLabel);
         panel.add(numberOfSimulationsSpinner);
         
@@ -169,7 +158,6 @@ final class SimulationPanel extends JPanel
                 startAndPauseButton.setText("Stop");
             }
             simulationController.switchSimulationActivityState();
-            mouseTrainingLevelSpinner.setEnabled(false);
             numberOfSimulationsSpinner.setEnabled(false);
         }
     };
@@ -183,18 +171,7 @@ final class SimulationPanel extends JPanel
             simulationController.stopLooping();
             settingModifier.resetRemainingNumberOfSimulationRuns();
             settingModifier.clearSearchTime();
-            mouseTrainingLevelSpinner.setEnabled(true);
             numberOfSimulationsSpinner.setEnabled(true);
-        }
-    };
-    
-    private final ChangeListener mouseTrainingLevelSpinnerListener = new ChangeListener()
-    {
-        @Override
-        public void stateChanged(ChangeEvent e)
-        {
-            double mouseTrainingLevel = getDoubleValueFrom(mouseTrainingLevelSpinner);
-            mouseTrainingLevelModifier.setMouseTrainingLevel(mouseTrainingLevel);
         }
     };
     

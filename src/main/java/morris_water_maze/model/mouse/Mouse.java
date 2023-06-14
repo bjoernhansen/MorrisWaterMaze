@@ -1,10 +1,14 @@
 package morris_water_maze.model.mouse;
 
 import morris_water_maze.model.StartingSide;
+import morris_water_maze.util.calculations.number_generation_1.GaussianDistribution;
+import morris_water_maze.util.calculations.number_generation_1.RandomDistribution;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
 import morris_water_maze.util.geometry.Square;
+
+import static morris_water_maze.model.mouse.Calculations.degreesToRadians;
 
 
 public final class Mouse
@@ -34,20 +38,44 @@ public final class Mouse
     private boolean
         isSwimming;				// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
     
-
-        
+    
     public Mouse(MouseParameter mouseParameter, Circle movementBoundaries, Square platformBounds)
     {
         this.movementBoundaries = movementBoundaries;
         coordinates = this.startingCoordinates = getStartPosition(mouseParameter.getStartingSide(), movementBoundaries);
         speed = mouseParameter.getMouseSpeed();
-        this.platformBounds = platformBounds;    
+        this.platformBounds = platformBounds;
+        
+        RandomDistribution reboundAngleDistribution = getReboundAngleDistribution(mouseParameter);
+        RandomDistribution movementDirectionDistribution = getMovementDirectionDistribution(mouseParameter);
+    
         this.movementDirection = new MovementDirection(
                                         mouseParameter,
-                                        mouseParameter.getMouseTrainingLevel(),
                                         movementBoundaries,
                                         startingCoordinates,
-                                        platformBounds.getCenter());
+                                        platformBounds.getCenter(),
+                                        reboundAngleDistribution,
+                                        movementDirectionDistribution);
+    }
+    
+    private RandomDistribution getMovementDirectionDistribution(MouseParameter mouseParameter)
+    {
+        double untrainedAngleDistributionSigma = degreesToRadians(mouseParameter.getUntrainedAngleDistributionSigma());
+        double sigmaForGaussianDistributedAngles = calculateSigmaForGaussianDistributedAngles(mouseParameter.getMouseTrainingLevel(), untrainedAngleDistributionSigma);
+        return new GaussianDistribution(sigmaForGaussianDistributedAngles);
+    }
+    
+    private double calculateSigmaForGaussianDistributedAngles(double trainingLevel, double untrainedAngleDistributionSigma)
+    {
+        // for a more trained mouse the standard deviation is smaller
+        return (1 - trainingLevel) * untrainedAngleDistributionSigma;
+    }
+    
+    private static RandomDistribution getReboundAngleDistribution(MouseParameter mouseParameter)
+    {
+        double meanPoolBorderReboundAngle = degreesToRadians(mouseParameter.getMeanPoolBorderReboundAngle());
+        double reboundAngleDistributionSigma = degreesToRadians(mouseParameter.getReboundAngleDistributionSigma());
+        return new GaussianDistribution(meanPoolBorderReboundAngle, reboundAngleDistributionSigma);
     }
     
     public void moveFor(double durationOfCurrentSimulationStep)
@@ -137,10 +165,5 @@ public final class Mouse
     public void startSwimming()
     {
         isSwimming = true;
-    }
-    
-    public void setTrainingLevel(double trainingLevel)
-    {
-        movementDirection.setMouseTrainingLevel(trainingLevel);
     }
 }

@@ -4,11 +4,7 @@ public interface MovementDirectionParameter
 {
     double getFieldOfView();
     
-    double getUntrainedAngleDistributionSigma();
-    
-    double getMeanPoolBorderReboundAngle();
-    
-    double getReboundAngleDistributionSigma();
-    
     double getStartingDirectionAngleRange();
+    
+    double getMouseTrainingLevel();
 }

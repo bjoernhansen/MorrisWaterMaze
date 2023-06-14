@@ -1,7 +1,7 @@
 package morris_water_maze.report.histogram;
 
 import morris_water_maze.model.simulation.SearchTimeProvider;
-import morris_water_maze.report.histogram.number_generation.RandomNumberGenerator;
+import morris_water_maze.util.calculations.number_generation_1.RandomDistribution;
 import morris_water_maze.util.Stack;
 
 import java.util.List;
@@ -16,13 +16,13 @@ public class PseudoSearchDurationProvider implements SearchTimeProvider
     private final Stack<Double>
         stack;
     
-    private final RandomNumberGenerator randomNumberGenerator;
+    private final RandomDistribution randomDistribution;
     
     
-    public PseudoSearchDurationProvider(int numberOfGeneratedValues, RandomNumberGenerator randomNumberGenerator)
+    public PseudoSearchDurationProvider(int numberOfGeneratedValues, RandomDistribution randomDistribution)
     {
         this.numberOfGeneratedValues = numberOfGeneratedValues; // 25000
-        this.randomNumberGenerator = randomNumberGenerator;
+        this.randomDistribution = randomDistribution;
         stack = getPseudoSearchTimes();
     }
     
@@ -31,7 +31,7 @@ public class PseudoSearchDurationProvider implements SearchTimeProvider
         Stack<Double> list = new Stack<>();
         for(int i = 0; i < numberOfGeneratedValues; i++)
         {
-            list.push(randomNumberGenerator.nextRandomNumber());
+            list.push(randomDistribution.nextDouble(0));
         }
         return list;
     }

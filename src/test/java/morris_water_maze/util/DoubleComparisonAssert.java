@@ -1,5 +1,6 @@
 package morris_water_maze.util;
 
+import morris_water_maze.util.calculations.DoubleComparison;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
 

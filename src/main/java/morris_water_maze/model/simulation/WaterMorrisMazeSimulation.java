@@ -79,12 +79,6 @@ public final class WaterMorrisMazeSimulation extends AbstractSimulation
     }
     
     @Override
-    public void setMouseTrainingLevel(double mouseTrainingLevel)
-    {
-        mouseMovement.setMouseTrainingLevel(mouseTrainingLevel);
-    }
-    
-    @Override
     public double getAverageSearchTime()
     {
         return searchTimeContainer.calculateSumOfSearchTimes() / getTotalNumberOfSimulationRuns();

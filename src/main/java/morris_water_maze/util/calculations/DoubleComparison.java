@@ -1,4 +1,4 @@
-package morris_water_maze.util;
+package morris_water_maze.util.calculations;
 
 import org.apache.commons.math3.util.Precision;
 

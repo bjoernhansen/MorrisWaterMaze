@@ -1,6 +1,6 @@
 package morris_water_maze.model.mouse;
 
-public class MouseParameterForTest implements MovementDirectionParameter
+public class MouseMovementParameterForTest implements MovementDirectionParameter
 {
     @Override
     public double getFieldOfView()
@@ -8,7 +8,7 @@ public class MouseParameterForTest implements MovementDirectionParameter
         return 90.0;
     }
     
-    @Override
+    /*@Override
     public double getUntrainedAngleDistributionSigma()
     {
         return 22.5;
@@ -25,10 +25,16 @@ public class MouseParameterForTest implements MovementDirectionParameter
     {
         return 15.0;
     }
-    
+    */
     @Override
     public double getStartingDirectionAngleRange()
     {
         return 180.0;
+    }
+    
+    @Override
+    public double getMouseTrainingLevel()
+    {
+        return 0.5;
     }
 }
