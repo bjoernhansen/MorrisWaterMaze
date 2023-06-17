@@ -1,7 +1,6 @@
 package morris_water_maze.model.mouse;
 
-import morris_water_maze.util.calculations.number_generation_1.GaussianDistribution;
-import morris_water_maze.util.calculations.number_generation_1.RandomDistribution;
+import morris_water_maze.util.calculations.number_generation.RandomDistribution;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
@@ -31,7 +30,7 @@ public final class MovementDirection
         polarAngleOfStartToPoolCenterVector;
     
     private final double
-        trainingLevel;		    // Trainingslevel der Maus; [0, 1]; default: 0.5
+        trainingLevel;            // Trainingslevel der Maus; [0, 1]; default: 0.5
     
     private final double
         fieldOfView;
@@ -50,15 +49,17 @@ public final class MovementDirection
                              Circle movementBoundaries,
                              Point mouseStartingCoordinates,
                              Point platformCenter,
-                             RandomDistribution reboundAngleDistribution,
-                             RandomDistribution movementDirectionDistribution)
+                             RandomDistribution movementDirectionDistribution,
+                             RandomDistribution reboundAngleDistribution)
     {
         this.movementBoundaries = movementBoundaries;
         this.poolCenter = movementBoundaries.getCenter();
         this.platformCenter = platformCenter;
         this.trainingLevel = movementDirectionParameter.getMouseTrainingLevel();
-        this.reboundAngleDistribution = reboundAngleDistribution;
+        // TODO die erstellung sollte nicht in Maus sondern deutlich weiter oben erfolgen,
+        //  ggf. könnte es eigene Klasse erstellt werden, die beide VErteilungen liefert und ggf. über die MausMovemenbtParameter abrufbar ist
         this.movementDirectionDistribution = movementDirectionDistribution;
+        this.reboundAngleDistribution = reboundAngleDistribution;
         
         Point startToPoolCenterVector = VectorBuilder.from(mouseStartingCoordinates)
                                                      .to(poolCenter);
@@ -82,7 +83,7 @@ public final class MovementDirection
     
     public void resetRandomly()
     {
-        double angularDeviation = startingDirectionAngleRange * (random()-0.5);
+        double angularDeviation = startingDirectionAngleRange * (random() - 0.5);
         angle = polarAngleOfStartToPoolCenterVector + angularDeviation;
     }
     
@@ -94,16 +95,13 @@ public final class MovementDirection
     private double getMovementDirectionAngleWhenTouchingPoolBorder(LineSegment currentMove)
     {
         Point newCoordinates = currentMove.getEnd();
-        Point currentPositionToPoolCenterVector = VectorBuilder.from(newCoordinates).to(poolCenter);
+        Point currentPositionToPoolCenterVector = VectorBuilder.from(newCoordinates)
+                                                               .to(poolCenter);
         
         RotationDirection rotationDirection = getRotationDirectionAroundPoolCenterWhenSwimmingAlong(currentMove);
-    
+        
         double gaussian = reboundAngleDistribution.nextDouble();
-        System.out.println("gaussians");
-        System.out.println(gaussian);
-        double v = calculatePolarAngle(currentPositionToPoolCenterVector) - rotationDirection.getValue() * gaussian;
-        System.out.println(v);
-        return v;
+        return calculatePolarAngle(currentPositionToPoolCenterVector) - gaussian * rotationDirection.getValue();
     }
     
     private double getMovementDirectionWhenAwayFromPoolBorder(LineSegment currentMove)

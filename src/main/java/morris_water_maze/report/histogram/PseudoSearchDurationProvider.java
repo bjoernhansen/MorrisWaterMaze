@@ -1,16 +1,16 @@
 package morris_water_maze.report.histogram;
 
 import morris_water_maze.model.simulation.SearchTimeProvider;
-import morris_water_maze.util.calculations.number_generation_1.RandomDistribution;
+import morris_water_maze.util.calculations.number_generation.RandomDistribution;
 import morris_water_maze.util.Stack;
 
 import java.util.List;
 import java.util.function.Consumer;
 
 
-public class PseudoSearchDurationProvider implements SearchTimeProvider
+final class PseudoSearchDurationProvider implements SearchTimeProvider
 {
-    public final int
+    private final int
         numberOfGeneratedValues;
         
     private final Stack<Double>

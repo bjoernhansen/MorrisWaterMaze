@@ -1,4 +1,4 @@
-package morris_water_maze.util.calculations.number_generation_1;
+package morris_water_maze.util.calculations.number_generation;
 
 
 public interface RandomDistribution

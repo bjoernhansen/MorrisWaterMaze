@@ -6,3 +6,5 @@ JavaFX verbessern --> fxml verwenden, GUI Elemente ergänzen (wie bei der Swing-
 JavaDocs an alle öffentlichen Elemente setzen
 
 Zenodo verwenden für die Veröffentlichung des Codes in GitHub
+
+Testabdeckung erhöhen

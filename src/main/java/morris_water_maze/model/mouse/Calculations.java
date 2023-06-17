@@ -1,7 +1,7 @@
 package morris_water_maze.model.mouse;
 
-import morris_water_maze.util.calculations.number_generation_2.EvenlyDistributedNumberGenerator;
-import morris_water_maze.util.calculations.number_generation_2.RandomNumberGenerator;
+import morris_water_maze.util.calculations.number_generation.EvenlyDistributedNumberGenerator;
+import morris_water_maze.util.calculations.number_generation.RandomNumberGenerator;
 import morris_water_maze.util.geometry.Point;
 
 import static java.lang.Math.acos;

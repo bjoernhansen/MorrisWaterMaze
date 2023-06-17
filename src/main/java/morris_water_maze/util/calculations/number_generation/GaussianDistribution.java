@@ -1,4 +1,4 @@
-package morris_water_maze.util.calculations.number_generation_1;
+package morris_water_maze.util.calculations.number_generation;
 
 import java.util.Random;
 
@@ -37,11 +37,16 @@ public class GaussianDistribution implements RandomDistribution
     @Override
     public double nextDouble(double mean)
     {
-        return sigma * random.nextGaussian() + mean;
+        return sigma * nextGaussian() + mean;
     }
     
     public VonMisesDistribution getCorrespondingVonMisesDistribution()
     {
-        return new VonMisesDistribution(sigma);
+        return new VonMisesDistribution(mean, sigma);
+    }
+    
+    double nextGaussian()
+    {
+        return random.nextGaussian();
     }
 }

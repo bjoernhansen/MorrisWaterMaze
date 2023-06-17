@@ -1,8 +1,8 @@
 package morris_water_maze.model.mouse;
 
 import morris_water_maze.model.StartingSide;
-import morris_water_maze.util.calculations.number_generation_1.GaussianDistribution;
-import morris_water_maze.util.calculations.number_generation_1.RandomDistribution;
+import morris_water_maze.util.calculations.number_generation.GaussianDistribution;
+import morris_water_maze.util.calculations.number_generation.RandomDistribution;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
@@ -13,30 +13,22 @@ import static morris_water_maze.model.mouse.Calculations.degreesToRadians;
 
 public final class Mouse
 {
-    public static final double
-        RADIUS = 3;					// Radius des die Maus repräsentierenden Kreises
+    public static final double RADIUS = 3;                    // Radius des die Maus repräsentierenden Kreises
     
-    private final double
-        speed;     					// Geschwindigkeit der Maus; default: 5
+    private final double speed;                        // Geschwindigkeit der Maus; default: 5
     
-    private final Square
-        platformBounds;
+    private final Square platformBounds;
     
-    private final Circle
-        movementBoundaries;	// Der Mittelpunkt der Maus muss sich innerhalb dieses Kreises befinden.
-        
-    private final Point
-        startingCoordinates;  // Startposition von der Maus
+    private final Circle movementBoundaries;    // Der Mittelpunkt der Maus muss sich innerhalb dieses Kreises befinden.
     
-    private final MovementDirection
-        movementDirection;
+    private final Point startingCoordinates;  // Startposition von der Maus
+    
+    private final MovementDirection movementDirection;
     
     // variable attributes
-    private Point
-        coordinates;		    // aktueller Aufenthaltsort der Maus
+    private Point coordinates;            // aktueller Aufenthaltsort der Maus
     
-    private boolean
-        isSwimming;				// = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
+    private boolean isSwimming;                // = true: Maus schwimmt; = false, wenn Maus Plattform erreicht hat oder die maximale Zeit überschritten wurde
     
     
     public Mouse(MouseParameter mouseParameter, Circle movementBoundaries, Square platformBounds)
@@ -48,21 +40,22 @@ public final class Mouse
         
         RandomDistribution reboundAngleDistribution = getReboundAngleDistribution(mouseParameter);
         RandomDistribution movementDirectionDistribution = getMovementDirectionDistribution(mouseParameter);
-    
+        
         this.movementDirection = new MovementDirection(
                                         mouseParameter,
                                         movementBoundaries,
                                         startingCoordinates,
                                         platformBounds.getCenter(),
-                                        reboundAngleDistribution,
-                                        movementDirectionDistribution);
+                                        movementDirectionDistribution,
+                                        reboundAngleDistribution);
     }
     
     private RandomDistribution getMovementDirectionDistribution(MouseParameter mouseParameter)
     {
         double untrainedAngleDistributionSigma = degreesToRadians(mouseParameter.getUntrainedAngleDistributionSigma());
         double sigmaForGaussianDistributedAngles = calculateSigmaForGaussianDistributedAngles(mouseParameter.getMouseTrainingLevel(), untrainedAngleDistributionSigma);
-        return new GaussianDistribution(sigmaForGaussianDistributedAngles);
+        GaussianDistribution gaussianDistribution = new GaussianDistribution(sigmaForGaussianDistributedAngles);
+        return gaussianDistribution;//.getCorrespondingVonMisesDistribution();
     }
     
     private double calculateSigmaForGaussianDistributedAngles(double trainingLevel, double untrainedAngleDistributionSigma)
@@ -75,7 +68,8 @@ public final class Mouse
     {
         double meanPoolBorderReboundAngle = degreesToRadians(mouseParameter.getMeanPoolBorderReboundAngle());
         double reboundAngleDistributionSigma = degreesToRadians(mouseParameter.getReboundAngleDistributionSigma());
-        return new GaussianDistribution(meanPoolBorderReboundAngle, reboundAngleDistributionSigma);
+        GaussianDistribution gaussianDistribution = new GaussianDistribution(meanPoolBorderReboundAngle, reboundAngleDistributionSigma);
+        return gaussianDistribution;//.getCorrespondingVonMisesDistribution();
     }
     
     public void moveFor(double durationOfCurrentSimulationStep)
@@ -136,9 +130,11 @@ public final class Mouse
     {
         if(startingSide == StartingSide.LEFT)
         {
-            return Point.newInstance(movementBoundaries.getX(), movementBoundaries.getCenter().getY());
+            return Point.newInstance(movementBoundaries.getX(), movementBoundaries.getCenter()
+                                                                                  .getY());
         }
-        return Point.newInstance(movementBoundaries.getMaxX(), movementBoundaries.getCenter().getY());
+        return Point.newInstance(movementBoundaries.getMaxX(), movementBoundaries.getCenter()
+                                                                                 .getY());
     }
     
     public Point getCoordinates()

@@ -1,4 +1,4 @@
-package morris_water_maze.util.calculations.number_generation_1;
+package morris_water_maze.util.calculations.number_generation;
 
 import ec.util.MersenneTwisterFast;
 import sim.util.distribution.VonMises;
@@ -12,11 +12,6 @@ public class VonMisesDistribution implements RandomDistribution
     private final VonMises
         vonMises;
     
-    
-    VonMisesDistribution(double sigma)
-    {
-        this(0, sigma);
-    }
     
     VonMisesDistribution(double mean, double sigma)
     {

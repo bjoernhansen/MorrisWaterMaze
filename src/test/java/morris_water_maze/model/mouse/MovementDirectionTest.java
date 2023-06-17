@@ -1,7 +1,7 @@
 package morris_water_maze.model.mouse;
 
-import morris_water_maze.util.calculations.number_generation_1.RandomDistribution;
-import morris_water_maze.util.calculations.number_generation_2.RandomNumberGenerator;
+import morris_water_maze.util.calculations.number_generation.RandomDistribution;
+import morris_water_maze.util.calculations.number_generation.RandomNumberGenerator;
 import morris_water_maze.util.geometry.Circle;
 import morris_water_maze.util.geometry.LineSegment;
 import morris_water_maze.util.geometry.Point;
@@ -40,6 +40,8 @@ class MovementDirectionTest
     private final MovementDirectionParameter
         mouseMovementParameterForTest = new MouseMovementParameterForTest();
     
+    private final double
+        meanPoolBorderReboundAngle = degreesToRadians(60.0);
     
     
     @Test
@@ -74,22 +76,22 @@ class MovementDirectionTest
     @DisplayName("is recalculated correctly")
     void shouldBeRecalculatedCorrectly()
     {
-        RandomDistribution randomDistribution = mock(RandomDistribution.class);
-        when(randomDistribution.nextDouble()).thenReturn(0.0);
+        RandomDistribution movementDirectionDistribution = mock(RandomDistribution.class);
+        RandomDistribution reboundAngleDistribution = mock(RandomDistribution.class);
+        when(reboundAngleDistribution.nextDouble()).thenReturn(meanPoolBorderReboundAngle);
         
         MovementDirection movementDirection = new MovementDirection(
             mouseMovementParameterForTest,
             movementBoundaries,
             startingCoordinates,
             platformCenter,
-            randomDistribution,
-            randomDistribution);
+            movementDirectionDistribution,
+            reboundAngleDistribution);
     
         LineSegment firstMove = LineSegment.from(startingCoordinates).to(poolCenter);
         Point firstMoveVector = VectorBuilder.of(firstMove);
         double polarAngleOfFirstMove = calculatePolarAngle(firstMoveVector);
-        System.out.println("polarAngleOfMoveAfterTouchingPoolBorder: ");
-        System.out.println(polarAngleOfFirstMove);
+
         movementDirection.recalculateForMoveAfter(firstMove);
     
         assertThat(poolCenter.isOnTheEdgeOf(movementBoundaries)).isFalse();
@@ -99,10 +101,7 @@ class MovementDirectionTest
         LineSegment secondMove = LineSegment.from(poolCenter).to(startingCoordinates);
         Point secondMoveVector = VectorBuilder.of(secondMove);
         double polarAngleOfMoveAfterTouchingPoolBorder = (calculatePolarAngle(secondMoveVector) + Calculations.degreesToRadians(240.0))%(2*Math.PI);
-    
-        System.out.println("polarAngleOfMoveAfterTouchingPoolBorder: ");
-        System.out.println(polarAngleOfMoveAfterTouchingPoolBorder);
-    
+        
         movementDirection.recalculateForMoveAfter(secondMove);
     
         assertThat(startingCoordinates.isOnTheEdgeOf(movementBoundaries)).isTrue();

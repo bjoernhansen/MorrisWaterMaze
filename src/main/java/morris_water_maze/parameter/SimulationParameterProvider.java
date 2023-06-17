@@ -30,10 +30,11 @@ public final class SimulationParameterProvider implements SimulationParameter
     {
         numberOfSimulations = Integer.parseInt(parameter.getProperty("numberOfSimulations", "10"));
         isStartingWithGui = Boolean.parseBoolean(parameter.getProperty("isStartingWithGui", "true"));
-        simulationId = generateSimulationId();
         mouseTrainingLevel = mouseParameterImplementation.getMouseTrainingLevel();
+        
         isReportingSimulationProgress = Boolean.parseBoolean(parameter.getProperty("isReportingSimulationProgress", "true"));
         
+        simulationId = generateSimulationId();
         validate();
     }
     
