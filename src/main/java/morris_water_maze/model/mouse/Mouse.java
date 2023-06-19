@@ -55,7 +55,7 @@ public final class Mouse
         double untrainedAngleDistributionSigma = degreesToRadians(mouseParameter.getUntrainedAngleDistributionSigma());
         double sigmaForGaussianDistributedAngles = calculateSigmaForGaussianDistributedAngles(mouseParameter.getMouseTrainingLevel(), untrainedAngleDistributionSigma);
         GaussianDistribution gaussianDistribution = new GaussianDistribution(sigmaForGaussianDistributedAngles);
-        return gaussianDistribution;//.getCorrespondingVonMisesDistribution();
+        return gaussianDistribution.getCorrespondingVonMisesDistribution();
     }
     
     private double calculateSigmaForGaussianDistributedAngles(double trainingLevel, double untrainedAngleDistributionSigma)
@@ -69,7 +69,7 @@ public final class Mouse
         double meanPoolBorderReboundAngle = degreesToRadians(mouseParameter.getMeanPoolBorderReboundAngle());
         double reboundAngleDistributionSigma = degreesToRadians(mouseParameter.getReboundAngleDistributionSigma());
         GaussianDistribution gaussianDistribution = new GaussianDistribution(meanPoolBorderReboundAngle, reboundAngleDistributionSigma);
-        return gaussianDistribution;//.getCorrespondingVonMisesDistribution();
+        return gaussianDistribution.getCorrespondingVonMisesDistribution();
     }
     
     public void moveFor(double durationOfCurrentSimulationStep)
