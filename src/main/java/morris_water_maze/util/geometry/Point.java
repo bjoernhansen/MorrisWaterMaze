@@ -64,9 +64,8 @@ public final class Point
     public boolean equals(Object o)
     {
         if (this == o) return true;
-        if (!(o instanceof Point)) return false;
+        if (!(o instanceof Point other)) return false;
         
-        Point other = (Point) o;
         return     doubleEquals(this.x, other.x)
                 && doubleEquals(this.y, other.y);
     }
